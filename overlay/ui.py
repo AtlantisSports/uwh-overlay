@@ -14,15 +14,9 @@ def sized_frame(master, height, width):
    F.pack_propagate(0)
    return F
 
-def SizedLabel(root, var, bg, fg, font, height, width, anchor):
-  sf = sized_frame(root, height, width)
-  l = Label(sf, textvariable=var, bg=bg, fg=fg, font=font, anchor=anchor)
-  l.pack(fill=BOTH, expand=1)
-  return sf
-
-class OverlayView(Frame):
+class OverlayView(Canvas):
   def __init__(self, parent, mgr):
-    Frame.__init__(self, parent)
+    Canvas.__init__(self, parent)
 
     self.parent = parent
     self.root = parent
@@ -30,101 +24,52 @@ class OverlayView(Frame):
     self.initUI()
 
   def initUI(self):
-
     self.parent.title("TimeShark Scores")
     self.pack(fill=BOTH, expand=1)
 
-    #Creating layout variables
-    ###########################################################################
-    #Fonts
-    score_font = ("Verdana", 20, "bold")
-    time_font = score_font
-
-    #Element sizes
-    score_width  = 48
-    score_height = 40
-    label_width = 2.5 * score_width
-    label_height = score_height
-    clock_height = 1 * score_height
-    clock_width = score_width + label_width
-    border_side_width = score_width
-    border_top_width = clock_width + 2 * border_side_width
-    border_side_height = 3 * score_height
-
-    #Setting colors
-    white_bg = "black"
-    white_fg = "white"
-    black_bg = white_bg
-    black_fg = "#666666fff"
-    score_bg = white_bg
-    score_fg = "#000fff000"
-
-    refresh_ms = 250
-
     # Vars
     ###########################################################################
-    self.black_score = self.mgr.blackScore()
-    self.white_score = self.mgr.whiteScore()
-    self.game_clock_time = self.mgr.gameClock()
     self.white_team = " White"
     self.black_team = " Black"
     self.border_text = ""
+    self.w = self.root.winfo_screenwidth()
+    self.h = self.root.winfo_screenheight()
 
-    self.white_score_var = StringVar()
-    self.white_score_var.set("%d" % (self.white_score,))
-    self.white_team_var = StringVar()
-    self.white_team_var.set("%s" % (self.white_team,))
-    self.game_clock_var = StringVar()
-    self.game_clock_var.set("%02d:%02d" % (self.game_clock_time//60,self.game_clock_time%60))
-    self.black_team_var = StringVar()
-    self.black_team_var.set("%s" % (self.black_team,))
-    self.black_score_var = StringVar()
-    self.black_score_var.set("%d" % (self.black_score,))
-    self.border_text_var = StringVar()
-    self.border_text_var.set("%s" % (self.border_text,))
+    self.clear()
 
-    w = Canvas(self)
-    w.pack(fill=BOTH, expand=1)
+    self.timeAndScore()
 
-    #w.create_rectangle(boxMargin+2*boxWidth, boxMargin, boxMargin+boxWidth, boxMargin+boxHeight, fill=boxColor1)
-    #w.create_rectangle(teamAlign_x - boxMargin, whiteAlign_y - boxMargin, scoreAlign_x - 2 * boxMargin, whiteAlign_y + boxMargin, outline=boxOutline1)
+  def clear(self):
+    self.create_rectangle((0, 0, self.w, self.h), fill="#000000")
 
-    #Table layout for time and score.
+  def timeAndScore(self):
+    black_score = self.mgr.blackScore()
+    white_score = self.mgr.whiteScore()
+    game_clock_time = self.mgr.gameClock()
 
-    #Border around table
-    border_top_label = SizedLabel(w, self.border_text_var, score_bg,
-      score_fg, time_font, clock_height, border_top_width, CENTER)
-    border_bottom_label = SizedLabel(w, self.border_text_var, score_bg,
-      score_fg, time_font, clock_height, border_top_width, CENTER)
-    border_left_label = SizedLabel(w, self.border_text_var, score_bg,
-      score_fg, time_font, border_side_height, border_side_width, CENTER)
-    border_right_label = SizedLabel(w, self.border_text_var, score_bg,
-      score_fg, time_font, border_side_height, border_side_width, CENTER)
-    border_top_label.grid(row=0, column=0, columnspan=4)
-    border_bottom_label.grid(row=10, column=0, columnspan=4)
-    border_left_label.grid(row=1, column=0, rowspan=3)
-    border_right_label.grid(row=1, column=3, rowspan=3)
+    width = 400
+    height = 50
+    loc_x = self.w / 2 - width / 2
+    loc_y = height / 2 + 10
+    inset = 30
 
+    radius = 15
+    fg="#888888"
+    font="Arial 40"
+    w_score="%2d" % (white_score,)
+    b_score="%2d" % (black_score,)
 
-    game_clock_label = SizedLabel(w, self.game_clock_var, score_bg,
-      score_fg, time_font, clock_height, clock_width, CENTER)
-    game_clock_label.grid(row=1, column=1, columnspan=2)
+    self.create_oval((loc_x - radius, loc_y, loc_x + radius, loc_y + height), fill=fg, outline=fg)
+    self.create_oval((loc_x + width - radius, loc_y, loc_x + width + radius, loc_y + height), fill=fg, outline=fg)
+    self.create_rectangle((loc_x, loc_y, loc_x + width, loc_y + height), fill=fg, outline=fg)
 
-    white_team = SizedLabel(w, self.white_team_var, white_bg,
-      white_fg, score_font, score_height, label_width, W)
-    white_team.grid(row=2, column=1)
-    white_score_label = SizedLabel(w, self.white_score_var, white_bg,
-      white_fg, score_font, score_height, score_width, E)
-    white_score_label.grid(row=2, column=2)
+    self.create_text((loc_x + inset, loc_y + height / 2),
+                     text=w_score, fill="#ffffff",
+                     font=font)
 
-    black_team = SizedLabel(w, self.black_team_var, black_bg,
-        black_fg, score_font, score_height, label_width, W)
-    black_team.grid(row=3, column=1)
-    black_score_label = SizedLabel(w, self.black_score_var, black_bg,
-      black_fg, score_font, score_height, score_width, E)
-    black_score_label.grid(row=3, column=2)
-
-
+    self.create_text((loc_x + width - inset, loc_y + height / 2),
+                     text=b_score, fill="#000088",
+                     font=font)
 
 def Overlay(mgr):
   root = Tk()
