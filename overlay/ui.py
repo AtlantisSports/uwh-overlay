@@ -25,10 +25,9 @@ class OverlayView(Frame):
     Frame.__init__(self, parent)
 
     self.parent = parent
-    self.initUI()
-
     self.root = parent
     self.mgr = mgr
+    self.initUI()
 
   def initUI(self):
 
@@ -64,9 +63,9 @@ class OverlayView(Frame):
 
     # Vars
     ###########################################################################
-    self.black_score  = 4
-    self.white_score = 10
-    self.game_clock_time = 609
+    self.black_score = self.mgr.blackScore()
+    self.white_score = self.mgr.whiteScore()
+    self.game_clock_time = self.mgr.gameClock()
     self.white_team = " White"
     self.black_team = " Black"
     self.border_text = ""
