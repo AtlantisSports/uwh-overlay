@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import sys
-import uwhdo
 import time
 from Tkinter import *
 
@@ -28,6 +27,7 @@ class OverlayView(Frame):
     self.parent = parent
     self.initUI()
 
+    self.root = parent
     self.mgr = mgr
 
   def initUI(self):
