@@ -33,9 +33,6 @@ class OverlayView(Canvas):
 
     # Vars
     ###########################################################################
-    self.white_team = " White"
-    self.black_team = " Black"
-    self.border_text = ""
     self.w = self.root.winfo_screenwidth()
     self.h = self.root.winfo_screenheight()
 
@@ -44,7 +41,9 @@ class OverlayView(Canvas):
     self.timeAndScore()
 
   def clear(self):
-    self.create_rectangle((0, 0, self.w, self.h), fill="#000000")
+    fake_water_color="#2e96ff"
+    #fake_water_color="#054a91"
+    self.create_rectangle((0, 0, self.w, self.h), fill=fake_water_color)
 
   def roundRectangle(self, bbox, radius, fill):
     x1, y1, x2, y2 = bbox
@@ -58,8 +57,8 @@ class OverlayView(Canvas):
     game_clock_time = self.mgr.gameClock()
 
     # Bounding box (except for ellipses)
-    overall_width = 400
-    overall_height = 50
+    overall_width = 600
+    overall_height = 60
 
     # Top left coords
     x1 = self.w / 2 - overall_width / 2
@@ -71,25 +70,43 @@ class OverlayView(Canvas):
 
     inset = 30
     radius = 15
-    fg="#aaaaaa"
-    font="Arial 40"
-    w_score="%2d" % (white_score,)
-    b_score="%2d" % (black_score,)
+    state_offset = 160
+    font=("Futura condensed light", 40)
+    logo_font=("Futura condensed light", 30)
+    w_score="%d" % (white_score,)
+    b_score="%d" % (black_score,)
+    #middle_color="#0a2463"
+    #middle_color="#054a91"
+    middle_color="#155aa1"
+    middle_text="#ffffff"
+    black_bg="#000000"
+    white_bg="#ffffff"
+    text_color="#db162f"
+    logo_color="#ffffff"
 
-    self.create_rectangle((x1, y1, x2, y2), fill="#00aaaa", outline="#00aaaa")
+    self.create_rectangle((x1, y1, x2, y2), fill=middle_color, outline=middle_color)
 
     self.roundRectangle(bbox=(x1, y1, x1 + score_width, y1 + overall_height),
-                        radius=radius, fill=fg)
+                        radius=radius, fill=white_bg)
     self.roundRectangle(bbox=(x2 - score_width, y1, x2, y1 + overall_height),
-                        radius=radius, fill=fg)
+                        radius=radius, fill=black_bg)
 
     self.create_text((x1 + score_width / 2, y1 + overall_height / 2),
-                     text=w_score, fill="#ffffff",
+                     text=w_score, fill=text_color,
                      font=font)
 
     self.create_text((x2 - score_width / 2, y1 + overall_height / 2),
-                     text=b_score, fill="#000088",
+                     text=b_score, fill=text_color,
                      font=font)
+
+    self.create_text((x1 + overall_width / 2, y1 + overall_height / 2),
+                    text="TiMESHARK", fill=logo_color, font=logo_font)
+
+    self.create_text((x1 + overall_width / 2 - state_offset, y1 + overall_height / 2),
+                    text="1st", fill=middle_text, font=font)
+
+    self.create_text((x1 + overall_width / 2 + state_offset, y1 + overall_height / 2),
+                    text="13:25", fill=middle_text, font=font)
 
 def Overlay(mgr):
   root = Tk()
