@@ -57,8 +57,8 @@ class OverlayView(Canvas):
     game_clock_time = self.mgr.gameClock()
 
     # Bounding box (except for ellipses)
-    overall_width = 350
-    overall_height = 60
+    overall_width = 380
+    overall_height = 50
 
     # Top left coords
     x1 = self.w / 2 - overall_width / 2
@@ -70,10 +70,10 @@ class OverlayView(Canvas):
 
     inset = 30
     radius = 15
-    state_offset = 250
+    wing_offset = 265
     wing_size = 125
     font=("Futura condensed light", 40)
-    logo_font=("Futura condensed light", 30)
+    logo_font=("Futura condensed light", 40)
     w_score="%d" % (white_score,)
     b_score="%d" % (black_score,)
     #middle_color="#0a2463"
@@ -115,10 +115,10 @@ class OverlayView(Canvas):
     self.create_text((x1 + overall_width / 2, y1 + overall_height / 2),
                     text="TiMESHARK", fill=logo_color, font=logo_font)
 
-    self.create_text((x1 + overall_width / 2 - state_offset, y1 + overall_height / 2),
+    self.create_text((x1 + overall_width / 2 - wing_offset, y1 + overall_height / 2),
                     text="1st", fill=middle_text, font=font)
 
-    self.create_text((x1 + overall_width / 2 + state_offset, y1 + overall_height / 2),
+    self.create_text((x1 + overall_width / 2 + wing_offset, y1 + overall_height / 2),
                     text="13:25", fill=middle_text, font=font)
 
 def Overlay(mgr):
