@@ -124,8 +124,10 @@ class OverlayView(Canvas):
                      font=font)
 
     # Logo
+    wall_time = int(round(time.time() * 1000))
+    logo_text = "NAVISJON" if (wall_time / 4000) % 2 == 0 else "TIMESHARK"
     self.create_text((x1 + overall_width / 2, y1 + overall_height / 2),
-                    text="TiMESHARK", fill=logo_color, font=logo_font)
+                    text=logo_text, fill=logo_color, font=logo_font)
 
     # Game State Text
     self.create_text((x1 + overall_width / 2 - wing_offset, y1 + overall_height / 2),
