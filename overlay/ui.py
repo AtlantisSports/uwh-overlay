@@ -82,7 +82,7 @@ class OverlayView(Canvas):
     middle_text="#ffffff"
     black_bg="#000000"
     white_bg="#ffffff"
-    text_color="#db162f"
+    score_color=middle_color
     logo_color="#ffffff"
 
     # Middle Section
@@ -105,11 +105,11 @@ class OverlayView(Canvas):
 
 
     self.create_text((x1 + score_width / 2, y1 + overall_height / 2),
-                     text=w_score, fill=text_color,
+                     text=w_score, fill=score_color,
                      font=font)
 
     self.create_text((x2 - score_width / 2, y1 + overall_height / 2),
-                     text=b_score, fill=text_color,
+                     text=b_score, fill=score_color,
                      font=font)
 
     self.create_text((x1 + overall_width / 2, y1 + overall_height / 2),
