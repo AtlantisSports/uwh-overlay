@@ -77,9 +77,7 @@ class OverlayView(Canvas):
     logo_font=("Futura condensed light", 40)
     w_score="%d" % (white_score,)
     b_score="%d" % (black_score,)
-    #middle_color="#0a2463"
-    #middle_color="#054a91"
-    middle_color="#2e96ff"
+    middle_color="#8f42f4"
     middle_text="#ffffff"
     black_bg="#000000"
     white_bg="#ffffff"
