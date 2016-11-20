@@ -58,8 +58,8 @@ class OverlayView(Canvas):
 
   def timeAndScore(self):
     # Bounding box (except for ellipses)
-    overall_width = 300
-    overall_height = 45
+    overall_width = 320
+    overall_height = 40
 
     # Top left coords
     x1 = self.w / 2 - overall_width / 2
@@ -71,7 +71,7 @@ class OverlayView(Canvas):
 
     inset = 30
     radius = 15
-    wing_offset = 225
+    wing_offset = 235
     wing_size = 125
     outset = 2
     font=("Menlo", 30)
