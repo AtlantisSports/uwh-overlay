@@ -21,6 +21,10 @@ class OverlayView(Canvas):
     self.parent = parent
     self.root = parent
     self.mgr = mgr
+
+    self.mgr.setBlackScore(7)
+    self.mgr.setWhiteScore(12)
+
     self.initUI()
 
   def initUI(self):
@@ -42,32 +46,48 @@ class OverlayView(Canvas):
   def clear(self):
     self.create_rectangle((0, 0, self.w, self.h), fill="#000000")
 
+  def roundRectangle(self, bbox, radius, fill):
+    x1, y1, x2, y2 = bbox
+    self.create_oval((x1 - radius, y1, x1 + radius, y2), fill=fill, outline=fill)
+    self.create_oval((x2 - radius, y1, x2 + radius, y2), fill=fill, outline=fill)
+    self.create_rectangle(bbox, fill=fill, outline=fill)
+
   def timeAndScore(self):
     black_score = self.mgr.blackScore()
     white_score = self.mgr.whiteScore()
     game_clock_time = self.mgr.gameClock()
 
-    width = 400
-    height = 50
-    loc_x = self.w / 2 - width / 2
-    loc_y = height / 2 + 10
-    inset = 30
+    # Bounding box (except for ellipses)
+    overall_width = 400
+    overall_height = 50
 
+    # Top left coords
+    x1 = self.w / 2 - overall_width / 2
+    y1 = overall_height / 2 + 10
+    x2 = x1 + overall_width
+    y2 = y1 + overall_height
+
+    score_width = 50
+
+    inset = 30
     radius = 15
-    fg="#888888"
+    fg="#aaaaaa"
     font="Arial 40"
     w_score="%2d" % (white_score,)
     b_score="%2d" % (black_score,)
 
-    self.create_oval((loc_x - radius, loc_y, loc_x + radius, loc_y + height), fill=fg, outline=fg)
-    self.create_oval((loc_x + width - radius, loc_y, loc_x + width + radius, loc_y + height), fill=fg, outline=fg)
-    self.create_rectangle((loc_x, loc_y, loc_x + width, loc_y + height), fill=fg, outline=fg)
+    self.create_rectangle((x1, y1, x2, y2), fill="#00aaaa", outline="#00aaaa")
 
-    self.create_text((loc_x + inset, loc_y + height / 2),
+    self.roundRectangle(bbox=(x1, y1, x1 + score_width, y1 + overall_height),
+                        radius=radius, fill=fg)
+    self.roundRectangle(bbox=(x2 - score_width, y1, x2, y1 + overall_height),
+                        radius=radius, fill=fg)
+
+    self.create_text((x1 + score_width / 2, y1 + overall_height / 2),
                      text=w_score, fill="#ffffff",
                      font=font)
 
-    self.create_text((loc_x + width - inset, loc_y + height / 2),
+    self.create_text((x2 - score_width / 2, y1 + overall_height / 2),
                      text=b_score, fill="#000088",
                      font=font)
 
