@@ -41,8 +41,8 @@ class OverlayView(Canvas):
     self.timeAndScore()
 
   def clear(self):
-    fake_water_color="#2e96ff"
-    #fake_water_color="#054a91"
+    #fake_water_color="#2e96ff"
+    fake_water_color="#054a91"
     self.create_rectangle((0, 0, self.w, self.h), fill=fake_water_color)
 
   def roundRectangle(self, bbox, radius, fill):
@@ -78,7 +78,7 @@ class OverlayView(Canvas):
     b_score="%d" % (black_score,)
     #middle_color="#0a2463"
     #middle_color="#054a91"
-    middle_color="#155aa1"
+    middle_color="#2e96ff"
     middle_text="#ffffff"
     black_bg="#000000"
     white_bg="#ffffff"
