@@ -31,19 +31,16 @@ class OverlayView(Canvas):
     self.parent.title("TimeShark Scores")
     self.pack(fill=BOTH, expand=1)
 
-    # Vars
-    ###########################################################################
     self.w = self.root.winfo_screenwidth()
     self.h = self.root.winfo_screenheight()
 
-    self.clear()
+    #self.clear(fill="#2e96ff")
+    self.clear(fill="#054a91")
 
     self.timeAndScore()
 
-  def clear(self):
-    #fake_water_color="#2e96ff"
-    fake_water_color="#054a91"
-    self.create_rectangle((0, 0, self.w, self.h), fill=fake_water_color)
+  def clear(self, fill):
+    self.create_rectangle((0, 0, self.w, self.h), fill=fill)
 
   def roundRectangle(self, bbox, radius, fill):
     x1, y1, x2, y2 = bbox
