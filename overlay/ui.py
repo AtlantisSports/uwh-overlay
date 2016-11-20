@@ -34,10 +34,15 @@ class OverlayView(Canvas):
     self.w = self.root.winfo_screenwidth()
     self.h = self.root.winfo_screenheight()
 
-    #self.clear(fill="#2e96ff")
-    self.clear(fill="#054a91")
-
-    self.timeAndScore()
+    self.refresh = 100
+    def draw(self):
+      self.delete(ALL)
+      #self.clear(fill="#2e96ff")
+      self.clear(fill="#054a91")
+      self.timeAndScore()
+      self.update()
+      self.after(self.refresh, lambda : draw(self))
+    self.after(1, lambda : draw(self))
 
   def clear(self, fill):
     self.create_rectangle((0, 0, self.w, self.h), fill=fill)
