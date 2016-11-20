@@ -72,6 +72,7 @@ class OverlayView(Canvas):
     radius = 15
     wing_offset = 265
     wing_size = 125
+    outset = 2
     font=("Futura condensed light", 40)
     logo_font=("Futura condensed light", 40)
     w_score="%d" % (white_score,)
@@ -84,6 +85,11 @@ class OverlayView(Canvas):
     white_bg="#ffffff"
     score_color=middle_color
     logo_color="#ffffff"
+
+    # Border
+    self.roundRectangle(bbox=(x1 - wing_size - outset, y1 - outset,
+                              x2 + wing_size + outset, y2 + outset),
+                        radius=radius, fill=white_bg)
 
     # Middle Section
     self.create_rectangle((x1, y1, x2, y2), fill=middle_color, outline=middle_color)
