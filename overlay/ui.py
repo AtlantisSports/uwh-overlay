@@ -35,12 +35,15 @@ class OverlayView(Canvas):
     self.h = self.root.winfo_screenheight()
 
     self.refresh = 100
+    self.t = 0
     def draw(self):
       self.delete(ALL)
       #self.clear(fill="#2e96ff")
       self.clear(fill="#054a91")
       self.timeAndScore()
       self.update()
+      self.t += 10
+      self.mgr.setGameClock(self.t)
       self.after(self.refresh, lambda : draw(self))
     self.after(1, lambda : draw(self))
 
@@ -54,13 +57,9 @@ class OverlayView(Canvas):
     self.create_rectangle(bbox, fill=fill, outline=fill)
 
   def timeAndScore(self):
-    black_score = self.mgr.blackScore()
-    white_score = self.mgr.whiteScore()
-    game_clock_time = self.mgr.gameClock()
-
     # Bounding box (except for ellipses)
     overall_width = 300
-    overall_height = 50
+    overall_height = 45
 
     # Top left coords
     x1 = self.w / 2 - overall_width / 2
@@ -75,10 +74,9 @@ class OverlayView(Canvas):
     wing_offset = 225
     wing_size = 125
     outset = 2
-    font=("Futura condensed light", 40)
-    logo_font=("Futura condensed medium", 40)
-    w_score="%d" % (white_score,)
-    b_score="%d" % (black_score,)
+    font=("Menlo", 30)
+    logo_font=("Menlo", 30)
+    time_font=("Menlo", 30)
     #middle_color="#0a2463"
     #middle_color="#054a91"
     middle_color="#2e96ff"
@@ -111,23 +109,33 @@ class OverlayView(Canvas):
     self.roundRectangle(bbox=(x2 - score_width, y1, x2, y1 + overall_height),
                         radius=radius, fill=black_bg)
 
-
+    # White Score Text
+    white_score = self.mgr.whiteScore()
+    w_score="%d" % (white_score,)
     self.create_text((x1 + score_width / 2, y1 + overall_height / 2),
                      text=w_score, fill=score_color,
                      font=font)
 
+    # Black Score Text
+    black_score = self.mgr.blackScore()
+    b_score="%d" % (black_score,)
     self.create_text((x2 - score_width / 2, y1 + overall_height / 2),
                      text=b_score, fill=score_color,
                      font=font)
 
+    # Logo
     self.create_text((x1 + overall_width / 2, y1 + overall_height / 2),
                     text="TiMESHARK", fill=logo_color, font=logo_font)
 
+    # Game State Text
     self.create_text((x1 + overall_width / 2 - wing_offset, y1 + overall_height / 2),
                     text="1st", fill=middle_text, font=font)
 
+    # Game Clock Text
+    clock_time = self.mgr.gameClock()
+    clock_text = "%2d:%02d" % (clock_time // 60, clock_time % 60)
     self.create_text((x1 + overall_width / 2 + wing_offset, y1 + overall_height / 2),
-                    text="13:25", fill=middle_text, font=font)
+                    text=clock_text, fill=middle_text, font=time_font)
 
 def Overlay(mgr):
   root = Tk()
