@@ -71,7 +71,6 @@ class OverlayView(Canvas):
 
     inset = 30
     radius = 15
-    wing_offset = 235
     wing_size = 125
     outset = 2
     font=("Menlo", 30)
@@ -130,13 +129,14 @@ class OverlayView(Canvas):
                     text=logo_text, fill=logo_color, font=logo_font)
 
     # Game State Text
-    self.create_text((x1 + overall_width / 2 - wing_offset, y1 + overall_height / 2),
-                    text="1st", fill=middle_text, font=font)
+    state_text="1st"
+    self.create_text((x1 - wing_size / 2, y1 + overall_height / 2),
+                    text=state_text, fill=middle_text, font=font)
 
     # Game Clock Text
     clock_time = self.mgr.gameClock()
     clock_text = "%2d:%02d" % (clock_time // 60, clock_time % 60)
-    self.create_text((x1 + overall_width / 2 + wing_offset, y1 + overall_height / 2),
+    self.create_text((x2 + wing_size / 2, y1 + overall_height / 2),
                     text=clock_text, fill=middle_text, font=time_font)
 
 def Overlay(mgr):
