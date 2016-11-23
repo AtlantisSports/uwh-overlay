@@ -71,7 +71,7 @@ class OverlayView(Canvas):
 
     inset = 30
     radius = 15
-    wing_size = 125
+    wing_size = 200
     outset = 2
     font=("Menlo", 30)
     logo_font=("Menlo", 30)
@@ -124,12 +124,12 @@ class OverlayView(Canvas):
 
     # Logo
     wall_time = int(round(time.time() * 1000))
-    logo_text = "NAVISJON" if (wall_time / 4000) % 2 == 0 else "TIMESHARK"
+    logo_text = "Timeshark"
     self.create_text((x1 + overall_width / 2, y1 + overall_height / 2),
                     text=logo_text, fill=logo_color, font=logo_font)
 
     # Game State Text
-    state_text="1st"
+    state_text="1st Half"
     self.create_text((x1 - wing_size / 2, y1 + overall_height / 2),
                     text=state_text, fill=middle_text, font=font)
 
