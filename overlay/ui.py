@@ -61,10 +61,23 @@ class OverlayView(Canvas):
     self.create_rectangle(bbox, fill=fill, outline=fill)
 
   def render(self):
-    try:
-      { "center" : self.render_top_center }[self.version]()
-    except KeyError as e:
-      self.render_top_center()
+    {
+      "center" : self.render_top_center
+    }.get(self.version, self.render_top_center)()
+
+  def color(self, name):
+    if self.mask:
+      return "#000000" if name == "bg" else "#ffffff"
+
+    return {
+      "border" : "#ffffff",
+      "fill" : "#2e96ff",
+      "fill_text" : "#ffffff",
+      "black_fill" : "#000000",
+      "black_text" : "#2e96ff",
+      "white_fill" : "#ffffff",
+      "white_text" : "#2e96ff"
+    }.get(name, "#ff0000")
 
   def render_top_center(self):
     # Bounding box (except for ellipses)
@@ -86,75 +99,63 @@ class OverlayView(Canvas):
     font=("Menlo", 30)
     logo_font=("Menlo", 30)
     time_font=("Menlo", 30)
-    if self.mask:
-      middle_color="#ffffff"
-      middle_text="#ffffff"
-      black_bg="#ffffff"
-      white_bg="#ffffff"
-      score_color="#ffffff"
-      logo_color="#ffffff"
-    else:
-      middle_color="#2e96ff"
-      middle_text="#ffffff"
-      black_bg="#000000"
-      white_bg="#ffffff"
-      score_color=middle_color
-      logo_color="#ffffff"
 
     # Border
     self.round_rectangle(bbox=(x1 - wing_size - outset, y1 - outset,
                               x2 + wing_size + outset, y2 + outset),
-                         radius=radius, fill=white_bg)
+                         radius=radius, fill=self.color("border"))
 
     # Middle Section
-    self.create_rectangle((x1, y1, x2, y2), fill=middle_color, outline=middle_color)
+    self.create_rectangle((x1, y1, x2, y2), fill=self.color("fill"),
+                          outline=self.color("fill"))
 
     # Left Wing
     self.round_rectangle(bbox=(x1 - wing_size, y1, x1, y2),
-                         radius=radius, fill=middle_color)
+                         radius=radius, fill=self.color("fill"))
 
     # Right Wing
     self.round_rectangle(bbox=(x2, y1, x2 + wing_size, y2),
-                         radius=radius, fill=middle_color)
+                         radius=radius, fill=self.color("fill"))
 
     # White Score
     self.round_rectangle(bbox=(x1, y1, x1 + score_width, y1 + overall_height),
-                         radius=radius, fill=white_bg)
+                         radius=radius, fill=self.color("white_fill"))
     # Black Score
     self.round_rectangle(bbox=(x2 - score_width, y1, x2, y1 + overall_height),
-                         radius=radius, fill=black_bg)
+                         radius=radius, fill=self.color("black_fill"))
 
     if not self.mask:
       # White Score Text
       white_score = self.mgr.whiteScore()
       w_score="%d" % (white_score,)
       self.create_text((x1 + score_width / 2, y1 + overall_height / 2),
-                       text=w_score, fill=score_color,
+                       text=w_score, fill=self.color("white_text"),
                        font=font)
 
       # Black Score Text
       black_score = self.mgr.blackScore()
       b_score="%d" % (black_score,)
       self.create_text((x2 - score_width / 2, y1 + overall_height / 2),
-                       text=b_score, fill=score_color,
+                       text=b_score, fill=self.color("black_text"),
                        font=font)
 
       # Logo
       wall_time = int(round(time.time() * 1000))
       logo_text = "Timeshark"
       self.create_text((x1 + overall_width / 2, y1 + overall_height / 2),
-                      text=logo_text, fill=logo_color, font=logo_font)
+                      text=logo_text, fill=self.color("fill_text"),
+                      font=logo_font)
 
       # Game State Text
       state_text="1st Half"
       self.create_text((x1 - wing_size / 2, y1 + overall_height / 2),
-                      text=state_text, fill=middle_text, font=font)
+                      text=state_text, fill=self.color("fill_text"), font=font)
 
       # Game Clock Text
       clock_time = self.mgr.gameClock()
       clock_text = "%2d:%02d" % (clock_time // 60, clock_time % 60)
       self.create_text((x2 + wing_size / 2, y1 + overall_height / 2),
-                      text=clock_text, fill=middle_text, font=time_font)
+                      text=clock_text, fill=self.color("fill_text"), font=time_font)
 
 def Overlay(mgr, mask, version):
   root = Tk()
