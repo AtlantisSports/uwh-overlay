@@ -62,7 +62,8 @@ class OverlayView(Canvas):
 
   def render(self):
     {
-      "center" : self.render_top_center
+      "center" : self.render_top_center,
+      "left" : self.render_left
     }.get(self.version, self.render_top_center)()
 
   def color(self, name):
@@ -78,6 +79,128 @@ class OverlayView(Canvas):
       "white_fill" : "#ffffff",
       "white_text" : "#2e96ff"
     }.get(name, "#ff0000")
+
+  def abbreviate(self, s):
+    if len(s) > 16:
+      return s[0:13] + "..."
+    else:
+      return s
+
+  def render_left(self):
+    radius = 15
+    height = 40
+    width = 365
+    score_width = 50
+    score_offset = width - score_width
+    time_width = 295
+    state_width = 120
+    state_offset = score_offset + time_width
+    outset = 2
+
+    x1 = 40 + radius
+    y1 = 40
+
+    font=("Menlo", 30)
+    logo_font=("Menlo", 30)
+    time_font=("Menlo", 70)
+    state_font=("Menlo", 50)
+
+    # State Border
+    self.round_rectangle(bbox=(x1 + state_offset - outset,
+                               y1 - outset,
+                               x1 + state_offset + state_width + outset,
+                               y1 + height * 2 + outset * 3),
+                         radius=radius, fill=self.color("border"))
+
+    # State Fill
+    self.round_rectangle(bbox=(x1 + state_offset,
+                               y1,
+                               x1 + state_offset + state_width,
+                               y1 + height * 2 + outset * 2),
+                         radius=radius, fill=self.color("fill"))
+
+    # Time Border
+    self.round_rectangle(bbox=(x1 + score_offset - outset,
+                               y1 - outset,
+                               x1 + state_offset + outset,
+                               y1 + height * 2 + outset * 3),
+                         radius=radius, fill=self.color("border"))
+
+    # Time Fill
+    self.round_rectangle(bbox=(x1 + score_offset,
+                               y1,
+                               x1 + state_offset,
+                               y1 + height * 2 + outset * 2),
+                         radius=radius, fill=self.color("fill"))
+
+    # Teams Border
+    self.round_rectangle(bbox=(x1 - outset,
+                               y1 - outset,
+                               x1 + width + outset,
+                               y1 + height + outset),
+                         radius=radius, fill=self.color("border"))
+    self.round_rectangle(bbox=(x1 - outset,
+                               y1 + height + outset,
+                               x1 + width + outset,
+                               y1 + height * 2 + outset * 3),
+                         radius=radius, fill=self.color("border"))
+
+    # Teams Fill
+    self.round_rectangle(bbox=(x1, y1, x1 + width, y1 + height),
+                         radius=radius, fill=self.color("fill"))
+    self.round_rectangle(bbox=(x1, y1 + height + outset * 2,
+                               x1 + width, y1 + height * 2 + outset * 2),
+                         radius=radius, fill=self.color("fill"))
+
+    # Scores Fill
+    self.round_rectangle(bbox=(x1 + score_offset,
+                               y1,
+                               x1 + score_offset + score_width,
+                               y1 + height),
+                         radius=radius, fill=self.color("white_fill"))
+    self.round_rectangle(bbox=(x1 + score_offset,
+                               y1 + height + outset * 2,
+                               x1 + score_offset + score_width,
+                               y1 + height * 2 + outset * 2),
+                         radius=radius, fill=self.color("black_fill"))
+
+    if not self.mask:
+      # Game State Text
+      state_text="1st"
+      self.create_text((x1 + state_offset + state_width, y1 + height + outset),
+                      text=state_text, fill=self.color("fill_text"), font=state_font, anchor=E)
+
+      # Time Text
+      clock_time = self.mgr.gameClock()
+      clock_text = "%2d:%02d" % (clock_time // 60, clock_time % 60)
+      self.create_text((x1 + state_offset, y1 + height + outset),
+                       text=clock_text, fill=self.color("fill_text"),
+                       font=time_font, anchor=E)
+
+      # White Score Text
+      white_score = self.mgr.whiteScore()
+      w_score="%d" % (white_score,)
+      self.create_text((x1 + score_offset + score_width / 2, y1 + height / 2),
+                       text=w_score, fill=self.color("white_text"),
+                       font=font)
+
+      # Black Score Text
+      black_score = self.mgr.blackScore()
+      b_score="%d" % (black_score,)
+      self.create_text((x1 + score_offset + score_width / 2,
+                        y1 + height / 2 + height + outset * 2),
+                       text=b_score, fill=self.color("black_text"),
+                       font=font)
+
+      # White Team Text
+      white_team=self.abbreviate("Rah Rah Oysters!")
+      self.create_text((x1, y1 + outset + height / 2), text=white_team,
+                       fill=self.color("fill_text"), anchor=W, font=font)
+
+      #black_team="Club Puck"
+      black_team=self.abbreviate("Team Moderately Sexy")
+      self.create_text((x1, y1 + height + outset * 3 + height / 2), text=black_team,
+                       fill=self.color("fill_text"), anchor=W, font=font)
 
   def render_top_center(self):
     # Bounding box (except for ellipses)
@@ -96,6 +219,7 @@ class OverlayView(Canvas):
     radius = 15
     wing_size = 200
     outset = 2
+
     font=("Menlo", 30)
     logo_font=("Menlo", 30)
     time_font=("Menlo", 30)
