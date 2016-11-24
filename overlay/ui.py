@@ -88,7 +88,7 @@ class OverlayView(Canvas):
 
   def render_left(self):
     radius = 15
-    height = 40
+    height = 50
     width = 365
     score_width = 50
     score_offset = width - score_width
@@ -101,7 +101,8 @@ class OverlayView(Canvas):
     y1 = 40
 
     font=("Menlo", 30)
-    logo_font=("Menlo", 30)
+    score_font=("Menlo", 40, "bold")
+    logo_font=("Menlo", 40)
     time_font=("Menlo", 70)
     state_font=("Menlo", 50)
 
@@ -182,7 +183,7 @@ class OverlayView(Canvas):
       w_score="%d" % (white_score,)
       self.create_text((x1 + score_offset + score_width / 2, y1 + height / 2),
                        text=w_score, fill=self.color("white_text"),
-                       font=font)
+                       font=score_font)
 
       # Black Score Text
       black_score = self.mgr.blackScore()
@@ -190,7 +191,7 @@ class OverlayView(Canvas):
       self.create_text((x1 + score_offset + score_width / 2,
                         y1 + height / 2 + height + outset * 2),
                        text=b_score, fill=self.color("black_text"),
-                       font=font)
+                       font=score_font)
 
       # White Team Text
       white_team=self.abbreviate("Rah Rah Oysters!")
