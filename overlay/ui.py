@@ -27,9 +27,9 @@ class OverlayView(Canvas):
     self.mgr.setBlackScore(7)
     self.mgr.setWhiteScore(12)
 
-    self.initUI()
+    self.init_ui()
 
-  def initUI(self):
+  def init_ui(self):
     self.parent.title("TimeShark Scores")
     self.pack(fill=BOTH, expand=1)
 
@@ -54,7 +54,7 @@ class OverlayView(Canvas):
   def clear(self, fill):
     self.create_rectangle((0, 0, self.w, self.h), fill=fill)
 
-  def roundRectangle(self, bbox, radius, fill):
+  def round_rectangle(self, bbox, radius, fill):
     x1, y1, x2, y2 = bbox
     self.create_oval((x1 - radius, y1, x1 + radius, y2), fill=fill, outline=fill)
     self.create_oval((x2 - radius, y1, x2 + radius, y2), fill=fill, outline=fill)
@@ -102,27 +102,27 @@ class OverlayView(Canvas):
       logo_color="#ffffff"
 
     # Border
-    self.roundRectangle(bbox=(x1 - wing_size - outset, y1 - outset,
+    self.round_rectangle(bbox=(x1 - wing_size - outset, y1 - outset,
                               x2 + wing_size + outset, y2 + outset),
-                        radius=radius, fill=white_bg)
+                         radius=radius, fill=white_bg)
 
     # Middle Section
     self.create_rectangle((x1, y1, x2, y2), fill=middle_color, outline=middle_color)
 
     # Left Wing
-    self.roundRectangle(bbox=(x1 - wing_size, y1, x1, y2),
-                        radius=radius, fill=middle_color)
+    self.round_rectangle(bbox=(x1 - wing_size, y1, x1, y2),
+                         radius=radius, fill=middle_color)
 
     # Right Wing
-    self.roundRectangle(bbox=(x2, y1, x2 + wing_size, y2),
-                        radius=radius, fill=middle_color)
+    self.round_rectangle(bbox=(x2, y1, x2 + wing_size, y2),
+                         radius=radius, fill=middle_color)
 
     # White Score
-    self.roundRectangle(bbox=(x1, y1, x1 + score_width, y1 + overall_height),
-                        radius=radius, fill=white_bg)
+    self.round_rectangle(bbox=(x1, y1, x1 + score_width, y1 + overall_height),
+                         radius=radius, fill=white_bg)
     # Black Score
-    self.roundRectangle(bbox=(x2 - score_width, y1, x2, y1 + overall_height),
-                        radius=radius, fill=black_bg)
+    self.round_rectangle(bbox=(x2 - score_width, y1, x2, y1 + overall_height),
+                         radius=radius, fill=black_bg)
 
     if not self.mask:
       # White Score Text
