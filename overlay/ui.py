@@ -15,12 +15,13 @@ def sized_frame(master, height, width):
    return F
 
 class OverlayView(Canvas):
-  def __init__(self, parent, mgr):
+  def __init__(self, parent, mgr, mask):
     Canvas.__init__(self, parent)
 
     self.parent = parent
     self.root = parent
     self.mgr = mgr
+    self.mask = mask
 
     self.mgr.setBlackScore(7)
     self.mgr.setWhiteScore(12)
@@ -38,8 +39,10 @@ class OverlayView(Canvas):
     self.t = 0
     def draw(self):
       self.delete(ALL)
-      #self.clear(fill="#2e96ff")
-      self.clear(fill="#054a91")
+      if self.mask:
+        self.clear(fill="#000000")
+      else:
+        self.clear(fill="#054a91")
       self.timeAndScore()
       self.update()
       self.t += 10
@@ -76,14 +79,20 @@ class OverlayView(Canvas):
     font=("Menlo", 30)
     logo_font=("Menlo", 30)
     time_font=("Menlo", 30)
-    #middle_color="#0a2463"
-    #middle_color="#054a91"
-    middle_color="#2e96ff"
-    middle_text="#ffffff"
-    black_bg="#000000"
-    white_bg="#ffffff"
-    score_color=middle_color
-    logo_color="#ffffff"
+    if self.mask:
+      middle_color="#ffffff"
+      middle_text="#ffffff"
+      black_bg="#ffffff"
+      white_bg="#ffffff"
+      score_color="#ffffff"
+      logo_color="#ffffff"
+    else:
+      middle_color="#2e96ff"
+      middle_text="#ffffff"
+      black_bg="#000000"
+      white_bg="#ffffff"
+      score_color=middle_color
+      logo_color="#ffffff"
 
     # Border
     self.roundRectangle(bbox=(x1 - wing_size - outset, y1 - outset,
@@ -108,40 +117,41 @@ class OverlayView(Canvas):
     self.roundRectangle(bbox=(x2 - score_width, y1, x2, y1 + overall_height),
                         radius=radius, fill=black_bg)
 
-    # White Score Text
-    white_score = self.mgr.whiteScore()
-    w_score="%d" % (white_score,)
-    self.create_text((x1 + score_width / 2, y1 + overall_height / 2),
-                     text=w_score, fill=score_color,
-                     font=font)
+    if not self.mask:
+      # White Score Text
+      white_score = self.mgr.whiteScore()
+      w_score="%d" % (white_score,)
+      self.create_text((x1 + score_width / 2, y1 + overall_height / 2),
+                       text=w_score, fill=score_color,
+                       font=font)
 
-    # Black Score Text
-    black_score = self.mgr.blackScore()
-    b_score="%d" % (black_score,)
-    self.create_text((x2 - score_width / 2, y1 + overall_height / 2),
-                     text=b_score, fill=score_color,
-                     font=font)
+      # Black Score Text
+      black_score = self.mgr.blackScore()
+      b_score="%d" % (black_score,)
+      self.create_text((x2 - score_width / 2, y1 + overall_height / 2),
+                       text=b_score, fill=score_color,
+                       font=font)
 
-    # Logo
-    wall_time = int(round(time.time() * 1000))
-    logo_text = "Timeshark"
-    self.create_text((x1 + overall_width / 2, y1 + overall_height / 2),
-                    text=logo_text, fill=logo_color, font=logo_font)
+      # Logo
+      wall_time = int(round(time.time() * 1000))
+      logo_text = "Timeshark"
+      self.create_text((x1 + overall_width / 2, y1 + overall_height / 2),
+                      text=logo_text, fill=logo_color, font=logo_font)
 
-    # Game State Text
-    state_text="1st Half"
-    self.create_text((x1 - wing_size / 2, y1 + overall_height / 2),
-                    text=state_text, fill=middle_text, font=font)
+      # Game State Text
+      state_text="1st Half"
+      self.create_text((x1 - wing_size / 2, y1 + overall_height / 2),
+                      text=state_text, fill=middle_text, font=font)
 
-    # Game Clock Text
-    clock_time = self.mgr.gameClock()
-    clock_text = "%2d:%02d" % (clock_time // 60, clock_time % 60)
-    self.create_text((x2 + wing_size / 2, y1 + overall_height / 2),
-                    text=clock_text, fill=middle_text, font=time_font)
+      # Game Clock Text
+      clock_time = self.mgr.gameClock()
+      clock_text = "%2d:%02d" % (clock_time // 60, clock_time % 60)
+      self.create_text((x2 + wing_size / 2, y1 + overall_height / 2),
+                      text=clock_text, fill=middle_text, font=time_font)
 
-def Overlay(mgr):
+def Overlay(mgr, mask):
   root = Tk()
-  ov = OverlayView(root, mgr)
+  ov = OverlayView(root, mgr, mask)
   # make it cover the entire screen
   w, h = root.winfo_screenwidth(), root.winfo_screenheight()
   root.geometry("%dx%d-0+0" % (w, h))

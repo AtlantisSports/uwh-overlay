@@ -2,7 +2,13 @@
 
 from overlay.ui import Overlay
 from overlay.gamemanager import GameManager
+import argparse
 
-ov = Overlay(GameManager())
+parser = argparse.ArgumentParser(description='Timeshark Video Overlay')
+parser.add_argument('--mask', help='Display the overlay\'s greyscale mask',
+                    action='store_true')
+args = parser.parse_args()
+
+ov = Overlay(GameManager(), mask=args.mask)
 ov.root.mainloop()
 
