@@ -15,13 +15,14 @@ def sized_frame(master, height, width):
    return F
 
 class OverlayView(Canvas):
-  def __init__(self, parent, mgr, mask):
+  def __init__(self, parent, mgr, mask, version):
     Canvas.__init__(self, parent)
 
     self.parent = parent
     self.root = parent
     self.mgr = mgr
     self.mask = mask
+    self.version = version
 
     self.mgr.setBlackScore(7)
     self.mgr.setWhiteScore(12)
@@ -43,7 +44,7 @@ class OverlayView(Canvas):
         self.clear(fill="#000000")
       else:
         self.clear(fill="#054a91")
-      self.timeAndScore()
+      self.render()
       self.update()
       self.t += 10
       self.mgr.setGameClock(self.t)
@@ -59,7 +60,13 @@ class OverlayView(Canvas):
     self.create_oval((x2 - radius, y1, x2 + radius, y2), fill=fill, outline=fill)
     self.create_rectangle(bbox, fill=fill, outline=fill)
 
-  def timeAndScore(self):
+  def render(self):
+    try:
+      { "center" : self.render_top_center }[self.version]()
+    except KeyError as e:
+      self.render_top_center()
+
+  def render_top_center(self):
     # Bounding box (except for ellipses)
     overall_width = 320
     overall_height = 40
@@ -149,9 +156,9 @@ class OverlayView(Canvas):
       self.create_text((x2 + wing_size / 2, y1 + overall_height / 2),
                       text=clock_text, fill=middle_text, font=time_font)
 
-def Overlay(mgr, mask):
+def Overlay(mgr, mask, version):
   root = Tk()
-  ov = OverlayView(root, mgr, mask)
+  ov = OverlayView(root, mgr, mask, version)
   # make it cover the entire screen
   w, h = root.winfo_screenwidth(), root.winfo_screenheight()
   root.geometry("%dx%d-0+0" % (w, h))
