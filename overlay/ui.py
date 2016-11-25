@@ -9,10 +9,13 @@ from datetime import datetime
 import time
 import sys
 
+class MaskKind:
+  NONE, LUMA, CHROMA = range(3)
+
 def sized_frame(master, height, width):
-   F = Frame(master, height=height, width=width)
-   F.pack_propagate(0)
-   return F
+  F = Frame(master, height=height, width=width)
+  F.pack_propagate(0)
+  return F
 
 class OverlayView(Canvas):
   def __init__(self, parent, mgr, mask, version):
@@ -70,8 +73,11 @@ class OverlayView(Canvas):
     }.get(self.version, self.render_top_center)()
 
   def color(self, name):
-    if self.mask:
+    if self.mask == MaskKind.LUMA:
       return "#000000" if name == "bg" else "#ffffff"
+
+    if self.mask == MaskKind.CHROMA and name == "bg":
+      return "#00ff00"
 
     return {
       "bg" : "#054a91",
@@ -157,7 +163,7 @@ class OverlayView(Canvas):
     self.logo = PhotoImage(file="res/timeshark.gif")
     self.logo_image = self.create_image(1920 / 2, 100, image = self.logo)
 
-    if not self.mask:
+    if not self.mask == MaskKind.LUMA:
       # Game State Text
       state_text="1st"
       self.create_text((x2 - time_width - radius * 2, y2 + height + outset),
@@ -242,7 +248,7 @@ class OverlayView(Canvas):
     self.round_rectangle(bbox=(x2 - score_width, y1, x2, y1 + overall_height),
                          radius=radius, fill=self.color("black_fill"))
 
-    if not self.mask:
+    if not self.mask == MaskKind.LUMA:
       # White Score Text
       white_score = self.mgr.whiteScore()
       w_score="%d" % (white_score,)
