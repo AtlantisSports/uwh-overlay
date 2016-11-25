@@ -40,10 +40,7 @@ class OverlayView(Canvas):
     self.t = 0
     def draw(self):
       self.delete(ALL)
-      if self.mask:
-        self.clear(fill="#000000")
-      else:
-        self.clear(fill="#054a91")
+      self.clear(fill=self.color("bg"))
       self.render()
       self.update()
       self.t += 10
@@ -77,6 +74,7 @@ class OverlayView(Canvas):
       return "#000000" if name == "bg" else "#ffffff"
 
     return {
+      "bg" : "#054a91",
       "border" : "#ffffff",
       "fill" : "#2e96ff",
       "fill_text" : "#ffffff",
