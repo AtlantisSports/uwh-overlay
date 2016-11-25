@@ -98,13 +98,16 @@ class OverlayView(Canvas):
     width = 260
     score_width = 40
     score_offset = width - score_width
-    time_width = 220
+    time_width = 150
     state_width = 100
     state_offset = score_offset + time_width
     outset = 2
 
     x1 = 40 + radius
     y1 = 40
+
+    x2 = 1920 - 40 - radius
+    y2 = y1
 
     font=("Menlo", 20)
     score_font=("Menlo", 30, "bold")
@@ -113,19 +116,19 @@ class OverlayView(Canvas):
     state_font=("Menlo", 40)
 
     # State
-    self.bordered_round_rectangle(bbox=(x1 + state_offset,
+    self.bordered_round_rectangle(bbox=(x2 - state_width - time_width,
                                         y1,
-                                        x1 + state_offset + state_width,
-                                        y1 + height * 2 + outset * 2),
+                                        x2 - time_width,
+                                        y2 + height * 2 + outset * 2),
                                   radius=radius, outset=outset,
                                   fill=self.color("fill"),
                                   border=self.color("border"))
 
     # Time
-    self.bordered_round_rectangle(bbox=(x1 + score_offset,
-                                        y1,
-                                        x1 + state_offset,
-                                        y1 + height * 2 + outset * 2),
+    self.bordered_round_rectangle(bbox=(x2 - time_width,
+                                        y2,
+                                        x2,
+                                        y2 + height * 2 + outset * 2),
                                   radius=radius, outset=outset,
                                   fill=self.color("fill"),
                                   border=self.color("border"))
@@ -156,14 +159,14 @@ class OverlayView(Canvas):
     if not self.mask:
       # Game State Text
       state_text="1st"
-      self.create_text((x1 + state_offset + state_width, y1 + height + outset),
+      self.create_text((x2 - time_width - radius * 2, y2 + height + outset),
                       text=state_text, fill=self.color("fill_text"), font=state_font, anchor=E)
 
       # Time Text
       clock_time = self.mgr.gameClock()
       #clock_text = "%2d:%02d" % (clock_time // 60, clock_time % 60)
       clock_text = "12:34"
-      self.create_text((x1 + state_offset, y1 + height + outset),
+      self.create_text((x2, y2 + height + outset),
                        text=clock_text, fill=self.color("fill_text"),
                        font=time_font, anchor=E)
 
