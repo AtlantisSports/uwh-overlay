@@ -60,6 +60,12 @@ class OverlayView(Canvas):
     self.create_oval((x2 - radius, y1, x2 + radius, y2), fill=fill, outline=fill)
     self.create_rectangle(bbox, fill=fill, outline=fill)
 
+  def bordered_round_rectangle(self, bbox, radius, outset, fill, border):
+    self.round_rectangle(bbox=(bbox[0]-outset, bbox[1]-outset,
+                               bbox[2]+outset, bbox[3]+outset),
+                         radius=radius, fill=border)
+    self.round_rectangle(bbox, radius=radius, fill=fill)
+
   def render(self):
     {
       "center" : self.render_top_center,
@@ -106,52 +112,34 @@ class OverlayView(Canvas):
     time_font=("Menlo", 70)
     state_font=("Menlo", 50)
 
-    # State Border
-    self.round_rectangle(bbox=(x1 + state_offset - outset,
-                               y1 - outset,
-                               x1 + state_offset + state_width + outset,
-                               y1 + height * 2 + outset * 3),
-                         radius=radius, fill=self.color("border"))
+    # State
+    self.bordered_round_rectangle(bbox=(x1 + state_offset,
+                                        y1,
+                                        x1 + state_offset + state_width,
+                                        y1 + height * 2 + outset * 2),
+                                  radius=radius, outset=outset,
+                                  fill=self.color("fill"),
+                                  border=self.color("border"))
 
-    # State Fill
-    self.round_rectangle(bbox=(x1 + state_offset,
-                               y1,
-                               x1 + state_offset + state_width,
-                               y1 + height * 2 + outset * 2),
-                         radius=radius, fill=self.color("fill"))
+    # Time
+    self.bordered_round_rectangle(bbox=(x1 + score_offset,
+                                        y1,
+                                        x1 + state_offset,
+                                        y1 + height * 2 + outset * 2),
+                                  radius=radius, outset=outset,
+                                  fill=self.color("fill"),
+                                  border=self.color("border"))
 
-    # Time Border
-    self.round_rectangle(bbox=(x1 + score_offset - outset,
-                               y1 - outset,
-                               x1 + state_offset + outset,
-                               y1 + height * 2 + outset * 3),
-                         radius=radius, fill=self.color("border"))
-
-    # Time Fill
-    self.round_rectangle(bbox=(x1 + score_offset,
-                               y1,
-                               x1 + state_offset,
-                               y1 + height * 2 + outset * 2),
-                         radius=radius, fill=self.color("fill"))
-
-    # Teams Border
-    self.round_rectangle(bbox=(x1 - outset,
-                               y1 - outset,
-                               x1 + width + outset,
-                               y1 + height + outset),
-                         radius=radius, fill=self.color("border"))
-    self.round_rectangle(bbox=(x1 - outset,
-                               y1 + height + outset,
-                               x1 + width + outset,
-                               y1 + height * 2 + outset * 3),
-                         radius=radius, fill=self.color("border"))
-
-    # Teams Fill
-    self.round_rectangle(bbox=(x1, y1, x1 + width, y1 + height),
-                         radius=radius, fill=self.color("fill"))
-    self.round_rectangle(bbox=(x1, y1 + height + outset * 2,
-                               x1 + width, y1 + height * 2 + outset * 2),
-                         radius=radius, fill=self.color("fill"))
+    # Teams
+    self.bordered_round_rectangle(bbox=(x1, y1, x1 + width, y1 + height),
+                                  radius=radius, outset=outset,
+                                  fill=self.color("fill"),
+                                  border=self.color("border"))
+    self.bordered_round_rectangle(bbox=(x1, y1 + height + outset * 2,
+                                        x1 + width, y1 + height * 2 + outset * 2),
+                                  radius=radius, outset=outset,
+                                  fill=self.color("fill"),
+                                  border=self.color("border"))
 
     # Scores Fill
     self.round_rectangle(bbox=(x1 + score_offset,
