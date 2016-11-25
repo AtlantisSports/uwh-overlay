@@ -274,7 +274,8 @@ def Overlay(mgr, mask, version):
   root = Tk()
   ov = OverlayView(root, mgr, mask, version)
   # make it cover the entire screen
-  w, h = root.winfo_screenwidth(), root.winfo_screenheight()
+  #w, h = root.winfo_screenwidth(), root.winfo_screenheight()
+  w, h = 1920, 1080
   root.geometry("%dx%d-0+0" % (w, h))
-  root.attributes('-fullscreen', True)
+  #root.attributes('-fullscreen', True)
   return ov
