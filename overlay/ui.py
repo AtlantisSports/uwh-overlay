@@ -94,23 +94,23 @@ class OverlayView(Canvas):
 
   def render_left(self):
     radius = 15
-    height = 50
-    width = 365
-    score_width = 50
+    height = 30
+    width = 260
+    score_width = 40
     score_offset = width - score_width
-    time_width = 295
-    state_width = 120
+    time_width = 220
+    state_width = 100
     state_offset = score_offset + time_width
     outset = 2
 
     x1 = 40 + radius
     y1 = 40
 
-    font=("Menlo", 30)
-    score_font=("Menlo", 40, "bold")
-    logo_font=("Menlo", 40)
-    time_font=("Menlo", 70)
-    state_font=("Menlo", 50)
+    font=("Menlo", 20)
+    score_font=("Menlo", 30, "bold")
+    logo_font=("Menlo", 30)
+    time_font=("Menlo", 50)
+    state_font=("Menlo", 40)
 
     # State
     self.bordered_round_rectangle(bbox=(x1 + state_offset,
@@ -161,7 +161,8 @@ class OverlayView(Canvas):
 
       # Time Text
       clock_time = self.mgr.gameClock()
-      clock_text = "%2d:%02d" % (clock_time // 60, clock_time % 60)
+      #clock_text = "%2d:%02d" % (clock_time // 60, clock_time % 60)
+      clock_text = "12:34"
       self.create_text((x1 + state_offset, y1 + height + outset),
                        text=clock_text, fill=self.color("fill_text"),
                        font=time_font, anchor=E)
