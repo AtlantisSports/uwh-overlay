@@ -160,9 +160,6 @@ class OverlayView(Canvas):
                                y1 + height * 2 + outset * 2),
                          radius=radius, fill=self.color("black_fill"))
 
-    self.logo = PhotoImage(file="res/timeshark.gif")
-    self.logo_image = self.create_image(1920 / 2, 100, image = self.logo)
-
     if not self.mask == MaskKind.LUMA:
       # Game State Text
       state_text="1st"
