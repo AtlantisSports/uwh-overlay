@@ -66,6 +66,10 @@ class OverlayView(Canvas):
                          radius=radius, fill=border)
     self.round_rectangle(bbox, radius=radius, fill=fill)
 
+  @staticmethod
+  def versions():
+    return ["center", "left"]
+
   def render(self):
     {
       "center" : self.render_top_center,
@@ -278,12 +282,19 @@ class OverlayView(Canvas):
       self.create_text((x2 + wing_size / 2, y1 + overall_height / 2),
                       text=clock_text, fill=self.color("fill_text"), font=time_font)
 
-def Overlay(mgr, mask, version):
-  root = Tk()
-  # make it cover the entire screen
-  #w, h = root.winfo_screenwidth(), root.winfo_screenheight()
-  w, h = 1920, 1080
-  ov = OverlayView(root, (w, h), mgr, mask, version)
-  root.geometry("%dx%d-0+0" % (w, h))
-  #root.attributes('-fullscreen', True)
-  return ov
+class Overlay(object):
+  def __init__(self, mgr, mask, version):
+    self.root = Tk()
+    # make it cover the entire screen
+    #w, h = root.winfo_screenwidth(), root.winfo_screenheight()
+    w, h = 1920, 1080
+    self.ov = OverlayView(self.root, (w, h), mgr, mask, version)
+    self.root.geometry("%dx%d-0+0" % (w, h))
+    #self.root.attributes('-fullscreen', True)
+
+  @staticmethod
+  def versions():
+    return OverlayView.versions()
+
+  def mainloop(self):
+    self.root.mainloop()
