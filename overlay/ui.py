@@ -18,7 +18,7 @@ def sized_frame(master, height, width):
   return F
 
 class OverlayView(Canvas):
-  def __init__(self, parent, mgr, mask, version):
+  def __init__(self, parent, bbox, mgr, mask, version):
     Canvas.__init__(self, parent)
 
     self.parent = parent
@@ -30,14 +30,14 @@ class OverlayView(Canvas):
     self.mgr.setBlackScore(7)
     self.mgr.setWhiteScore(12)
 
-    self.init_ui()
+    self.init_ui(bbox)
 
-  def init_ui(self):
+  def init_ui(self, bbox):
     self.parent.title("TimeShark Scores")
     self.pack(fill=BOTH, expand=1)
 
-    self.w = self.root.winfo_screenwidth()
-    self.h = self.root.winfo_screenheight()
+    self.w = bbox[0]
+    self.h = bbox[1]
 
     self.refresh = 100
     self.t = 0
@@ -280,10 +280,10 @@ class OverlayView(Canvas):
 
 def Overlay(mgr, mask, version):
   root = Tk()
-  ov = OverlayView(root, mgr, mask, version)
   # make it cover the entire screen
   #w, h = root.winfo_screenwidth(), root.winfo_screenheight()
   w, h = 1920, 1080
+  ov = OverlayView(root, (w, h), mgr, mask, version)
   root.geometry("%dx%d-0+0" % (w, h))
   #root.attributes('-fullscreen', True)
   return ov
