@@ -68,12 +68,12 @@ class OverlayView(Canvas):
 
   @staticmethod
   def versions():
-    return ["center", "left"]
+    return ["center", "split"]
 
   def render(self):
     {
       "center" : self.render_top_center,
-      "left" : self.render_left
+      "split" : self.render_split
     }.get(self.version, self.render_top_center)()
 
   def color(self, name):
@@ -100,7 +100,7 @@ class OverlayView(Canvas):
     else:
       return s
 
-  def render_left(self):
+  def render_split(self):
     radius = 15
     height = 30
     width = 260
