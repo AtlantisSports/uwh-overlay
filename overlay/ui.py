@@ -167,7 +167,7 @@ class OverlayView(tk.Canvas):
       # Game State Text
       state_text="1st"
       self.create_text((x2 - time_width - radius * 2, y2 + height + outset),
-                      text=state_text, fill=self.color("fill_text"), font=state_font, anchor=E)
+                      text=state_text, fill=self.color("fill_text"), font=state_font, anchor=tk.E)
 
       # Time Text
       clock_time = self.mgr.gameClock()
@@ -175,7 +175,7 @@ class OverlayView(tk.Canvas):
       clock_text = "12:34"
       self.create_text((x2, y2 + height + outset),
                        text=clock_text, fill=self.color("fill_text"),
-                       font=time_font, anchor=E)
+                       font=time_font, anchor=tk.E)
 
       # White Score Text
       white_score = self.mgr.whiteScore()
@@ -195,12 +195,12 @@ class OverlayView(tk.Canvas):
       # White Team Text
       white_team=self.abbreviate("Rah Rah Oysters!")
       self.create_text((x1, y1 + outset + height / 2), text=white_team,
-                       fill=self.color("fill_text"), anchor=W, font=font)
+                       fill=self.color("fill_text"), anchor=tk.W, font=font)
 
       #black_team="Club Puck"
       black_team=self.abbreviate("Team Moderately Sexy")
       self.create_text((x1, y1 + height + outset * 3 + height / 2), text=black_team,
-                       fill=self.color("fill_text"), anchor=W, font=font)
+                       fill=self.color("fill_text"), anchor=tk.W, font=font)
 
   def render_top_center(self):
     # Bounding box (except for ellipses)
