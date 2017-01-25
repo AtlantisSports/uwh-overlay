@@ -26,8 +26,9 @@ class OverlayView(tk.Canvas):
     self.mask = mask
     self.version = version
 
-    self.mgr.setBlackScore(7)
-    self.mgr.setWhiteScore(12)
+    #self.mgr.setBlackScore(7)
+    #self.mgr.setWhiteScore(12)
+    #self.mgr.setGameClock(12 * 60 + 34)
 
     self.init_ui(bbox)
 
@@ -45,8 +46,6 @@ class OverlayView(tk.Canvas):
       self.clear(fill=self.color("bg"))
       self.render()
       self.update()
-      self.t += 10
-      self.mgr.setGameClock(self.t)
       self.after(self.refresh, lambda : draw(self))
     self.after(1, lambda : draw(self))
 
@@ -264,14 +263,23 @@ class OverlayView(tk.Canvas):
                        font=font)
 
       # Logo
-      wall_time = int(round(time.time() * 1000))
       logo_text = "Timeshark"
       self.create_text((x1 + overall_width / 2, y1 + overall_height / 2),
                       text=logo_text, fill=self.color("fill_text"),
                       font=logo_font)
 
       # Game State Text
-      state_text="1st Half"
+      state_text=""
+      if self.mgr.gameStateWallClock():
+          state_text="Navisjon"
+      elif self.mgr.gameStateFirstHalf():
+          state_text="1st Half"
+      elif self.mgr.gameStateSecondHalf():
+          state_text="2nd Half"
+      elif self.mgr.gameStateHalfTime():
+          state_text="Half Time"
+      elif self.mgr.gameStateGameOver():
+          state_text="Game Over"
       self.create_text((x1 - wing_size / 2, y1 + overall_height / 2),
                       text=state_text, fill=self.color("fill_text"), font=font)
 
