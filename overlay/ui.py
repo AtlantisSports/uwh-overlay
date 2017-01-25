@@ -102,7 +102,7 @@ class OverlayView(tk.Canvas):
   def render_split(self):
     radius = 15
     height = 30
-    width = 260
+    width = 150
     score_width = 40
     score_offset = width - score_width
     time_width = 150
@@ -193,12 +193,12 @@ class OverlayView(tk.Canvas):
                        font=score_font)
 
       # White Team Text
-      white_team=self.abbreviate("Rah Rah Oysters!")
+      white_team=self.abbreviate("White")
       self.create_text((x1, y1 + outset + height / 2), text=white_team,
                        fill=self.color("fill_text"), anchor=tk.W, font=font)
 
       #black_team="Club Puck"
-      black_team=self.abbreviate("Team Moderately Sexy")
+      black_team=self.abbreviate("Black")
       self.create_text((x1, y1 + height + outset * 3 + height / 2), text=black_team,
                        fill=self.color("fill_text"), anchor=tk.W, font=font)
 
