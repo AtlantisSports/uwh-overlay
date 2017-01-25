@@ -3,6 +3,7 @@ class GameState(object):
     first_half = 1
     half_time = 2
     second_half = 3
+    wall_clock = 4
 
 
 class TimeoutState(object):
@@ -57,6 +58,12 @@ class GameManager(object):
 
     def setTimeoutState(self, state):
         self._timeout_state = state
+
+    def gameStateWallClock(self):
+        return self._game_state == GameState.wall_clock
+
+    def setGameStateWallClock(self):
+        self._game_state = GameState.wall_clock
 
     def gameStateFirstHalf(self):
         return self._game_state == GameState.first_half
