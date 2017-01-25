@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 
-import sys
-import time
-from Tkinter import *
+from tkinter import ttk
+import tkinter as tk
 
 from multiprocessing import Process, Queue
 from datetime import datetime
@@ -13,13 +12,13 @@ class MaskKind:
   NONE, LUMA, CHROMA = range(3)
 
 def sized_frame(master, height, width):
-  F = Frame(master, height=height, width=width)
+  F = tk.Frame(master, height=height, width=width)
   F.pack_propagate(0)
   return F
 
-class OverlayView(Canvas):
+class OverlayView(tk.Canvas):
   def __init__(self, parent, bbox, mgr, mask, version):
-    Canvas.__init__(self, parent)
+    tk.Canvas.__init__(self, parent)
 
     self.parent = parent
     self.root = parent
@@ -34,7 +33,7 @@ class OverlayView(Canvas):
 
   def init_ui(self, bbox):
     self.parent.title("TimeShark Scores")
-    self.pack(fill=BOTH, expand=1)
+    self.pack(fill=tk.BOTH, expand=1)
 
     self.w = bbox[0]
     self.h = bbox[1]
@@ -42,7 +41,7 @@ class OverlayView(Canvas):
     self.refresh = 100
     self.t = 0
     def draw(self):
-      self.delete(ALL)
+      self.delete(tk.ALL)
       self.clear(fill=self.color("bg"))
       self.render()
       self.update()
@@ -284,7 +283,7 @@ class OverlayView(Canvas):
 
 class Overlay(object):
   def __init__(self, mgr, mask, version):
-    self.root = Tk()
+    self.root = tk.Tk()
     # make it cover the entire screen
     #w, h = root.winfo_screenwidth(), root.winfo_screenheight()
     w, h = 1920, 1080
