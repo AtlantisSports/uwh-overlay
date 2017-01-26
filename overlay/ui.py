@@ -203,7 +203,7 @@ class OverlayView(tk.Canvas):
 
   def render_top_center(self):
     # Bounding box (except for ellipses)
-    overall_width = 320
+    overall_width = 360
     overall_height = 40
 
     # Top left coords
@@ -216,7 +216,7 @@ class OverlayView(tk.Canvas):
 
     inset = 30
     radius = 15
-    wing_size = 200
+    wing_size = 270
     outset = 2
 
     font=("Menlo", 30)
@@ -263,7 +263,7 @@ class OverlayView(tk.Canvas):
                        font=font)
 
       # Logo
-      logo_text = "Timeshark"
+      logo_text = "TimeShark"
       self.create_text((x1 + overall_width / 2, y1 + overall_height / 2),
                       text=logo_text, fill=self.color("fill_text"),
                       font=logo_font)
