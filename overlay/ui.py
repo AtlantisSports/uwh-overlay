@@ -159,7 +159,15 @@ class OverlayView(tk.Canvas):
 
     if not self.mask == MaskKind.LUMA:
       # Game State Text
-      state_text="1st"
+      state_text=""
+      if self.mgr.gameStateFirstHalf():
+          state_text="1st"
+      elif self.mgr.gameStateSecondHalf():
+          state_text="2nd"
+      elif self.mgr.gameStateHalfTime():
+          state_text="H/T"
+      elif self.mgr.gameStateGameOver():
+          state_text="G/O"
       self.create_text((x2 - time_width - radius * 2, y2 + height + outset),
                       text=state_text, fill=self.color("fill_text"), font=state_font, anchor=tk.E)
 
