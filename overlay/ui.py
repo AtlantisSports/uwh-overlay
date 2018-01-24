@@ -95,12 +95,12 @@ class OverlayView(tk.Canvas):
 
   def render_split(self):
     radius = 15
-    height = 30
+    height = 40
     width = 150
     score_width = 40
     score_offset = width - score_width
-    time_width = 150
-    state_width = 100
+    time_width = 190
+    state_width = 130
     state_offset = score_offset + time_width
     outset = 2
 
