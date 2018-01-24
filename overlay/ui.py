@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 
-from tkinter import ttk
-import tkinter as tk
-
 from multiprocessing import Process, Queue
 from datetime import datetime
+import tkinter as tk
+
 import time
 import sys
 
@@ -270,9 +269,7 @@ class OverlayView(tk.Canvas):
 
       # Game State Text
       state_text=""
-      if self.mgr.gameStateWallClock():
-          state_text="Navisjon"
-      elif self.mgr.gameStateFirstHalf():
+      if self.mgr.gameStateFirstHalf():
           state_text="1st Half"
       elif self.mgr.gameStateSecondHalf():
           state_text="2nd Half"

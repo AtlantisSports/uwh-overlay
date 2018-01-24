@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
+from uwh.gamemanager import GameManager
+from uwh.xbee_comms import XBeeClient, XBeeConfigParser, xbee_port, xbee_baud
 from overlay.ui import Overlay, MaskKind
-from overlay.gamemanager import GameManager
 import argparse
 
 parser = argparse.ArgumentParser(description='Timeshark Video Overlay')
@@ -13,6 +14,18 @@ parser.add_argument('--version', help='Version of the display',type=str,
                     choices=Overlay.versions())
 args = parser.parse_args()
 
-ov = Overlay(GameManager(), args.mask, args.version)
+mgr = GameManager()
+mgr.setPassive()
+mgr.setBlackScore(0)
+mgr.setWhiteScore(0)
+mgr.setGameClock(0)
+
+cfg = XBeeConfigParser()
+cfg.read('timeshark.cfg')
+
+xbee = XBeeClient(mgr, xbee_port(cfg), xbee_baud(cfg))
+xbee.listen_thread()
+
+ov = Overlay(mgr, args.mask, args.version)
 ov.mainloop()
 
