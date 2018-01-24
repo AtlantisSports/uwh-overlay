@@ -25,10 +25,6 @@ class OverlayView(tk.Canvas):
     self.mask = mask
     self.version = version
 
-    #self.mgr.setBlackScore(7)
-    #self.mgr.setWhiteScore(12)
-    #self.mgr.setGameClock(12 * 60 + 34)
-
     self.init_ui(bbox)
 
   def init_ui(self, bbox):
@@ -169,8 +165,7 @@ class OverlayView(tk.Canvas):
 
       # Time Text
       clock_time = self.mgr.gameClock()
-      #clock_text = "%2d:%02d" % (clock_time // 60, clock_time % 60)
-      clock_text = "12:34"
+      clock_text = "%2d:%02d" % (clock_time // 60, clock_time % 60)
       self.create_text((x2, y2 + height + outset),
                        text=clock_text, fill=self.color("fill_text"),
                        font=time_font, anchor=tk.E)
