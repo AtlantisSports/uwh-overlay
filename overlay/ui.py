@@ -101,6 +101,7 @@ class OverlayView(tk.Canvas):
     score_offset = width - score_width
     time_width = 190
     state_width = 130
+    timeout_width = 250
     state_offset = score_offset + time_width
     outset = 2
 
@@ -115,6 +116,18 @@ class OverlayView(tk.Canvas):
     logo_font=("Menlo", 30)
     time_font=("Menlo", 50)
     state_font=("Menlo", 40)
+
+    # Timeout
+    if (self.mgr.timeoutStateRef() or
+        self.mgr.timeoutStateWhite() or
+        self.mgr.timeoutStateBlack()):
+        self.bordered_round_rectangle(bbox=(x2 - timeout_width - state_width - time_width,
+                                            y1,
+                                            x2 - state_width - time_width,
+                                            y2 + height * 2 + outset * 2),
+                                      radius=radius, outset=outset,
+                                      fill=self.color("fill"),
+                                      border=self.color("border"))
 
     # State
     self.bordered_round_rectangle(bbox=(x2 - state_width - time_width,
@@ -158,6 +171,17 @@ class OverlayView(tk.Canvas):
                          radius=radius, fill=self.color("black_fill"))
 
     if not self.mask == MaskKind.LUMA:
+      # Timeout
+      timeout_text=""
+      if self.mgr.timeoutStateRef():
+          timeout_text="Ref T/O"
+      elif self.mgr.timeoutStateWhite():
+          timeout_text="White T/O"
+      elif self.mgr.timeoutStateBlack():
+          timeout_text="Black T/O"
+      self.create_text((x2 - state_width - time_width - radius * 2, y2 + height + outset),
+                      text=timeout_text, fill=self.color("fill_text"), font=state_font, anchor=tk.E)
+
       # Game State Text
       state_text=""
       if self.mgr.gameStateFirstHalf():
