@@ -23,8 +23,9 @@ mgr.setGameClock(0)
 cfg = XBeeConfigParser()
 cfg.read('timeshark.cfg')
 
-xbee = XBeeClient(mgr, xbee_port(cfg), xbee_baud(cfg))
-xbee.listen_thread()
+if cfg.getboolean('hardware', 'has_xbee'):
+    xbee = XBeeServer(mgr, xbee_port(cfg), xbee_baud(cfg))
+    xbee.listen_thread()
 
 ov = Overlay(mgr, args.mask, args.version)
 ov.mainloop()
