@@ -3,6 +3,7 @@
 from multiprocessing import Process, Queue
 from datetime import datetime
 import tkinter as tk
+from uwh.gamemanager import PoolLayout
 
 import time
 import sys
@@ -62,6 +63,30 @@ class OverlayView(tk.Canvas):
   @staticmethod
   def versions():
     return ["center", "split"]
+
+  def left_score(self):
+    if self.mgr.layout() == PoolLayout.white_on_right:
+      return self.mgr.blackScore()
+    else:
+      return self.mgr.whiteScore()
+
+  def left_color(self):
+    if self.mgr.layout() == PoolLayout.white_on_right:
+      return "black"
+    else:
+      return "white"
+
+  def right_score(self):
+    if self.mgr.layout() == PoolLayout.white_on_right:
+      return self.mgr.whiteScore()
+    else:
+      return self.mgr.blackScore()
+
+  def right_color(self):
+    if self.mgr.layout() == PoolLayout.white_on_right:
+      return "white"
+    else:
+      return "black"
 
   def render(self):
     {
@@ -163,12 +188,12 @@ class OverlayView(tk.Canvas):
                                y1,
                                x1 + score_offset + score_width,
                                y1 + height),
-                         radius=radius, fill=self.color("white_fill"))
+                         radius=radius, fill=self.color("%s_fill" % (self.left_color(),)))
     self.round_rectangle(bbox=(x1 + score_offset,
                                y1 + height + outset * 2,
                                x1 + score_offset + score_width,
                                y1 + height * 2 + outset * 2),
-                         radius=radius, fill=self.color("black_fill"))
+                         radius=radius, fill=self.color("%s_fill" % (self.right_color(),)))
 
     if not self.mask == MaskKind.LUMA:
       # Timeout
@@ -203,18 +228,18 @@ class OverlayView(tk.Canvas):
                        font=time_font, anchor=tk.E)
 
       # White Score Text
-      white_score = self.mgr.whiteScore()
-      w_score="%d" % (white_score,)
+      left_score = self.left_score()
+      l_score="%d" % (left_score,)
       self.create_text((x1 + score_offset + score_width / 2, y1 + height / 2),
-                       text=w_score, fill=self.color("white_text"),
+                       text=l_score, fill=self.color("%s_text" % (self.left_color(),)),
                        font=score_font)
 
       # Black Score Text
-      black_score = self.mgr.blackScore()
-      b_score="%d" % (black_score,)
+      right_score = self.right_score()
+      r_score="%d" % (right_score,)
       self.create_text((x1 + score_offset + score_width / 2,
                         y1 + height / 2 + height + outset * 2),
-                       text=b_score, fill=self.color("black_text"),
+                       text=r_score, fill=self.color("%s_text" % (self.right_color(),)),
                        font=score_font)
 
       # White Team Text
@@ -268,24 +293,24 @@ class OverlayView(tk.Canvas):
 
     # White Score
     self.round_rectangle(bbox=(x1, y1, x1 + score_width, y1 + overall_height),
-                         radius=radius, fill=self.color("white_fill"))
+                         radius=radius, fill=self.color("%s_fill" % (self.left_color(),)))
     # Black Score
     self.round_rectangle(bbox=(x2 - score_width, y1, x2, y1 + overall_height),
-                         radius=radius, fill=self.color("black_fill"))
+                         radius=radius, fill=self.color("%s_fill" % (self.right_color(),)))
 
     if not self.mask == MaskKind.LUMA:
       # White Score Text
-      white_score = self.mgr.whiteScore()
-      w_score="%d" % (white_score,)
+      left_score = self.left_score()
+      l_score="%d" % (left_score,)
       self.create_text((x1 + score_width / 2, y1 + overall_height / 2),
-                       text=w_score, fill=self.color("white_text"),
+                       text=l_score, fill=self.color("%s_text" % (self.left_color(),)),
                        font=font)
 
       # Black Score Text
-      black_score = self.mgr.blackScore()
-      b_score="%d" % (black_score,)
+      right_score = self.right_score()
+      r_score="%d" % (right_score,)
       self.create_text((x2 - score_width / 2, y1 + overall_height / 2),
-                       text=b_score, fill=self.color("black_text"),
+                       text=r_score, fill=self.color("%s_text" % (self.right_color(),)),
                        font=font)
 
       # Logo
