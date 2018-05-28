@@ -74,53 +74,22 @@ class OverlayView(tk.Canvas):
   def versions():
     return ["center", "split", "worlds"]
 
-  def left_score(self):
-    if self.mgr.layout() == PoolLayout.white_on_right:
-      return self.mgr.blackScore()
+  def get(self, side, feature):
+    if ((self.mgr.layout() == PoolLayout.white_on_right) ==
+        (side == 'right')):
+      return {
+        'score' : self.mgr.whiteScore(),
+        'color' : 'white',
+        'id' : self.white_id,
+        'name' : self.white_name,
+      }[feature]
     else:
-      return self.mgr.whiteScore()
-
-  def left_color(self):
-    if self.mgr.layout() == PoolLayout.white_on_right:
-      return "black"
-    else:
-      return "white"
-
-  def right_score(self):
-    if self.mgr.layout() == PoolLayout.white_on_right:
-      return self.mgr.whiteScore()
-    else:
-      return self.mgr.blackScore()
-
-  def right_color(self):
-    if self.mgr.layout() == PoolLayout.white_on_right:
-      return "white"
-    else:
-      return "black"
-
-  def left_id(self):
-    if self.mgr.layout() == PoolLayout.white_on_right:
-      return self.black_id
-    else:
-      return self.white_id
-
-  def right_id(self):
-    if self.mgr.layout() == PoolLayout.white_on_right:
-      return self.white_id
-    else:
-      return self.black_id
-
-  def left_name(self):
-    if self.mgr.layout() == PoolLayout.white_on_right:
-      return self.black_name
-    else:
-      return self.white_name
-
-  def right_name(self):
-    if self.mgr.layout() == PoolLayout.white_on_right:
-      return self.white_name
-    else:
-      return self.black_name
+      return {
+        'score' : self.mgr.blackScore(),
+        'color' : 'black',
+        'id' : self.black_id,
+        'name' : self.black_name,
+      }[feature]
 
   def render(self):
     {
@@ -224,12 +193,12 @@ class OverlayView(tk.Canvas):
                                y1,
                                x1 + score_offset + score_width,
                                y1 + height),
-                         radius=radius, fill=self.color("%s_fill" % (self.left_color(),)))
+                         radius=radius, fill=self.color("%s_fill" % (self.get('left', 'color'),)))
     self.round_rectangle(bbox=(x1 + score_offset,
                                y1 + height + outset * 2,
                                x1 + score_offset + score_width,
                                y1 + height * 2 + outset * 2),
-                         radius=radius, fill=self.color("%s_fill" % (self.right_color(),)))
+                         radius=radius, fill=self.color("%s_fill" % (self.get('right', 'color'),)))
 
     if not self.mask == MaskKind.LUMA:
       # Timeout
@@ -264,18 +233,18 @@ class OverlayView(tk.Canvas):
                        font=time_font, anchor=tk.E)
 
       # White Score Text
-      left_score = self.left_score()
+      left_score = self.get('left', 'score')
       l_score="%d" % (left_score,)
       self.create_text((x1 + score_offset + score_width / 2, y1 + height / 2),
-                       text=l_score, fill=self.color("%s_text" % (self.left_color(),)),
+                       text=l_score, fill=self.color("%s_text" % (self.get('left', 'color'),)),
                        font=score_font)
 
       # Black Score Text
-      right_score = self.right_score()
+      right_score = self.get('right', 'score')
       r_score="%d" % (right_score,)
       self.create_text((x1 + score_offset + score_width / 2,
                         y1 + height / 2 + height + outset * 2),
-                       text=r_score, fill=self.color("%s_text" % (self.right_color(),)),
+                       text=r_score, fill=self.color("%s_text" % (self.get('right', 'color'),)),
                        font=score_font)
 
       # White Team Text
@@ -329,24 +298,24 @@ class OverlayView(tk.Canvas):
 
     # White Score
     self.round_rectangle(bbox=(x1, y1, x1 + score_width, y1 + overall_height),
-                         radius=radius, fill=self.color("%s_fill" % (self.left_color(),)))
+                         radius=radius, fill=self.color("%s_fill" % (self.get('left', 'color'),)))
     # Black Score
     self.round_rectangle(bbox=(x2 - score_width, y1, x2, y1 + overall_height),
-                         radius=radius, fill=self.color("%s_fill" % (self.right_color(),)))
+                         radius=radius, fill=self.color("%s_fill" % (self.get('right', 'color'),)))
 
     if not self.mask == MaskKind.LUMA:
       # White Score Text
-      left_score = self.left_score()
+      left_score = self.get('left', 'score')
       l_score="%d" % (left_score,)
       self.create_text((x1 + score_width / 2, y1 + overall_height / 2),
-                       text=l_score, fill=self.color("%s_text" % (self.left_color(),)),
+                       text=l_score, fill=self.color("%s_text" % (self.get('left', 'color'),)),
                        font=font)
 
       # Black Score Text
-      right_score = self.right_score()
+      right_score = self.get('right', 'score')
       r_score="%d" % (right_score,)
       self.create_text((x2 - score_width / 2, y1 + overall_height / 2),
-                       text=r_score, fill=self.color("%s_text" % (self.right_color(),)),
+                       text=r_score, fill=self.color("%s_text" % (self.get('right', 'color'),)),
                        font=font)
 
       # Logo
@@ -412,12 +381,16 @@ class OverlayView(tk.Canvas):
               row1_y = 20
               row2_y = 75
 
-              if self.left_id() is not None:
-                  self._left_flag = get_flag(self.tid, self.gid, self.left_id(), self.left_color())
+              if self.get('left', 'id') is not None:
+                  self._left_flag = get_flag(self.tid, self.gid,
+                                             self.get('left', 'id'),
+                                             self.get('left', 'color'))
                   self.create_image(10, row1_y, anchor=tk.NW, image=self._left_flag)
 
-              if self.right_id() is not None:
-                  self._right_flag = get_flag(self.tid, self.gid, self.right_id(), self.right_color())
+              if self.get('right', 'id') is not None:
+                  self._right_flag = get_flag(self.tid, self.gid,
+                                              self.get('right', 'id'),
+                                              self.get('right', 'color'))
                   self.create_image(180, row1_y, anchor=tk.NW, image=self._right_flag)
 
               clock_time = self.mgr.gameClock()
@@ -426,16 +399,16 @@ class OverlayView(tk.Canvas):
                                text=clock_text, fill=self.color("fill_text"), font=time_font,
                                anchor=tk.N)
 
-              left_score = self.left_score()
+              left_score = self.get('left', 'score')
               l_score="%d" % (left_score,)
               self.create_text((40, row2_y),
-                               text=l_score, fill=self.color("%s_fill" % (self.left_color(),)),
+                               text=l_score, fill=self.color("%s_fill" % (self.get('left', 'color'),)),
                                font=score_font)
 
-              right_score = self.right_score()
+              right_score = self.get('right', 'score')
               r_score="%d" % (right_score,)
               self.create_text((205, row2_y),
-                               text=r_score, fill=self.color("%s_fill" % (self.right_color(),)),
+                               text=r_score, fill=self.color("%s_fill" % (self.get('right', 'color'),)),
                                font=score_font)
 
               state_text=""
@@ -460,20 +433,24 @@ class OverlayView(tk.Canvas):
               self._background = ImageTk.PhotoImage(Image.open("res/worlds-roster-bg.png"))
               self.create_image(0, 0, anchor=tk.NW, image=self._background)
 
-              if self.left_id() is not None:
-                  self._left_flag = get_flag(self.tid, self.gid, self.left_id(), self.left_color())
+              if self.get('left', 'id') is not None:
+                  self._left_flag = get_flag(self.tid, self.gid,
+                                             self.get('left', 'id'),
+                                             self.get('left', 'color'))
                   self.create_image(400, 550, anchor=tk.NW, image=self._left_flag)
 
-              if self.right_id() is not None:
-                  self._right_flag = get_flag(self.tid, self.gid, self.right_id(), self.right_color())
+              if self.get('right', 'id') is not None:
+                  self._right_flag = get_flag(self.tid, self.gid,
+                                              self.get('right', 'id'),
+                                              self.get('right', 'color'))
                   self.create_image(1250, 550, anchor=tk.NW, image=self._right_flag)
 
-              if self.left_name() is not None:
-                  self.create_text((800, 600), text=self.left_name(),
+              if self.get('left', 'name') is not None:
+                  self.create_text((800, 600), text=self.get('left', 'name'),
                                    fill=self.color("team_text"), font=team_font)
 
-              if self.right_name() is not None:
-                  self.create_text((1100, 600), text=self.right_name(),
+              if self.get('right', 'name') is not None:
+                  self.create_text((1100, 600), text=self.get('right', 'name'),
                                    fill=self.color("team_text"), font=team_font)
 
 
