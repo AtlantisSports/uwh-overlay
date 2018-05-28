@@ -75,7 +75,7 @@ class OverlayView(tk.Canvas):
 
   @staticmethod
   def versions():
-    return ["center", "split", "worlds"]
+    return ["center", "split", "worlds", "left"]
 
   def get(self, side, feature):
     if ((self.mgr.layout() == PoolLayout.white_on_right) ==
@@ -130,6 +130,7 @@ class OverlayView(tk.Canvas):
       {
         "center" : self.render_top_center,
         "split" : self.render_split,
+        "left" : self.render_left,
         "worlds" : self.render_worlds,
       }.get(self.version, self.render_top_center)()
 
@@ -290,6 +291,137 @@ class OverlayView(tk.Canvas):
       #black_team="Club Puck"
       black_team=self.abbreviate(self.get('right', 'color'))
       self.create_text((x1, y1 + height + outset * 3 + height / 2), text=black_team,
+                       fill=self.color("fill_text"), anchor=tk.W, font=font)
+
+  def render_left(self):
+    radius = 0
+    height = 40
+    width = 200
+    score_width = 40
+    score_offset = width - score_width
+    time_width = 155
+    state_width = 130
+    timeout_width = 250
+    state_offset = score_offset + time_width
+    outset = 0
+
+    x1 = 40 + radius
+    y1 = 40
+
+    font=("Menlo", 20)
+    score_font=("Menlo", 30, "bold")
+    logo_font=("Menlo", 30)
+    time_font=("Menlo", 50)
+    state_font=("Menlo", 40)
+
+    # Timeout
+    if (self.mgr.timeoutStateRef() or
+        self.mgr.timeoutStateWhite() or
+        self.mgr.timeoutStateBlack()):
+        self.bordered_round_rectangle(bbox=(x1 + width + state_width + time_width,
+                                            y1,
+                                            x1 + width + state_width + time_width + timeout_width,
+                                            y1 + height * 2 + outset * 2),
+                                      radius=radius, outset=outset,
+                                      fill=self.color("fill"),
+                                      border=self.color("border"))
+
+    # State
+    self.bordered_round_rectangle(bbox=(x1 + width,
+                                        y1,
+                                        x1 + width + state_width,
+                                        y1 + height * 2 + outset * 2),
+                                  radius=radius, outset=outset,
+                                  fill=self.color("fill"),
+                                  border=self.color("border"))
+
+    # Time
+    self.bordered_round_rectangle(bbox=(x1 + width + state_width,
+                                        y1,
+                                        x1 + width + state_width + time_width,
+                                        y1 + height * 2 + outset * 2),
+                                  radius=radius, outset=outset,
+                                  fill=self.color("fill"),
+                                  border=self.color("border"))
+
+    # Teams
+    self.bordered_round_rectangle(bbox=(x1, y1, x1 + width, y1 + height),
+                                  radius=radius, outset=outset,
+                                  fill=self.color("fill"),
+                                  border=self.color("border"))
+    self.bordered_round_rectangle(bbox=(x1, y1 + height + outset * 2,
+                                        x1 + width, y1 + height * 2 + outset * 2),
+                                  radius=radius, outset=outset,
+                                  fill=self.color("fill"),
+                                  border=self.color("border"))
+
+    # Scores Fill
+    self.round_rectangle(bbox=(x1 + score_offset,
+                               y1,
+                               x1 + score_offset + score_width,
+                               y1 + height),
+                         radius=radius, fill=self.color("%s_fill" % (self.get('left', 'color'),)))
+    self.round_rectangle(bbox=(x1 + score_offset,
+                               y1 + height + outset * 2,
+                               x1 + score_offset + score_width,
+                               y1 + height * 2 + outset * 2),
+                         radius=radius, fill=self.color("%s_fill" % (self.get('right', 'color'),)))
+
+    if not self.mask == MaskKind.LUMA:
+      # Timeout
+      timeout_text=""
+      if self.mgr.timeoutStateRef():
+          timeout_text="Ref T/O"
+      elif self.mgr.timeoutStateWhite():
+          timeout_text="White T/O"
+      elif self.mgr.timeoutStateBlack():
+          timeout_text="Black T/O"
+      self.create_text((x1 + width + state_width + radius / 2, y1 + height + outset),
+                      text=timeout_text, fill=self.color("fill_text"), font=state_font, anchor=tk.W)
+
+      # Game State Text
+      state_text=""
+      if self.mgr.gameStateFirstHalf():
+          state_text="1st"
+      elif self.mgr.gameStateSecondHalf():
+          state_text="2nd"
+      elif self.mgr.gameStateHalfTime():
+          state_text="H/T"
+      elif self.mgr.gameStateGameOver():
+          state_text="G/O"
+      self.create_text((x1 + width + outset + 10, y1 + height + outset),
+                      text=state_text, fill=self.color("fill_text"), font=state_font, anchor=tk.W)
+
+      # Time Text
+      clock_time = self.mgr.gameClock()
+      clock_text = "%2d:%02d" % (clock_time // 60, clock_time % 60)
+      self.create_text((x1 + width + state_width, y1 + height + outset),
+                       text=clock_text, fill=self.color("fill_text"),
+                       font=time_font, anchor=tk.W)
+
+      # White Score Text
+      left_score = self.get('left', 'score')
+      l_score="%d" % (left_score,)
+      self.create_text((x1 + score_offset + score_width / 2, y1 + height / 2),
+                       text=l_score, fill=self.color("%s_text" % (self.get('left', 'color'),)),
+                       font=score_font)
+
+      # Black Score Text
+      right_score = self.get('right', 'score')
+      r_score="%d" % (right_score,)
+      self.create_text((x1 + score_offset + score_width / 2,
+                        y1 + height / 2 + height + outset * 2),
+                       text=r_score, fill=self.color("%s_text" % (self.get('right', 'color'),)),
+                       font=score_font)
+
+      # White Team Text
+      white_team=self.abbreviate(self.get('left', 'name'))
+      self.create_text((x1 + 10, y1 + outset + height / 2), text=white_team,
+                       fill=self.color("fill_text"), anchor=tk.W, font=font)
+
+      #black_team="Club Puck"
+      black_team=self.abbreviate(self.get('right', 'name'))
+      self.create_text((x1 + 10, y1 + height + outset * 3 + height / 2), text=black_team,
                        fill=self.color("fill_text"), anchor=tk.W, font=font)
 
   def render_top_center(self):
