@@ -248,12 +248,12 @@ class OverlayView(tk.Canvas):
                        font=score_font)
 
       # White Team Text
-      white_team=self.abbreviate("White")
+      white_team=self.abbreviate(self.get('left', 'color'))
       self.create_text((x1, y1 + outset + height / 2), text=white_team,
                        fill=self.color("fill_text"), anchor=tk.W, font=font)
 
       #black_team="Club Puck"
-      black_team=self.abbreviate("Black")
+      black_team=self.abbreviate(self.get('right', 'color'))
       self.create_text((x1, y1 + height + outset * 3 + height / 2), text=black_team,
                        fill=self.color("fill_text"), anchor=tk.W, font=font)
 
