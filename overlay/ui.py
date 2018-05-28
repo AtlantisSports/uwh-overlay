@@ -92,11 +92,28 @@ class OverlayView(tk.Canvas):
       }[feature]
 
   def render(self):
-    {
-      "center" : self.render_top_center,
-      "split" : self.render_split,
-      "worlds" : self.render_worlds,
-    }.get(self.version, self.render_top_center)()
+      # Update teams between games
+      if (self.tid != self.mgr.tid() or
+          self.gid != self.mgr.gid()):
+          self.tid = self.mgr.tid()
+          self.gid = self.mgr.gid()
+          self.white_id = None
+          self.black_id = None
+          self.black_name = None
+          self.white_name = None
+
+          def response(game):
+              self.black_name = game['black']
+              self.white_name = game['white']
+              self.black_id = game['black_id']
+              self.white_id = game['white_id']
+          self.uwhscores.get_game(self.tid, self.gid, response)
+
+      {
+        "center" : self.render_top_center,
+        "split" : self.render_split,
+        "worlds" : self.render_worlds,
+      }.get(self.version, self.render_top_center)()
 
   def color(self, name):
     if self.mask == MaskKind.LUMA:
@@ -351,23 +368,6 @@ class OverlayView(tk.Canvas):
       time_font=("Menlo", 30)
       state_font=("Menlo", 40)
       team_font=("Menlo", 30, "bold")
-
-      # Reset on tournament / game changes
-      if (self.tid != self.mgr.tid() or
-          self.gid != self.mgr.gid()):
-          self.tid = self.mgr.tid()
-          self.gid = self.mgr.gid()
-          self.white_id = None
-          self.black_id = None
-          self.black_name = None
-          self.white_name = None
-
-          def response(game):
-              self.black_name = game['black']
-              self.white_name = game['white']
-              self.black_id = game['black_id']
-              self.white_id = game['white_id']
-          self.uwhscores.get_game(self.tid, self.gid, response)
 
       def game_play_view():
           if not self.mask == MaskKind.LUMA:
