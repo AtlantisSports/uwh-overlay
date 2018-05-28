@@ -4,6 +4,8 @@ from multiprocessing import Process, Queue
 from datetime import datetime
 import tkinter as tk
 from uwh.gamemanager import PoolLayout
+from uwh.uwhscores_comms import UWHScores
+from PIL import Image, ImageTk
 
 import time
 import sys
@@ -25,6 +27,14 @@ class OverlayView(tk.Canvas):
     self.mgr = mgr
     self.mask = mask
     self.version = version
+
+    self.uwhscores = UWHScores('https://uwhscores.com/api/v1/', mock=True)
+    self.tid = None
+    self.gid = None
+    self.white_name = None
+    self.black_name = None
+    self.white_id = None
+    self.black_id = None
 
     self.init_ui(bbox)
 
@@ -62,7 +72,7 @@ class OverlayView(tk.Canvas):
 
   @staticmethod
   def versions():
-    return ["center", "split"]
+    return ["center", "split", "worlds"]
 
   def left_score(self):
     if self.mgr.layout() == PoolLayout.white_on_right:
@@ -88,10 +98,35 @@ class OverlayView(tk.Canvas):
     else:
       return "black"
 
+  def left_id(self):
+    if self.mgr.layout() == PoolLayout.white_on_right:
+      return self.black_id
+    else:
+      return self.white_id
+
+  def right_id(self):
+    if self.mgr.layout() == PoolLayout.white_on_right:
+      return self.white_id
+    else:
+      return self.black_id
+
+  def left_name(self):
+    if self.mgr.layout() == PoolLayout.white_on_right:
+      return self.black_name
+    else:
+      return self.white_name
+
+  def right_name(self):
+    if self.mgr.layout() == PoolLayout.white_on_right:
+      return self.white_name
+    else:
+      return self.black_name
+
   def render(self):
     {
       "center" : self.render_top_center,
-      "split" : self.render_split
+      "split" : self.render_split,
+      "worlds" : self.render_worlds,
     }.get(self.version, self.render_top_center)()
 
   def color(self, name):
@@ -109,7 +144,8 @@ class OverlayView(tk.Canvas):
       "black_fill" : "#000000",
       "black_text" : "#2e96ff",
       "white_fill" : "#ffffff",
-      "white_text" : "#2e96ff"
+      "white_text" : "#2e96ff",
+      "team_text"  : "#2e96ff",
     }.get(name, "#ff0000")
 
   def abbreviate(self, s):
@@ -337,6 +373,116 @@ class OverlayView(tk.Canvas):
       clock_text = "%2d:%02d" % (clock_time // 60, clock_time % 60)
       self.create_text((x2 + wing_size / 2, y1 + overall_height / 2),
                       text=clock_text, fill=self.color("fill_text"), font=time_font)
+
+  def render_worlds(self):
+
+      font=("Menlo", 20)
+      score_font=("Menlo", 30, "bold")
+      logo_font=("Menlo", 30)
+      time_font=("Menlo", 30)
+      state_font=("Menlo", 40)
+      team_font=("Menlo", 30, "bold")
+
+      # Reset on tournament / game changes
+      if (self.tid != self.mgr.tid() or
+          self.gid != self.mgr.gid()):
+          self.tid = self.mgr.tid()
+          self.gid = self.mgr.gid()
+          self.white_id = None
+          self.black_id = None
+          self.black_name = None
+          self.white_name = None
+
+          def response(game):
+              self.black_name = game['black']
+              self.white_name = game['white']
+              self.black_id = game['black_id']
+              self.white_id = game['white_id']
+          self.uwhscores.get_game(self.tid, self.gid, response)
+
+      def game_play_view():
+          if not self.mask == MaskKind.LUMA:
+              def get_flag(tid, gid, team, color):
+                  filename = "res/scoreboard/flags/tid_{}/{}/{}.png".format(tid, color, team)
+                  return ImageTk.PhotoImage(Image.open(filename))
+
+              self._background = ImageTk.PhotoImage(Image.open("res/worlds-game-bg.png"))
+              self.create_image(0, 0, anchor=tk.NW, image=self._background)
+
+              row1_y = 20
+              row2_y = 75
+
+              if self.left_id() is not None:
+                  self._left_flag = get_flag(self.tid, self.gid, self.left_id(), self.left_color())
+                  self.create_image(10, row1_y, anchor=tk.NW, image=self._left_flag)
+
+              if self.right_id() is not None:
+                  self._right_flag = get_flag(self.tid, self.gid, self.right_id(), self.right_color())
+                  self.create_image(180, row1_y, anchor=tk.NW, image=self._right_flag)
+
+              clock_time = self.mgr.gameClock()
+              clock_text = "%2d:%02d" % (clock_time // 60, clock_time % 60)
+              self.create_text((125, row1_y),
+                               text=clock_text, fill=self.color("fill_text"), font=time_font,
+                               anchor=tk.N)
+
+              left_score = self.left_score()
+              l_score="%d" % (left_score,)
+              self.create_text((40, row2_y),
+                               text=l_score, fill=self.color("%s_fill" % (self.left_color(),)),
+                               font=score_font)
+
+              right_score = self.right_score()
+              r_score="%d" % (right_score,)
+              self.create_text((205, row2_y),
+                               text=r_score, fill=self.color("%s_fill" % (self.right_color(),)),
+                               font=score_font)
+
+              state_text=""
+              if self.mgr.gameStateFirstHalf():
+                  state_text="1st Half"
+              elif self.mgr.gameStateSecondHalf():
+                  state_text="2nd Half"
+              elif self.mgr.gameStateHalfTime():
+                  state_text="Half Time"
+              elif self.mgr.gameStateGameOver():
+                  state_text="Game Over"
+              self.create_text((125, row2_y),
+                              text=state_text, fill=self.color("fill_text"), font=font)
+
+      def roster_view():
+          if not self.mask == MaskKind.LUMA:
+              def get_flag(tid, gid, team, color):
+                  filename = "res/scoreboard/flags/tid_{}/{}/{}.png".format(tid, color, team)
+                  #filename = "res/roster/flags/{}/{}.png".format(color, team_name)
+                  return ImageTk.PhotoImage(Image.open(filename))
+
+              self._background = ImageTk.PhotoImage(Image.open("res/worlds-roster-bg.png"))
+              self.create_image(0, 0, anchor=tk.NW, image=self._background)
+
+              if self.left_id() is not None:
+                  self._left_flag = get_flag(self.tid, self.gid, self.left_id(), self.left_color())
+                  self.create_image(400, 550, anchor=tk.NW, image=self._left_flag)
+
+              if self.right_id() is not None:
+                  self._right_flag = get_flag(self.tid, self.gid, self.right_id(), self.right_color())
+                  self.create_image(1250, 550, anchor=tk.NW, image=self._right_flag)
+
+              if self.left_name() is not None:
+                  self.create_text((800, 600), text=self.left_name(),
+                                   fill=self.color("team_text"), font=team_font)
+
+              if self.right_name() is not None:
+                  self.create_text((1100, 600), text=self.right_name(),
+                                   fill=self.color("team_text"), font=team_font)
+
+
+      if (self.mgr.gameStateFirstHalf() or
+          self.mgr.gameStateHalfTime() or
+          self.mgr.gameStateSecondHalf()):
+          game_play_view()
+      else:
+          roster_view()
 
 class Overlay(object):
   def __init__(self, mgr, mask, version):
