@@ -31,10 +31,13 @@ class OverlayView(tk.Canvas):
     self.uwhscores = UWHScores('https://uwhscores.com/api/v1/', mock=True)
     self.tid = None
     self.gid = None
-    self.white_name = None
-    self.black_name = None
     self.white_id = None
     self.black_id = None
+    self.white_name = None
+    self.black_name = None
+    self.white_roster = None
+    self.black_roster = None
+    self.tournament = None
 
     self.init_ui(bbox)
 
@@ -82,6 +85,7 @@ class OverlayView(tk.Canvas):
         'color' : 'white',
         'id' : self.white_id,
         'name' : self.white_name,
+        'roster' : self.white_roster,
       }[feature]
     else:
       return {
@@ -89,6 +93,7 @@ class OverlayView(tk.Canvas):
         'color' : 'black',
         'id' : self.black_id,
         'name' : self.black_name,
+        'roster' : self.black_roster,
       }[feature]
 
   def render(self):
@@ -101,13 +106,26 @@ class OverlayView(tk.Canvas):
           self.black_id = None
           self.black_name = None
           self.white_name = None
+          self.black_roster = None
+          self.white_roster = None
+          self.tournament = None
 
-          def response(game):
-              self.black_name = game['black']
-              self.white_name = game['white']
-              self.black_id = game['black_id']
-              self.white_id = game['white_id']
-          self.uwhscores.get_game(self.tid, self.gid, response)
+          def game(response):
+              self.black_name = response['black']
+              self.white_name = response['white']
+              self.black_id = response['black_id']
+              self.white_id = response['white_id']
+              def black_roster(roster):
+                  self.black_roster = roster
+              def white_roster(roster):
+                  self.white_roster = roster
+              self.uwhscores.get_roster(self.tid, self.black_id, black_roster)
+              self.uwhscores.get_roster(self.tid, self.white_id, white_roster)
+          self.uwhscores.get_game(self.tid, self.gid, game)
+
+          def tournament(response):
+              self.tournament = response
+          self.uwhscores.get_tournament(self.tid, tournament)
 
       {
         "center" : self.render_top_center,
@@ -131,7 +149,7 @@ class OverlayView(tk.Canvas):
       "black_text" : "#2e96ff",
       "white_fill" : "#ffffff",
       "white_text" : "#2e96ff",
-      "team_text"  : "#2e96ff",
+      "team_text"  : "#000000",
     }.get(name, "#ff0000")
 
   def abbreviate(self, s):
@@ -368,6 +386,7 @@ class OverlayView(tk.Canvas):
       time_font=("Menlo", 30)
       state_font=("Menlo", 40)
       team_font=("Menlo", 30, "bold")
+      players_font=("Menlo", 20)
 
       def game_play_view():
           if not self.mask == MaskKind.LUMA:
@@ -430,28 +449,69 @@ class OverlayView(tk.Canvas):
                   #filename = "res/roster/flags/{}/{}.png".format(color, team_name)
                   return ImageTk.PhotoImage(Image.open(filename))
 
-              self._background = ImageTk.PhotoImage(Image.open("res/worlds-roster-bg.png"))
-              self.create_image(0, 0, anchor=tk.NW, image=self._background)
+              #self._background = ImageTk.PhotoImage(Image.open("res/worlds-roster-bg.png"))
+              #self.create_image(0, 0, anchor=tk.NW, image=self._background)
 
-              if self.get('left', 'id') is not None:
-                  self._left_flag = get_flag(self.tid, self.gid,
-                                             self.get('left', 'id'),
+              center_x = self.w / 2
+              col_spread = 200
+              left_col = center_x - col_spread
+              right_col = center_x + col_spread
+              col_width = 200
+              flag_width = 75
+
+              self.logo = ImageTk.PhotoImage(Image.open('res/worlds-roster-logo.png'))
+              self.create_image(center_x, 125, anchor=tk.N, image=self.logo)
+
+              team_id = self.get('left', 'id')
+              if team_id is not None:
+                  self._left_flag = get_flag(self.tid, self.gid, team_id,
                                              self.get('left', 'color'))
-                  self.create_image(400, 550, anchor=tk.NW, image=self._left_flag)
+                  self.create_image(left_col - col_width / 2, 600, anchor=tk.W, image=self._left_flag)
 
-              if self.get('right', 'id') is not None:
-                  self._right_flag = get_flag(self.tid, self.gid,
-                                              self.get('right', 'id'),
+              team_id = self.get('right', 'id')
+              if team_id is not None:
+                  self._right_flag = get_flag(self.tid, self.gid, team_id,
                                               self.get('right', 'color'))
-                  self.create_image(1250, 550, anchor=tk.NW, image=self._right_flag)
+                  self.create_image(right_col - col_width / 2, 600, anchor=tk.W, image=self._right_flag)
 
-              if self.get('left', 'name') is not None:
-                  self.create_text((800, 600), text=self.get('left', 'name'),
-                                   fill=self.color("team_text"), font=team_font)
+              name = self.get('left', 'name')
+              if name is not None:
+                  self.create_text((left_col - col_width / 2 + flag_width, 600), text=name,
+                                   fill=self.color("team_text"), font=team_font, anchor=tk.W)
 
-              if self.get('right', 'name') is not None:
-                  self.create_text((1100, 600), text=self.get('right', 'name'),
-                                   fill=self.color("team_text"), font=team_font)
+              name = self.get('right', 'name')
+              if name is not None:
+                  self.create_text((right_col - col_width / 2 + flag_width, 600), text=name,
+                                   fill=self.color("team_text"), font=team_font, anchor=tk.W)
+
+              roster = self.get('left', 'roster')
+              if roster is not None:
+                  y_offset = 0
+                  for pid, player in roster.items():
+                      display_text = "#{} - {}".format(pid, player['name'])
+                      self.create_text((left_col - col_width / 2, 650 + y_offset), text=display_text,
+                                       fill=self.color("team_text"), font=players_font,
+                                       anchor=tk.W)
+                      y_offset += 30
+
+              roster = self.get('right', 'roster')
+              if roster is not None:
+                  y_offset = 0
+                  for pid, player in roster.items():
+                      display_text = "#{} - {}".format(pid, player['name'])
+                      self.create_text((right_col - col_width / 2, 650 + y_offset), text=display_text,
+                                       fill=self.color("team_text"), font=players_font,
+                                       anchor=tk.W)
+                      y_offset += 30
+
+              if self.tournament is not None:
+                  self.create_text((center_x, 475), text=self.tournament['name'],
+                                   fill=self.color("team_text"), font=players_font,
+                                   anchor=tk.N)
+
+                  self.create_text((center_x, 525), text=self.tournament['location'],
+                                   fill=self.color("team_text"), font=players_font,
+                                   anchor=tk.N)
 
 
       if (self.mgr.gameStateFirstHalf() or
