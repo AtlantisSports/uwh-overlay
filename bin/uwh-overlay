@@ -20,6 +20,7 @@ mgr.setBlackScore(10)
 mgr.setWhiteScore(11)
 mgr.setGameClock(12 * 60 + 34)
 #mgr.setGameStateGameOver()
+mgr.setTimeoutStateRef()
 mgr.setGid(1)
 mgr.setTid(15)
 

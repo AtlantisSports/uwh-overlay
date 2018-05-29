@@ -294,48 +294,47 @@ class OverlayView(tk.Canvas):
                        fill=self.color("fill_text"), anchor=tk.W, font=font)
 
   def render_left(self):
-    radius = 0
-    height = 40
-    width = 200
+    radius = 10
+    score_radius = 0
+    height = 30
+    width = 250
     score_width = 40
     score_offset = width - score_width
     time_width = 155
-    state_width = 130
-    timeout_width = 250
+    state_width = 110
+    timeout_width = 150
     state_offset = score_offset + time_width
-    outset = 0
+    outset = 2
 
-    x1 = 40 + radius
+    x1 = 40
     y1 = 40
 
     font=("Menlo", 20)
     score_font=("Menlo", 30, "bold")
     logo_font=("Menlo", 30)
     time_font=("Menlo", 50)
-    state_font=("Menlo", 40)
+    state_font=("Menlo", 25)
 
-    # Timeout
+    # Bottom Rectangle
     if (self.mgr.timeoutStateRef() or
         self.mgr.timeoutStateWhite() or
         self.mgr.timeoutStateBlack()):
-        self.bordered_round_rectangle(bbox=(x1 + width + state_width + time_width,
+        self.bordered_round_rectangle(bbox=(x1,
                                             y1,
                                             x1 + width + state_width + time_width + timeout_width,
                                             y1 + height * 2 + outset * 2),
                                       radius=radius, outset=outset,
                                       fill=self.color("fill"),
                                       border=self.color("border"))
+    else:
+        self.bordered_round_rectangle(bbox=(x1,
+                                            y1,
+                                            x1 + width + state_width + time_width,
+                                            y1 + height * 2 + outset * 2),
+                                      radius=radius, outset=outset,
+                                      fill=self.color("fill"),
+                                      border=self.color("border"))
 
-    # State
-    self.bordered_round_rectangle(bbox=(x1 + width,
-                                        y1,
-                                        x1 + width + state_width,
-                                        y1 + height * 2 + outset * 2),
-                                  radius=radius, outset=outset,
-                                  fill=self.color("fill"),
-                                  border=self.color("border"))
-
-    # Time
     self.bordered_round_rectangle(bbox=(x1 + width + state_width,
                                         y1,
                                         x1 + width + state_width + time_width,
@@ -344,52 +343,57 @@ class OverlayView(tk.Canvas):
                                   fill=self.color("fill"),
                                   border=self.color("border"))
 
-    # Teams
-    self.bordered_round_rectangle(bbox=(x1, y1, x1 + width, y1 + height),
-                                  radius=radius, outset=outset,
-                                  fill=self.color("fill"),
-                                  border=self.color("border"))
-    self.bordered_round_rectangle(bbox=(x1, y1 + height + outset * 2,
-                                        x1 + width, y1 + height * 2 + outset * 2),
-                                  radius=radius, outset=outset,
-                                  fill=self.color("fill"),
-                                  border=self.color("border"))
+    # Flags
+    def get_flag(tid, gid, team, color):
+        filename = "res/scoreboard/flags/tid_{}/{}/{}.png".format(tid, color, team)
+        return ImageTk.PhotoImage(Image.open(filename))
+    team_id = self.get('left', 'id')
+    if team_id is not None:
+        self._left_flag = get_flag(self.tid, self.gid, team_id,
+                                   self.get('left', 'color'))
+        self.create_image(x1 + width - score_width, y1, anchor=tk.NE, image=self._left_flag)
+
+    team_id = self.get('right', 'id')
+    if team_id is not None:
+        self._right_flag = get_flag(self.tid, self.gid, team_id,
+                                    self.get('right', 'color'))
+        self.create_image(x1 + width - score_width, y1 + height, anchor=tk.NE, image=self._right_flag)
 
     # Scores Fill
     self.round_rectangle(bbox=(x1 + score_offset,
                                y1,
                                x1 + score_offset + score_width,
                                y1 + height),
-                         radius=radius, fill=self.color("%s_fill" % (self.get('left', 'color'),)))
+                         radius=score_radius, fill=self.color("%s_fill" % (self.get('left', 'color'),)))
     self.round_rectangle(bbox=(x1 + score_offset,
                                y1 + height + outset * 2,
                                x1 + score_offset + score_width,
                                y1 + height * 2 + outset * 2),
-                         radius=radius, fill=self.color("%s_fill" % (self.get('right', 'color'),)))
+                         radius=score_radius, fill=self.color("%s_fill" % (self.get('right', 'color'),)))
 
     if not self.mask == MaskKind.LUMA:
       # Timeout
       timeout_text=""
       if self.mgr.timeoutStateRef():
-          timeout_text="Ref T/O"
+          timeout_text="Ref\nTimeout"
       elif self.mgr.timeoutStateWhite():
-          timeout_text="White T/O"
+          timeout_text="White\nTimeout"
       elif self.mgr.timeoutStateBlack():
-          timeout_text="Black T/O"
-      self.create_text((x1 + width + state_width + radius / 2, y1 + height + outset),
+          timeout_text="Black\nTimeout"
+      self.create_text((x1 + width + state_width + time_width + 30, y1 + height + outset),
                       text=timeout_text, fill=self.color("fill_text"), font=state_font, anchor=tk.W)
 
       # Game State Text
       state_text=""
       if self.mgr.gameStateFirstHalf():
-          state_text="1st"
+          state_text="1st\nHalf"
       elif self.mgr.gameStateSecondHalf():
-          state_text="2nd"
+          state_text="2nd\nHalf"
       elif self.mgr.gameStateHalfTime():
-          state_text="H/T"
+          state_text="Half\nTime"
       elif self.mgr.gameStateGameOver():
-          state_text="G/O"
-      self.create_text((x1 + width + outset + 10, y1 + height + outset),
+          state_text="Game\nOver"
+      self.create_text((x1 + width + outset + 20, y1 + height + outset),
                       text=state_text, fill=self.color("fill_text"), font=state_font, anchor=tk.W)
 
       # Time Text
