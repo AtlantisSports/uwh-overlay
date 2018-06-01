@@ -3,7 +3,7 @@
 from multiprocessing import Process, Queue
 from datetime import datetime
 import tkinter as tk
-from uwh.gamemanager import PoolLayout
+from uwh.gamemanager import PoolLayout, TeamColor
 from uwh.uwhscores_comms import UWHScores
 from PIL import Image, ImageTk
 
@@ -427,6 +427,31 @@ class OverlayView(tk.Canvas):
       black_team=self.abbreviate(self.get('right', 'name'))
       self.create_text((x1 + 10, y1 + height + outset * 3 + height / 2), text=black_team,
                        fill=self.color("fill_text"), anchor=tk.W, font=font)
+
+      # Sin-bin
+      penalties = self.mgr.penalties(TeamColor.white) + self.mgr.penalties(TeamColor.black)
+      if len(penalties) > 0:
+          penalties.sort(key=lambda p: p.timeRemaining(self.mgr))
+
+          inset = 5
+          v_spacing = 40
+          penalty_height = 30
+          penalty_width = width + state_width + time_width
+
+          y_offset = 0
+          for p in penalties:
+              remaining = p.timeRemaining(self.mgr)
+              penalty_text = "#%d - Voss, Valentine - %d:%02d" % (p.player(), remaining // 60, remaining % 60)
+
+              fill_color = "#000000" if p.team() == TeamColor.black else "#ffffff"
+              self.round_rectangle(bbox=(x1 + inset, y1 + height * 3 + y_offset - penalty_height / 2,
+                                         x1 + penalty_width - inset,
+                                         y1 + height * 3 + y_offset + penalty_height / 2),
+                                   radius=radius, fill=fill_color)
+
+              self.create_text((x1, y1 + height * 3 + y_offset), text=penalty_text,
+                               fill=self.color("fill"), anchor=tk.W, font=font)
+              y_offset += v_spacing
 
   def render_top_center(self):
     # Bounding box (except for ellipses)
