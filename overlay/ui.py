@@ -318,13 +318,35 @@ class OverlayView(tk.Canvas):
     # Bottom Rectangle
     if (self.mgr.timeoutStateRef() or
         self.mgr.timeoutStateWhite() or
-        self.mgr.timeoutStateBlack()):
-        self.bordered_round_rectangle(bbox=(x1,
+        self.mgr.timeoutStateBlack() or
+        self.mgr.timeoutStatePenaltyShot()):
+        if self.mgr.timeoutStateRef():
+            fill_color = "#ffff00"
+            border_color = "#000000"
+        elif self.mgr.timeoutStateWhite():
+            fill_color = "#ffffff"
+            border_color = "#000000"
+        elif self.mgr.timeoutStateBlack():
+            fill_color = "#000000"
+            border_color = "#ffffff"
+        elif self.mgr.timeoutStatePenaltyShot():
+            fill_color = "#ff0000"
+            border_color = "#000000"
+
+        self.bordered_round_rectangle(bbox=(x1 + width + state_width + time_width,
                                             y1,
                                             x1 + width + state_width + time_width + timeout_width,
                                             y1 + height * 2 + outset * 2),
                                       radius=radius, outset=outset,
-                                      fill=self.color("fill"),
+                                      fill=fill_color,
+                                      border=border_color)
+
+        self.bordered_round_rectangle(bbox=(x1,
+                                            y1,
+                                            x1 + width + state_width + time_width,
+                                            y1 + height * 2 + outset * 2),
+                                      radius=radius, outset=outset,
+                                      fill=self.color('fill'),
                                       border=self.color("border"))
     else:
         self.bordered_round_rectangle(bbox=(x1,
@@ -374,14 +396,21 @@ class OverlayView(tk.Canvas):
     if not self.mask == MaskKind.LUMA:
       # Timeout
       timeout_text=""
+      text_color = self.color('fill_text')
       if self.mgr.timeoutStateRef():
           timeout_text="Ref\nTimeout"
+          text_color="#000000"
       elif self.mgr.timeoutStateWhite():
           timeout_text="White\nTimeout"
+          text_color=self.color('fill')
       elif self.mgr.timeoutStateBlack():
           timeout_text="Black\nTimeout"
+          text_color=self.color('fill')
+      elif self.mgr.timeoutStatePenaltyShot():
+          timeout_text="Penalty\nShot"
+          text_color="#000000"
       self.create_text((x1 + width + state_width + time_width + 30, y1 + height + outset),
-                      text=timeout_text, fill=self.color("fill_text"), font=state_font, anchor=tk.W)
+                      text=timeout_text, fill=text_color, font=state_font, anchor=tk.W)
 
       # Game State Text
       state_text=""
