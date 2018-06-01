@@ -469,17 +469,22 @@ class OverlayView(tk.Canvas):
 
           y_offset = 0
           for p in penalties:
-              remaining = p.timeRemaining(self.mgr)
-              penalty_text = "#%d - Voss, Valentine - %d:%02d" % (p.player(), remaining // 60, remaining % 60)
-
               fill_color = "#000000" if p.team() == TeamColor.black else "#ffffff"
               self.round_rectangle(bbox=(x1 + inset, y1 + height * 3 + y_offset - penalty_height / 2,
                                          x1 + penalty_width - inset,
                                          y1 + height * 3 + y_offset + penalty_height / 2),
                                    radius=radius, fill=fill_color)
 
+              penalty_text = "#%d - Voss, Valentine" % (p.player(),)
               self.create_text((x1, y1 + height * 3 + y_offset), text=penalty_text,
                                fill=self.color("fill"), anchor=tk.W, font=font)
+
+              remaining = p.timeRemaining(self.mgr)
+              penalty_text = "%d:%02d" % (remaining // 60, remaining % 60)
+              self.create_text((x1 + penalty_width, y1 + height * 3 + y_offset), text=penalty_text,
+                               fill=self.color("fill"), anchor=tk.E, font=font)
+
+
               y_offset += v_spacing
 
   def render_top_center(self):
