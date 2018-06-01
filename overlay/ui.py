@@ -465,7 +465,14 @@ class OverlayView(tk.Canvas):
           inset = 5
           v_spacing = 40
           penalty_height = 30
-          penalty_width = width + state_width + time_width
+
+          name = None
+          #name = "Voss, Valentine"
+
+          if name:
+              penalty_width = width + state_width + time_width
+          else:
+              penalty_width = 120
 
           y_offset = 0
           for p in penalties:
@@ -475,7 +482,7 @@ class OverlayView(tk.Canvas):
                                          y1 + height * 3 + y_offset + penalty_height / 2),
                                    radius=radius, fill=fill_color)
 
-              penalty_text = "#%d - Voss, Valentine" % (p.player(),)
+              penalty_text = "#%d - %s" % (p.player(), name or "")
               self.create_text((x1, y1 + height * 3 + y_offset), text=penalty_text,
                                fill=self.color("fill"), anchor=tk.W, font=font)
 
