@@ -167,9 +167,9 @@ class OverlayView(tk.Canvas):
             "team_text"  : "#000000",
         }.get(name, "#ff0000")
 
-    def abbreviate(self, s):
-        if len(s) > 16:
-            return s[0:13] + "..."
+    def abbreviate(self, s, max_len = 16):
+        if len(s) > max_len:
+            return s[0:max_len-3] + "..."
         else:
             return s
 
