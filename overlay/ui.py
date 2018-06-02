@@ -352,10 +352,10 @@ class OverlayView(tk.Canvas):
                 penalties.sort(key=lambda p: p.timeRemaining(self.mgr))
 
                 inset = 0
-                v_spacing = 40
+                v_spacing = 45
                 penalty_height = 30
 
-                y_offset = 0
+                y_offset = 10
                 for p in penalties:
                     if p.team() == TeamColor.black:
                         roster = self.black_roster
@@ -378,10 +378,11 @@ class OverlayView(tk.Canvas):
 
                     fill_color = "#000000" if p.team() == TeamColor.black else "#ffffff"
                     text_color = "#ffffff" if p.team() == TeamColor.black else "#000000"
-                    self.round_rectangle(bbox=(x1 + inset, y1 + height * 3 + y_offset - penalty_height / 2,
-                                               x1 + penalty_width - inset,
-                                               y1 + height * 3 + y_offset + penalty_height / 2),
-                                         radius=radius, fill=fill_color)
+                    self.bordered_round_rectangle(bbox=(x1 + inset, y1 + height * 3 + y_offset - penalty_height / 2,
+                                                        x1 + penalty_width - inset,
+                                                        y1 + height * 3 + y_offset + penalty_height / 2),
+                                                  radius=radius, fill=fill_color, border="#ff0000",
+                                                  outset=outset)
 
                     penalty_text = "#%d - %s" % (p.player(), name)
                     self.create_text((x1, y1 + height * 3 + y_offset), text=penalty_text,
