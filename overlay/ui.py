@@ -80,11 +80,14 @@ class OverlayView(tk.Canvas):
         self.create_rectangle((x1, y1, x2, (y1+y2)/2), fill=fill_t, outline=fill_t)
         self.create_rectangle((x1, (y1+y2)/2, x2, y2), fill=fill_b, outline=fill_b)
 
-    def bordered_round_rectangle(self, bbox, radius, outset, fill, border):
+    def bordered_round_rectangle(self, bbox, radius, outset, fill, border,
+                                 fill_t=None, fill_b=None, border_t=None, border_b=None):
         self.round_rectangle(bbox=(bbox[0]-outset, bbox[1]-outset,
                                    bbox[2]+outset, bbox[3]+outset),
-                             radius=radius, fill=border)
-        self.round_rectangle(bbox, radius=radius, fill=fill)
+                             radius=radius, fill=border,
+                             fill_t=border_t, fill_b=border_b)
+        self.round_rectangle(bbox, radius=radius, fill=fill,
+                             fill_t=fill_t, fill_b=fill_b)
 
     @staticmethod
     def versions():
@@ -227,7 +230,7 @@ class OverlayView(tk.Canvas):
                 fill_color = "#ff0000"
                 border_color = "#000000"
 
-            # (           (   ))####)
+            # ((       )    (   ))####)
             self.bordered_round_rectangle(bbox=(x1 + width + state_width + time_width,
                                                 y1,
                                                 x1 + width + state_width + time_width + timeout_width,
@@ -236,25 +239,29 @@ class OverlayView(tk.Canvas):
                                           fill=fill_color,
                                           border=border_color)
 
-            # (###########(   ))    )
-            self.bordered_round_rectangle(bbox=(x1,
-                                                y1,
-                                                x1 + width + state_width + time_width,
-                                                y1 + height * 2 + outset * 2),
-                                          radius=radius, outset=outset,
-                                          fill=self.color('fill'),
-                                          border=self.color("border"))
-        else:
-            # (###########(   ))    )
-            self.bordered_round_rectangle(bbox=(x1,
-                                                y1,
-                                                x1 + width + state_width + time_width,
-                                                y1 + height * 2 + outset * 2),
-                                          radius=radius, outset=outset,
-                                          fill=self.color("fill"),
-                                          border=self.color("border"))
+        # ((       )####(   ))    )
+        self.bordered_round_rectangle(bbox=(x1 + width,
+                                            y1,
+                                            x1 + width + state_width,
+                                            y1 + height * 2 + outset * 2),
+                                      radius=radius, outset=outset,
+                                      fill=self.color("fill"),
+                                      border=self.color("border"))
 
-        # (           (###))    )
+        # ((#######)    (   ))    )
+        self.bordered_round_rectangle(bbox=(x1,
+                                            y1,
+                                            x1 + width,
+                                            y1 + height * 2 + outset * 2),
+                                      radius=radius, outset=outset,
+                                      fill=None,
+                                      fill_t=self.get('left', 'color'),
+                                      fill_b=self.get('right', 'color'),
+                                      border=None,
+                                      border_t=self.get('right', 'color'),
+                                      border_b=self.get('left', 'color'))
+
+        # ((       )    (###))    )
         self.bordered_round_rectangle(bbox=(x1 + width + state_width,
                                             y1,
                                             x1 + width + state_width + time_width,
@@ -272,13 +279,13 @@ class OverlayView(tk.Canvas):
         # Flags
         left_flag = self.get('left', 'flag')
         if left_flag is not None:
-            left_flag = left_flag.resize((flag_width, height + outset * 2), Image.ANTIALIAS)
+            left_flag = left_flag.resize((flag_width, height + outset), Image.ANTIALIAS)
             self._left_flag = ImageTk.PhotoImage(left_flag)
             self.create_image(x1 + width - score_width, y1, anchor=tk.NE, image=self._left_flag)
 
         right_flag = self.get('right', 'flag')
         if right_flag is not None:
-            right_flag = right_flag.resize((flag_width, height + outset * 2), Image.ANTIALIAS)
+            right_flag = right_flag.resize((flag_width, height + outset), Image.ANTIALIAS)
             self._right_flag = ImageTk.PhotoImage(right_flag)
             self.create_image(x1 + width - score_width, y1 + height + outset, anchor=tk.NE, image=self._right_flag)
 
@@ -348,14 +355,14 @@ class OverlayView(tk.Canvas):
                              text=r_score, fill=self.get('left', 'color'),
                              font=score_font)
 
-            # White Team Text
+            # Team Names
             white_team=self.abbreviate(self.get('left', 'name'))
             self.create_text((x1 + 10, y1 + outset + height / 2), text=white_team,
-                             fill=self.color("fill_text"), anchor=tk.W, font=font)
+                             fill=self.get('right','color'), anchor=tk.W, font=font)
 
             black_team=self.abbreviate(self.get('right', 'name'))
-            self.create_text((x1 + 10, y1 + height + outset * 3 + height / 2), text=black_team,
-                             fill=self.color("fill_text"), anchor=tk.W, font=font)
+            self.create_text((x1 + 10, y1 + height + outset * 2 + height / 2), text=black_team,
+                             fill=self.get('left', 'color'), anchor=tk.W, font=font)
 
             # Sin-bin
             penalties = self.mgr.penalties(TeamColor.white) + self.mgr.penalties(TeamColor.black)
