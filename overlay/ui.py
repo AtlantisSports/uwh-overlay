@@ -32,15 +32,7 @@ class OverlayView(tk.Canvas):
         self.uwhscores = UWHScores('http://localhost:5000/api/v1/', mock=False)
         self.tid = None
         self.gid = None
-        self.white_id = None
-        self.black_id = None
-        self.white_name = None
-        self.black_name = None
-        self.white_roster = None
-        self.black_roster = None
-        self.tournament = None
-        self.black_flag = None
-        self.white_flag = None
+        self.reset_uwhscores()
 
         self.init_ui(bbox)
 
@@ -67,6 +59,12 @@ class OverlayView(tk.Canvas):
             self.update()
             self.after(self.refresh, lambda : draw(self))
         self.after(1, lambda : draw(self))
+
+        # Update UWHScores data periodically
+        def refresh_uwhscores(self):
+            self.fetch_uwhscores()
+            self.after(60 * 1000, lambda : refresh_uwhscores(self))
+        self.after(1, lambda : refresh_uwhscores(self))
 
     def clear(self, fill):
         self.create_rectangle((0, 0, self.w, self.h), fill=fill)
@@ -108,45 +106,49 @@ class OverlayView(tk.Canvas):
                 'flag' : self.black_flag,
             }[feature]
 
+    def reset_uwhscores(self):
+        self.white_id = None
+        self.black_id = None
+        self.black_name = "Black"
+        self.white_name = "White"
+        self.black_roster = None
+        self.white_roster = None
+        self.tournament = None
+        self.black_flag = None
+        self.white_flag = None
+
+    def fetch_uwhscores(self):
+        self.tid = self.mgr.tid()
+        self.gid = self.mgr.gid()
+        def game(response):
+            self.black_name = response['black']
+            self.white_name = response['white']
+            self.black_id = response['black_id']
+            self.white_id = response['white_id']
+            def black_roster(roster):
+                self.black_roster = roster
+            def white_roster(roster):
+                self.white_roster = roster
+            self.uwhscores.get_roster(self.tid, self.black_id, black_roster)
+            self.uwhscores.get_roster(self.tid, self.white_id, white_roster)
+            def white_flag(flag):
+                self.white_flag = flag
+            def black_flag(flag):
+                self.black_flag = flag
+            self.uwhscores.get_team_flag(self.tid, self.black_id, black_flag)
+            self.uwhscores.get_team_flag(self.tid, self.white_id, white_flag)
+
+        self.uwhscores.get_game(self.tid, self.gid, game)
+
+        def tournament(response):
+            self.tournament = response
+        self.uwhscores.get_tournament(self.tid, tournament)
+
     def render(self):
-        # Update teams between games
+        # Force update of teams between games
         if (self.tid != self.mgr.tid() or
             self.gid != self.mgr.gid()):
-            self.tid = self.mgr.tid()
-            self.gid = self.mgr.gid()
-            self.white_id = None
-            self.black_id = None
-            self.black_name = "Black"
-            self.white_name = "White"
-            self.black_roster = None
-            self.white_roster = None
-            self.tournament = None
-            self.black_flag = None
-            self.white_flag = None
-
-            def game(response):
-                self.black_name = response['black']
-                self.white_name = response['white']
-                self.black_id = response['black_id']
-                self.white_id = response['white_id']
-                def black_roster(roster):
-                    self.black_roster = roster
-                def white_roster(roster):
-                    self.white_roster = roster
-                self.uwhscores.get_roster(self.tid, self.black_id, black_roster)
-                self.uwhscores.get_roster(self.tid, self.white_id, white_roster)
-                def white_flag(flag):
-                    self.white_flag = flag
-                def black_flag(flag):
-                    self.black_flag = flag
-                self.uwhscores.get_team_flag(self.tid, self.black_id, black_flag)
-                self.uwhscores.get_team_flag(self.tid, self.white_id, white_flag)
-
-            self.uwhscores.get_game(self.tid, self.gid, game)
-
-            def tournament(response):
-                self.tournament = response
-            self.uwhscores.get_tournament(self.tid, tournament)
+            self.fetch_uwhscores()
 
         if (self.mgr.gameStateGameOver() and self.tournament is not None):
             self.roster_view()
