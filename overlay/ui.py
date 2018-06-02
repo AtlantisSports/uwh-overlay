@@ -197,7 +197,7 @@ class OverlayView(tk.Canvas):
         y1 = 40
 
         font=("Menlo", 20)
-        score_font=("Menlo", 30, "bold")
+        score_font=("Menlo", 30)
         logo_font=("Menlo", 30)
         time_font=("Menlo", 50)
         state_font=("Menlo", 25)
@@ -276,12 +276,12 @@ class OverlayView(tk.Canvas):
                                    y1,
                                    x1 + score_offset + score_width,
                                    y1 + height + outset),
-                             radius=score_radius, fill=self.color("%s_fill" % (self.get('left', 'color'),)))
+                             radius=score_radius, fill=self.get('left', 'color'))
         self.round_rectangle(bbox=(x1 + score_offset,
                                    y1 + height + outset,
                                    x1 + score_offset + score_width,
                                    y1 + height * 2 + outset * 2),
-                             radius=score_radius, fill=self.color("%s_fill" % (self.get('right', 'color'),)))
+                             radius=score_radius, fill=self.get('right', 'color'))
 
         if not self.mask == MaskKind.LUMA:
             # Timeout
@@ -326,7 +326,7 @@ class OverlayView(tk.Canvas):
             left_score = self.get('left', 'score')
             l_score="%d" % (left_score,)
             self.create_text((x1 + score_offset + score_width / 2, y1 + height / 2),
-                             text=l_score, fill=self.color("%s_text" % (self.get('left', 'color'),)),
+                             text=l_score, fill=self.get('right', 'color'),
                              font=score_font)
 
             # Black Score Text
@@ -334,7 +334,7 @@ class OverlayView(tk.Canvas):
             r_score="%d" % (right_score,)
             self.create_text((x1 + score_offset + score_width / 2,
                               y1 + height / 2 + height + outset * 2),
-                             text=r_score, fill=self.color("%s_text" % (self.get('right', 'color'),)),
+                             text=r_score, fill=self.get('left', 'color'),
                              font=score_font)
 
             # White Team Text
@@ -377,6 +377,7 @@ class OverlayView(tk.Canvas):
                         penalty_width = 120
 
                     fill_color = "#000000" if p.team() == TeamColor.black else "#ffffff"
+                    text_color = "#ffffff" if p.team() == TeamColor.black else "#000000"
                     self.round_rectangle(bbox=(x1 + inset, y1 + height * 3 + y_offset - penalty_height / 2,
                                                x1 + penalty_width - inset,
                                                y1 + height * 3 + y_offset + penalty_height / 2),
@@ -384,12 +385,12 @@ class OverlayView(tk.Canvas):
 
                     penalty_text = "#%d - %s" % (p.player(), name)
                     self.create_text((x1, y1 + height * 3 + y_offset), text=penalty_text,
-                                     fill=self.color("fill"), anchor=tk.W, font=font)
+                                     fill=text_color, anchor=tk.W, font=font)
 
                     remaining = p.timeRemaining(self.mgr)
                     penalty_text = "%d:%02d" % (remaining // 60, remaining % 60)
                     self.create_text((x1 + penalty_width, y1 + height * 3 + y_offset), text=penalty_text,
-                                     fill=self.color("fill"), anchor=tk.E, font=font)
+                                     fill=text_color, anchor=tk.E, font=font)
 
 
                     y_offset += v_spacing
@@ -482,15 +483,13 @@ class OverlayView(tk.Canvas):
             name_width = (bar_width - title_width - flag_width * 2) / 2
             name = self.get('left', 'name')
             if name is not None:
-                name_fill = self.color("fill") if left_flag else "#ffffff"
                 self.create_text((center_x - bar_width / 2 + name_width / 2, bar_y + bar_height / 2), text=name,
-                                 fill=name_fill, font=team_font, anchor=tk.CENTER)
+                                 fill=self.get('right', 'color'), font=team_font, anchor=tk.CENTER)
 
             name = self.get('right', 'name')
             if name is not None:
-                name_fill = self.color("fill") if left_flag else "#ffffff"
                 self.create_text((center_x + bar_width / 2 - name_width / 2, bar_y + bar_height / 2), text=name,
-                                 fill=name_fill, font=team_font, anchor=tk.CENTER)
+                                 fill=self.get('left', 'color'), font=team_font, anchor=tk.CENTER)
 
             roster = self.get('left', 'roster')
             if roster is not None:
@@ -505,7 +504,7 @@ class OverlayView(tk.Canvas):
 
                     display_text = "#{} - {}".format(number, name)
                     self.create_text((left_col - col_width / 2, roster_y + y_offset + player_h / 2), text=display_text,
-                                     fill=self.color("fill"), font=players_font,
+                                     fill=self.get('right', 'color'), font=players_font,
                                      anchor=tk.W)
                     y_offset += 40
 
@@ -522,7 +521,7 @@ class OverlayView(tk.Canvas):
 
                     display_text = "#{} - {}".format(number, name)
                     self.create_text((right_col - col_width / 2, roster_y + y_offset + player_h / 2), text=display_text,
-                                     fill=self.color("fill"), font=players_font,
+                                     fill=self.get('left', 'color'), font=players_font,
                                      anchor=tk.W)
                     y_offset += 40
 
