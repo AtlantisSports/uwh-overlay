@@ -401,36 +401,45 @@ class OverlayView(tk.Canvas):
             right_col = center_x + col_spread
             col_width = 200
             flag_width = 75
+            roster_y = 750
+            flags_y = 600
+            names_y = 550
+            tourney_name_y = 450
+            tourney_loc_y = 500
 
             self.logo = ImageTk.PhotoImage(Image.open('res/worlds-roster-logo.png'))
-            self.create_image(center_x, 125, anchor=tk.N, image=self.logo)
+            self.create_image(center_x, 80, anchor=tk.N, image=self.logo)
 
+            # Flags
             left_flag = self.get('left', 'flag')
             if left_flag is not None:
                 self._left_flag = ImageTk.PhotoImage(left_flag)
-                self.create_image(left_col - col_width / 2, 600, anchor=tk.W, image=self._left_flag)
+                self.create_image(left_col, flags_y, anchor=tk.N, image=self._left_flag)
 
             right_flag = self.get('right', 'flag')
             if right_flag is not None:
                 self._right_flag = ImageTk.PhotoImage(right_flag)
-                self.create_image(right_col - col_width / 2, 600, anchor=tk.W, image=self._right_flag)
+                self.create_image(right_col, flags_y, anchor=tk.N, image=self._right_flag)
 
+            # Team Names
             name = self.get('left', 'name')
             if name is not None:
-                self.create_text((left_col - col_width / 2 + flag_width, 600), text=name,
-                                 fill=self.color("team_text"), font=team_font, anchor=tk.W)
+                self.create_text((left_col - col_width / 2, names_y), text=name,
+                                 fill=self.color("team_text"), font=team_font, anchor=tk.NW)
 
             name = self.get('right', 'name')
             if name is not None:
-                self.create_text((right_col - col_width / 2 + flag_width, 600), text=name,
-                                 fill=self.color("team_text"), font=team_font, anchor=tk.W)
+                self.create_text((right_col - col_width / 2, names_y), text=name,
+                                 fill=self.color("team_text"), font=team_font, anchor=tk.NW)
 
             roster = self.get('left', 'roster')
             if roster is not None:
                 y_offset = 0
-                for pid, player in roster.items():
-                    display_text = "#{} - {}".format(pid, player['name'])
-                    self.create_text((left_col - col_width / 2, 650 + y_offset), text=display_text,
+                for player in roster:
+                    number = player['number']
+                    name = player['name']
+                    display_text = "#{} - {}".format(number, name)
+                    self.create_text((left_col - col_width / 2, roster_y + y_offset), text=display_text,
                                      fill=self.color("team_text"), font=players_font,
                                      anchor=tk.W)
                     y_offset += 30
@@ -438,19 +447,22 @@ class OverlayView(tk.Canvas):
             roster = self.get('right', 'roster')
             if roster is not None:
                 y_offset = 0
-                for pid, player in roster.items():
-                    display_text = "#{} - {}".format(pid, player['name'])
-                    self.create_text((right_col - col_width / 2, 650 + y_offset), text=display_text,
+                for player in roster:
+                    number = player['number']
+                    name = player['name']
+                    display_text = "#{} - {}".format(number, name)
+                    self.create_text((right_col - col_width / 2, roster_y + y_offset), text=display_text,
                                      fill=self.color("team_text"), font=players_font,
                                      anchor=tk.W)
                     y_offset += 30
 
+            # Tournament info
             if self.tournament is not None:
-                self.create_text((center_x, 475), text=self.tournament['name'],
+                self.create_text((center_x, tourney_name_y), text=self.tournament['name'],
                                  fill=self.color("team_text"), font=players_font,
                                  anchor=tk.N)
 
-                self.create_text((center_x, 525), text=self.tournament['location'],
+                self.create_text((center_x, tourney_loc_y), text=self.tournament['location'],
                                  fill=self.color("team_text"), font=players_font,
                                  anchor=tk.N)
 
