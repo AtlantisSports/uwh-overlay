@@ -358,7 +358,7 @@ class OverlayView(tk.Canvas):
                               break
 
                   if name is not None:
-                      name = self.abbreviate(name)
+                      name = self.abbreviate(name, 32)
                       penalty_width = width + state_width + time_width
                   else:
                       name = ""
