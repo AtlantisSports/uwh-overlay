@@ -39,6 +39,8 @@ class OverlayView(tk.Canvas):
     self.white_roster = None
     self.black_roster = None
     self.tournament = None
+    self.black_flag = None
+    self.white_flag = None
 
     self.init_ui(bbox)
 
@@ -87,6 +89,7 @@ class OverlayView(tk.Canvas):
         'id' : self.white_id,
         'name' : self.white_name,
         'roster' : self.white_roster,
+        'flag' : self.white_flag,
       }[feature]
     else:
       return {
@@ -95,6 +98,7 @@ class OverlayView(tk.Canvas):
         'id' : self.black_id,
         'name' : self.black_name,
         'roster' : self.black_roster,
+        'flag' : self.black_flag,
       }[feature]
 
   def render(self):
@@ -110,6 +114,8 @@ class OverlayView(tk.Canvas):
           self.black_roster = None
           self.white_roster = None
           self.tournament = None
+          self.black_flag = None
+          self.white_flag = None
 
           def game(response):
               self.black_name = response['black']
@@ -122,6 +128,13 @@ class OverlayView(tk.Canvas):
                   self.white_roster = roster
               self.uwhscores.get_roster(self.tid, self.black_id, black_roster)
               self.uwhscores.get_roster(self.tid, self.white_id, white_roster)
+              def white_flag(flag):
+                  self.white_flag = flag
+              def black_flag(flag):
+                  self.black_flag = flag
+              self.uwhscores.get_team_flag(self.tid, self.black_id, black_flag)
+              self.uwhscores.get_team_flag(self.tid, self.white_id, white_flag)
+
           self.uwhscores.get_game(self.tid, self.gid, game)
 
           def tournament(response):
@@ -299,6 +312,7 @@ class OverlayView(tk.Canvas):
     score_radius = 0
     height = 30
     width = 250
+    flag_width = 60
     score_width = 40
     score_offset = width - score_width
     time_width = 155
@@ -367,29 +381,26 @@ class OverlayView(tk.Canvas):
                                   border=self.color("border"))
 
     # Flags
-    def get_flag(tid, gid, team, color):
-        filename = "res/scoreboard/flags/tid_{}/{}/{}.png".format(tid, color, team)
-        return ImageTk.PhotoImage(Image.open(filename))
-    team_id = self.get('left', 'id')
-    if team_id is not None:
-        self._left_flag = get_flag(self.tid, self.gid, team_id,
-                                   self.get('left', 'color'))
+    left_flag = self.get('left', 'flag')
+    if left_flag is not None:
+        left_flag = left_flag.resize((flag_width, height + outset * 2), Image.ANTIALIAS)
+        self._left_flag = ImageTk.PhotoImage(left_flag)
         self.create_image(x1 + width - score_width, y1, anchor=tk.NE, image=self._left_flag)
 
-    team_id = self.get('right', 'id')
-    if team_id is not None:
-        self._right_flag = get_flag(self.tid, self.gid, team_id,
-                                    self.get('right', 'color'))
-        self.create_image(x1 + width - score_width, y1 + height, anchor=tk.NE, image=self._right_flag)
+    right_flag = self.get('right', 'flag')
+    if right_flag is not None:
+        right_flag = right_flag.resize((flag_width, height + outset * 2), Image.ANTIALIAS)
+        self._right_flag = ImageTk.PhotoImage(right_flag)
+        self.create_image(x1 + width - score_width, y1 + height + outset, anchor=tk.NE, image=self._right_flag)
 
     # Scores Fill
     self.round_rectangle(bbox=(x1 + score_offset,
                                y1,
                                x1 + score_offset + score_width,
-                               y1 + height),
+                               y1 + height + outset),
                          radius=score_radius, fill=self.color("%s_fill" % (self.get('left', 'color'),)))
     self.round_rectangle(bbox=(x1 + score_offset,
-                               y1 + height + outset * 2,
+                               y1 + height + outset,
                                x1 + score_offset + score_width,
                                y1 + height * 2 + outset * 2),
                          radius=score_radius, fill=self.color("%s_fill" % (self.get('right', 'color'),)))
@@ -593,26 +604,20 @@ class OverlayView(tk.Canvas):
 
       def game_play_view():
           if not self.mask == MaskKind.LUMA:
-              def get_flag(tid, gid, team, color):
-                  filename = "res/scoreboard/flags/tid_{}/{}/{}.png".format(tid, color, team)
-                  return ImageTk.PhotoImage(Image.open(filename))
-
               self._background = ImageTk.PhotoImage(Image.open("res/worlds-game-bg.png"))
               self.create_image(0, 0, anchor=tk.NW, image=self._background)
 
               row1_y = 20
               row2_y = 75
 
-              if self.get('left', 'id') is not None:
-                  self._left_flag = get_flag(self.tid, self.gid,
-                                             self.get('left', 'id'),
-                                             self.get('left', 'color'))
+              left_flag = self.get('left', 'flag')
+              if left_flag is not None:
+                  self._left_flag = ImageTk.PhotoImage(left_flag)
                   self.create_image(10, row1_y, anchor=tk.NW, image=self._left_flag)
 
-              if self.get('right', 'id') is not None:
-                  self._right_flag = get_flag(self.tid, self.gid,
-                                              self.get('right', 'id'),
-                                              self.get('right', 'color'))
+              right_flag = self.get('right', 'flag')
+              if right_flag is not None:
+                  self._right_flag = ImageTk.PhotoImage(right_flag)
                   self.create_image(180, row1_y, anchor=tk.NW, image=self._right_flag)
 
               clock_time = self.mgr.gameClock()
@@ -647,11 +652,6 @@ class OverlayView(tk.Canvas):
 
       def roster_view():
           if not self.mask == MaskKind.LUMA:
-              def get_flag(tid, gid, team, color):
-                  filename = "res/scoreboard/flags/tid_{}/{}/{}.png".format(tid, color, team)
-                  #filename = "res/roster/flags/{}/{}.png".format(color, team_name)
-                  return ImageTk.PhotoImage(Image.open(filename))
-
               #self._background = ImageTk.PhotoImage(Image.open("res/worlds-roster-bg.png"))
               #self.create_image(0, 0, anchor=tk.NW, image=self._background)
 
@@ -665,16 +665,14 @@ class OverlayView(tk.Canvas):
               self.logo = ImageTk.PhotoImage(Image.open('res/worlds-roster-logo.png'))
               self.create_image(center_x, 125, anchor=tk.N, image=self.logo)
 
-              team_id = self.get('left', 'id')
-              if team_id is not None:
-                  self._left_flag = get_flag(self.tid, self.gid, team_id,
-                                             self.get('left', 'color'))
+              left_flag = self.get('left', 'flag')
+              if left_flag is not None:
+                  self._left_flag = ImageTk.PhotoImage(left_flag)
                   self.create_image(left_col - col_width / 2, 600, anchor=tk.W, image=self._left_flag)
 
-              team_id = self.get('right', 'id')
-              if team_id is not None:
-                  self._right_flag = get_flag(self.tid, self.gid, team_id,
-                                              self.get('right', 'color'))
+              right_flag = self.get('right', 'flag')
+              if right_flag is not None:
+                  self._right_flag = ImageTk.PhotoImage(right_flag)
                   self.create_image(right_col - col_width / 2, 600, anchor=tk.W, image=self._right_flag)
 
               name = self.get('left', 'name')

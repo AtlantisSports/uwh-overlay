@@ -21,6 +21,7 @@ mgr.setWhiteScore(11)
 mgr.setGameClock(2 * 60 + 34)
 mgr.setGameStateHalfTime()
 mgr.setTimeoutStatePenaltyShot()
+#mgr.setGameStateGameOver()
 mgr.setGid(1)
 mgr.setTid(16)
 
