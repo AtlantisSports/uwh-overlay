@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from uwh.gamemanager import GameManager, Penalty, TeamColor
+from uwh.gamemanager import GameManager, Penalty, TeamColor, PoolLayout
 from uwh.xbee_comms import XBeeClient, XBeeConfigParser, xbee_port, xbee_baud
 from overlay.ui import Overlay, MaskKind
 import argparse
@@ -26,6 +26,7 @@ mgr.setTimeoutStatePenaltyShot()
 #mgr.setGameStateGameOver()
 mgr.setGid(1)
 mgr.setTid(16)
+mgr.setLayout(PoolLayout.white_on_left)
 
 mgr.addPenalty(Penalty(5, TeamColor.white, 5 * 60))
 mgr.addPenalty(Penalty(1, TeamColor.black, 1 * 60))
