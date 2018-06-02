@@ -330,7 +330,6 @@ class OverlayView(tk.Canvas):
           self.create_text((x1 + 10, y1 + outset + height / 2), text=white_team,
                            fill=self.color("fill_text"), anchor=tk.W, font=font)
 
-          #black_team="Club Puck"
           black_team=self.abbreviate(self.get('right', 'name'))
           self.create_text((x1 + 10, y1 + height + outset * 3 + height / 2), text=black_team,
                            fill=self.color("fill_text"), anchor=tk.W, font=font)
@@ -344,23 +343,34 @@ class OverlayView(tk.Canvas):
               v_spacing = 40
               penalty_height = 30
 
-              #name = None
-              name = "Voss, Valentine"
-
-              if name:
-                  penalty_width = width + state_width + time_width
-              else:
-                  penalty_width = 120
-
               y_offset = 0
               for p in penalties:
+                  if p.team() == TeamColor.black:
+                      roster = self.black_roster
+                  else:
+                      roster = self.white_roster
+
+                  name = None
+                  if roster is not None:
+                      for player in roster:
+                          if p.player() == player['number']:
+                              name = player['name']
+                              break
+
+                  if name is not None:
+                      name = self.abbreviate(name)
+                      penalty_width = width + state_width + time_width
+                  else:
+                      name = ""
+                      penalty_width = 120
+
                   fill_color = "#000000" if p.team() == TeamColor.black else "#ffffff"
                   self.round_rectangle(bbox=(x1 + inset, y1 + height * 3 + y_offset - penalty_height / 2,
                                              x1 + penalty_width - inset,
                                              y1 + height * 3 + y_offset + penalty_height / 2),
                                        radius=radius, fill=fill_color)
 
-                  penalty_text = "#%d - %s" % (p.player(), name or "")
+                  penalty_text = "#%d - %s" % (p.player(), name)
                   self.create_text((x1, y1 + height * 3 + y_offset), text=penalty_text,
                                    fill=self.color("fill"), anchor=tk.W, font=font)
 
