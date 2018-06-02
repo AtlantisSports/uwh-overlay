@@ -11,7 +11,7 @@ import time
 import sys
 
 class MaskKind:
-    NONE, LUMA, CHROMA = range(3)
+    NONE, LUMA, CHROMA, VMAC = range(4)
 
 def sized_frame(master, height, width):
     F = tk.Frame(master, height=height, width=width)
@@ -55,7 +55,14 @@ class OverlayView(tk.Canvas):
         self.t = 0
         def draw(self):
             self.delete(tk.ALL)
-            self.clear(fill=self.color("bg"))
+            if self.mask == MaskKind.VMAC:
+                # Borrowed from the first few minutes of: https://www.youtube.com/watch?v=hb8NU1LdhnI
+                vmac = Image.open('res/vmac.png')
+                vmac = vmac.resize((self.w, self.h), Image.ANTIALIAS)
+                self.vmac = ImageTk.PhotoImage(vmac)
+                self.create_image(0, 0, anchor=tk.NW, image=self.vmac)
+            else:
+                self.clear(fill=self.color("bg"))
             self.render()
             self.update()
             self.after(self.refresh, lambda : draw(self))

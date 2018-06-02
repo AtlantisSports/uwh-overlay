@@ -10,6 +10,8 @@ parser.add_argument('--luma', help='Display the overlay\'s greyscale mask',
                     action='store_const', const=MaskKind.LUMA, dest='mask')
 parser.add_argument('--chroma', help='Perform masking via chroma keying',
                     action='store_const', const=MaskKind.CHROMA, dest='mask')
+parser.add_argument('--vmac', help='Display on top of a mock VMAC image',
+                    action='store_const', const=MaskKind.VMAC, dest='mask')
 parser.add_argument('--version', help='Version of the display',type=str,
                     choices=Overlay.versions())
 args = parser.parse_args()
