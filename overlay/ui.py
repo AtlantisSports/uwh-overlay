@@ -273,115 +273,115 @@ class OverlayView(tk.Canvas):
                              radius=score_radius, fill=self.color("%s_fill" % (self.get('right', 'color'),)))
 
         if not self.mask == MaskKind.LUMA:
-          # Timeout
-          timeout_text=""
-          text_color = self.color('fill_text')
-          if self.mgr.timeoutStateRef():
-              timeout_text="Ref\nTimeout"
-              text_color="#000000"
-          elif self.mgr.timeoutStateWhite():
-              timeout_text="White\nTimeout"
-              text_color=self.color('fill')
-          elif self.mgr.timeoutStateBlack():
-              timeout_text="Black\nTimeout"
-              text_color=self.color('fill')
-          elif self.mgr.timeoutStatePenaltyShot():
-              timeout_text="Penalty\nShot"
-              text_color="#000000"
-          self.create_text((x1 + width + state_width + time_width + 30, y1 + height + outset),
-                          text=timeout_text, fill=text_color, font=state_font, anchor=tk.W)
+            # Timeout
+            timeout_text=""
+            text_color = self.color('fill_text')
+            if self.mgr.timeoutStateRef():
+                timeout_text="Ref\nTimeout"
+                text_color="#000000"
+            elif self.mgr.timeoutStateWhite():
+                timeout_text="White\nTimeout"
+                text_color=self.color('fill')
+            elif self.mgr.timeoutStateBlack():
+                timeout_text="Black\nTimeout"
+                text_color=self.color('fill')
+            elif self.mgr.timeoutStatePenaltyShot():
+                timeout_text="Penalty\nShot"
+                text_color="#000000"
+            self.create_text((x1 + width + state_width + time_width + 30, y1 + height + outset),
+                            text=timeout_text, fill=text_color, font=state_font, anchor=tk.W)
 
-          # Game State Text
-          state_text=""
-          if self.mgr.gameStateFirstHalf():
-              state_text="1st\nHalf"
-          elif self.mgr.gameStateSecondHalf():
-              state_text="2nd\nHalf"
-          elif self.mgr.gameStateHalfTime():
-              state_text="Half\nTime"
-          elif self.mgr.gameStateGameOver():
-              state_text="Game\nOver"
-          self.create_text((x1 + width + outset + 20, y1 + height + outset),
-                          text=state_text, fill=self.color("fill_text"), font=state_font, anchor=tk.W)
+            # Game State Text
+            state_text=""
+            if self.mgr.gameStateFirstHalf():
+                state_text="1st\nHalf"
+            elif self.mgr.gameStateSecondHalf():
+                state_text="2nd\nHalf"
+            elif self.mgr.gameStateHalfTime():
+                state_text="Half\nTime"
+            elif self.mgr.gameStateGameOver():
+                state_text="Game\nOver"
+            self.create_text((x1 + width + outset + 20, y1 + height + outset),
+                            text=state_text, fill=self.color("fill_text"), font=state_font, anchor=tk.W)
 
-          # Time Text
-          clock_time = self.mgr.gameClock()
-          clock_text = "%2d:%02d" % (clock_time // 60, clock_time % 60)
-          self.create_text((x1 + width + state_width, y1 + height + outset),
-                           text=clock_text, fill=self.color("fill_text"),
-                           font=time_font, anchor=tk.W)
+            # Time Text
+            clock_time = self.mgr.gameClock()
+            clock_text = "%2d:%02d" % (clock_time // 60, clock_time % 60)
+            self.create_text((x1 + width + state_width, y1 + height + outset),
+                             text=clock_text, fill=self.color("fill_text"),
+                             font=time_font, anchor=tk.W)
 
-          # White Score Text
-          left_score = self.get('left', 'score')
-          l_score="%d" % (left_score,)
-          self.create_text((x1 + score_offset + score_width / 2, y1 + height / 2),
-                           text=l_score, fill=self.color("%s_text" % (self.get('left', 'color'),)),
-                           font=score_font)
+            # White Score Text
+            left_score = self.get('left', 'score')
+            l_score="%d" % (left_score,)
+            self.create_text((x1 + score_offset + score_width / 2, y1 + height / 2),
+                             text=l_score, fill=self.color("%s_text" % (self.get('left', 'color'),)),
+                             font=score_font)
 
-          # Black Score Text
-          right_score = self.get('right', 'score')
-          r_score="%d" % (right_score,)
-          self.create_text((x1 + score_offset + score_width / 2,
-                            y1 + height / 2 + height + outset * 2),
-                           text=r_score, fill=self.color("%s_text" % (self.get('right', 'color'),)),
-                           font=score_font)
+            # Black Score Text
+            right_score = self.get('right', 'score')
+            r_score="%d" % (right_score,)
+            self.create_text((x1 + score_offset + score_width / 2,
+                              y1 + height / 2 + height + outset * 2),
+                             text=r_score, fill=self.color("%s_text" % (self.get('right', 'color'),)),
+                             font=score_font)
 
-          # White Team Text
-          white_team=self.abbreviate(self.get('left', 'name'))
-          self.create_text((x1 + 10, y1 + outset + height / 2), text=white_team,
-                           fill=self.color("fill_text"), anchor=tk.W, font=font)
+            # White Team Text
+            white_team=self.abbreviate(self.get('left', 'name'))
+            self.create_text((x1 + 10, y1 + outset + height / 2), text=white_team,
+                             fill=self.color("fill_text"), anchor=tk.W, font=font)
 
-          black_team=self.abbreviate(self.get('right', 'name'))
-          self.create_text((x1 + 10, y1 + height + outset * 3 + height / 2), text=black_team,
-                           fill=self.color("fill_text"), anchor=tk.W, font=font)
+            black_team=self.abbreviate(self.get('right', 'name'))
+            self.create_text((x1 + 10, y1 + height + outset * 3 + height / 2), text=black_team,
+                             fill=self.color("fill_text"), anchor=tk.W, font=font)
 
-          # Sin-bin
-          penalties = self.mgr.penalties(TeamColor.white) + self.mgr.penalties(TeamColor.black)
-          if len(penalties) > 0:
-              penalties.sort(key=lambda p: p.timeRemaining(self.mgr))
+            # Sin-bin
+            penalties = self.mgr.penalties(TeamColor.white) + self.mgr.penalties(TeamColor.black)
+            if len(penalties) > 0:
+                penalties.sort(key=lambda p: p.timeRemaining(self.mgr))
 
-              inset = 0
-              v_spacing = 40
-              penalty_height = 30
+                inset = 0
+                v_spacing = 40
+                penalty_height = 30
 
-              y_offset = 0
-              for p in penalties:
-                  if p.team() == TeamColor.black:
-                      roster = self.black_roster
-                  else:
-                      roster = self.white_roster
+                y_offset = 0
+                for p in penalties:
+                    if p.team() == TeamColor.black:
+                        roster = self.black_roster
+                    else:
+                        roster = self.white_roster
 
-                  name = None
-                  if roster is not None:
-                      for player in roster:
-                          if p.player() == player['number']:
-                              name = player['name']
-                              break
+                    name = None
+                    if roster is not None:
+                        for player in roster:
+                            if p.player() == player['number']:
+                                name = player['name']
+                                break
 
-                  if name is not None:
-                      name = self.abbreviate(name, 32)
-                      penalty_width = width + state_width + time_width
-                  else:
-                      name = ""
-                      penalty_width = 120
+                    if name is not None:
+                        name = self.abbreviate(name, 32)
+                        penalty_width = width + state_width + time_width
+                    else:
+                        name = ""
+                        penalty_width = 120
 
-                  fill_color = "#000000" if p.team() == TeamColor.black else "#ffffff"
-                  self.round_rectangle(bbox=(x1 + inset, y1 + height * 3 + y_offset - penalty_height / 2,
-                                             x1 + penalty_width - inset,
-                                             y1 + height * 3 + y_offset + penalty_height / 2),
-                                       radius=radius, fill=fill_color)
+                    fill_color = "#000000" if p.team() == TeamColor.black else "#ffffff"
+                    self.round_rectangle(bbox=(x1 + inset, y1 + height * 3 + y_offset - penalty_height / 2,
+                                               x1 + penalty_width - inset,
+                                               y1 + height * 3 + y_offset + penalty_height / 2),
+                                         radius=radius, fill=fill_color)
 
-                  penalty_text = "#%d - %s" % (p.player(), name)
-                  self.create_text((x1, y1 + height * 3 + y_offset), text=penalty_text,
-                                   fill=self.color("fill"), anchor=tk.W, font=font)
+                    penalty_text = "#%d - %s" % (p.player(), name)
+                    self.create_text((x1, y1 + height * 3 + y_offset), text=penalty_text,
+                                     fill=self.color("fill"), anchor=tk.W, font=font)
 
-                  remaining = p.timeRemaining(self.mgr)
-                  penalty_text = "%d:%02d" % (remaining // 60, remaining % 60)
-                  self.create_text((x1 + penalty_width, y1 + height * 3 + y_offset), text=penalty_text,
-                                   fill=self.color("fill"), anchor=tk.E, font=font)
+                    remaining = p.timeRemaining(self.mgr)
+                    penalty_text = "%d:%02d" % (remaining // 60, remaining % 60)
+                    self.create_text((x1 + penalty_width, y1 + height * 3 + y_offset), text=penalty_text,
+                                     fill=self.color("fill"), anchor=tk.E, font=font)
 
 
-                  y_offset += v_spacing
+                    y_offset += v_spacing
 
     def roster_view(self):
         font=("Menlo", 20)
