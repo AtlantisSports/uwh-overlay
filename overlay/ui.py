@@ -141,12 +141,10 @@ class OverlayView(tk.Canvas):
                 self.tournament = response
             self.uwhscores.get_tournament(self.tid, tournament)
 
-        if (self.mgr.gameStateFirstHalf() or
-            self.mgr.gameStateHalfTime() or
-            self.mgr.gameStateSecondHalf()):
-            self.game_play_view()
-        else:
+        if (self.mgr.gameStateGameOver() and self.tournament is not None):
             self.roster_view()
+        else:
+            self.game_play_view()
 
     def color(self, name):
         if self.mask == MaskKind.LUMA:
