@@ -403,16 +403,13 @@ class OverlayView(tk.Canvas):
             col_width = 200
             flag_width = 150
             roster_y = 750
-            names_y = 550
-            bar_y = 450
+            bar_y = 1080 / 2
             title_y = bar_y
             bar_width = 1000
             bar_height = 100
             title_width = col_spread
             title_height = bar_height
             flags_y = bar_y
-            tourney_name_y = 460
-            tourney_loc_y = 510
 
             self.logo = ImageTk.PhotoImage(Image.open('res/worlds-roster-logo.png'))
             self.create_image(center_x, 80, anchor=tk.N, image=self.logo)
@@ -500,13 +497,13 @@ class OverlayView(tk.Canvas):
 
             # Tournament info
             if self.tournament is not None:
-                self.create_text((center_x, tourney_name_y), text=self.tournament['name'],
+                self.create_text((center_x, bar_y + bar_height / 4), text=self.tournament['name'],
                                  fill=self.color("title_text"), font=title_font,
-                                 anchor=tk.N)
+                                 anchor=tk.CENTER)
 
-                self.create_text((center_x, tourney_loc_y), text=self.tournament['location'],
+                self.create_text((center_x, bar_y + 3 * bar_height / 4), text=self.tournament['location'],
                                  fill=self.color("title_text"), font=title_font,
-                                 anchor=tk.N)
+                                 anchor=tk.CENTER)
 
 
 class Overlay(object):
