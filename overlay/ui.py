@@ -206,11 +206,11 @@ class OverlayView(tk.Canvas):
         x1 = 40
         y1 = 40
 
-        font=("Menlo", 20)
-        score_font=("Menlo", 30)
-        logo_font=("Menlo", 30)
-        time_font=("Menlo", 50)
-        state_font=("Menlo", 25)
+        font=("Avenir Next", 20)
+        score_font=("Avenir Next", 30)
+        logo_font=("Avenir Next", 30)
+        time_font=("Avenir Next", 50)
+        state_font=("Avenir Next", 25)
 
         # Bottom Rectangle
         if (self.mgr.timeoutStateRef() or
@@ -336,9 +336,9 @@ class OverlayView(tk.Canvas):
             # Time Text
             clock_time = self.mgr.gameClock()
             clock_text = "%2d:%02d" % (clock_time // 60, clock_time % 60)
-            self.create_text((x1 + width + state_width, y1 + height + outset),
+            self.create_text((x1 + width + state_width + time_width / 2, y1 + height + outset),
                              text=clock_text, fill=self.color("fill_text"),
-                             font=time_font, anchor=tk.W)
+                             font=time_font, anchor=tk.CENTER)
 
             # White Score Text
             left_score = self.get('left', 'score')
@@ -415,14 +415,14 @@ class OverlayView(tk.Canvas):
                     y_offset += v_spacing
 
     def roster_view(self):
-        font=("Menlo", 20)
-        score_font=("Menlo", 30, "bold")
-        logo_font=("Menlo", 30)
-        time_font=("Menlo", 30)
-        state_font=("Menlo", 40)
-        team_font=("Menlo", 30, "bold")
-        players_font=("Menlo", 20)
-        title_font=("Menlo", 25, "bold")
+        font=("Avenir Next", 20)
+        score_font=("Avenir Next", 30, "bold")
+        logo_font=("Avenir Next", 30)
+        time_font=("Avenir Next", 30)
+        state_font=("Avenir Next", 40)
+        team_font=("Avenir Next", 30, "bold")
+        players_font=("Avenir Next", 20)
+        title_font=("Avenir Next", 25, "bold")
 
         if not self.mask == MaskKind.LUMA:
             radius = 5
