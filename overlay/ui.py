@@ -417,8 +417,15 @@ class OverlayView(tk.Canvas):
             flags_y = bar_y
             player_h = 25
 
-            self.logo = ImageTk.PhotoImage(Image.open('res/worlds-roster-logo.png'))
-            self.create_image(center_x, 80, anchor=tk.N, image=self.logo)
+            # Worlds
+            #self.logo = ImageTk.PhotoImage(Image.open('res/worlds-roster-logo.png'))
+            #self.create_image(center_x, 80, anchor=tk.N, image=self.logo)
+
+            # Nationals
+            logo = Image.open('res/logo-nationals2018.png')
+            logo = logo.resize((400, 400), Image.ANTIALIAS)
+            self.logo = ImageTk.PhotoImage(logo)
+            self.create_image(center_x, 1080 / 4, anchor=tk.CENTER, image=self.logo)
 
             self.bordered_round_rectangle(bbox=(center_x - bar_width / 2,
                                                 bar_y,
