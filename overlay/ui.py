@@ -69,11 +69,16 @@ class OverlayView(tk.Canvas):
     def clear(self, fill):
         self.create_rectangle((0, 0, self.w, self.h), fill=fill)
 
-    def round_rectangle(self, bbox, radius, fill):
+    def round_rectangle(self, bbox, radius, fill, fill_t=None, fill_b=None):
         x1, y1, x2, y2 = bbox
-        self.create_oval((x1 - radius, y1, x1 + radius, y2), fill=fill, outline=fill)
-        self.create_oval((x2 - radius, y1, x2 + radius, y2), fill=fill, outline=fill)
-        self.create_rectangle(bbox, fill=fill, outline=fill)
+        fill_t = fill_t or fill
+        fill_b = fill_b or fill
+        self.create_arc((x2 - radius, y1, x2 + radius, y2), fill=fill_t, outline=fill_t, start=0)
+        self.create_arc((x1 - radius, y1, x1 + radius, y2), fill=fill_t, outline=fill_t, start=90)
+        self.create_arc((x1 - radius, y1, x1 + radius, y2), fill=fill_b, outline=fill_b, start=180)
+        self.create_arc((x2 - radius, y1, x2 + radius, y2), fill=fill_b, outline=fill_b, start=270)
+        self.create_rectangle((x1, y1, x2, (y1+y2)/2), fill=fill_t, outline=fill_t)
+        self.create_rectangle((x1, (y1+y2)/2, x2, y2), fill=fill_b, outline=fill_b)
 
     def bordered_round_rectangle(self, bbox, radius, outset, fill, border):
         self.round_rectangle(bbox=(bbox[0]-outset, bbox[1]-outset,
