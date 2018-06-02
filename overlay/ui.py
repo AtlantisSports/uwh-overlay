@@ -227,6 +227,7 @@ class OverlayView(tk.Canvas):
                 fill_color = "#ff0000"
                 border_color = "#000000"
 
+            # (           (   ))####)
             self.bordered_round_rectangle(bbox=(x1 + width + state_width + time_width,
                                                 y1,
                                                 x1 + width + state_width + time_width + timeout_width,
@@ -235,6 +236,7 @@ class OverlayView(tk.Canvas):
                                           fill=fill_color,
                                           border=border_color)
 
+            # (###########(   ))    )
             self.bordered_round_rectangle(bbox=(x1,
                                                 y1,
                                                 x1 + width + state_width + time_width,
@@ -243,6 +245,7 @@ class OverlayView(tk.Canvas):
                                           fill=self.color('fill'),
                                           border=self.color("border"))
         else:
+            # (###########(   ))    )
             self.bordered_round_rectangle(bbox=(x1,
                                                 y1,
                                                 x1 + width + state_width + time_width,
@@ -251,6 +254,7 @@ class OverlayView(tk.Canvas):
                                           fill=self.color("fill"),
                                           border=self.color("border"))
 
+        # (           (###))    )
         self.bordered_round_rectangle(bbox=(x1 + width + state_width,
                                             y1,
                                             x1 + width + state_width + time_width,
