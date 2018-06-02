@@ -141,12 +141,12 @@ class OverlayView(tk.Canvas):
               self.tournament = response
           self.uwhscores.get_tournament(self.tid, tournament)
 
-      {
-        "center" : self.render_top_center,
-        "split" : self.render_split,
-        "left" : self.render_left,
-        "worlds" : self.render_worlds,
-      }.get(self.version, self.render_top_center)()
+      if (self.mgr.gameStateFirstHalf() or
+          self.mgr.gameStateHalfTime() or
+          self.mgr.gameStateSecondHalf()):
+          self.game_play_view()
+      else:
+          self.roster_view()
 
   def color(self, name):
     if self.mask == MaskKind.LUMA:
@@ -173,141 +173,7 @@ class OverlayView(tk.Canvas):
     else:
       return s
 
-  def render_split(self):
-    radius = 15
-    height = 40
-    width = 150
-    score_width = 40
-    score_offset = width - score_width
-    time_width = 190
-    state_width = 130
-    timeout_width = 250
-    state_offset = score_offset + time_width
-    outset = 2
-
-    x1 = 40 + radius
-    y1 = 40
-
-    x2 = 1920 - 40 - radius
-    y2 = y1
-
-    font=("Menlo", 20)
-    score_font=("Menlo", 30, "bold")
-    logo_font=("Menlo", 30)
-    time_font=("Menlo", 50)
-    state_font=("Menlo", 40)
-
-    # Timeout
-    if (self.mgr.timeoutStateRef() or
-        self.mgr.timeoutStateWhite() or
-        self.mgr.timeoutStateBlack()):
-        self.bordered_round_rectangle(bbox=(x2 - timeout_width - state_width - time_width,
-                                            y1,
-                                            x2 - state_width - time_width,
-                                            y2 + height * 2 + outset * 2),
-                                      radius=radius, outset=outset,
-                                      fill=self.color("fill"),
-                                      border=self.color("border"))
-
-    # State
-    self.bordered_round_rectangle(bbox=(x2 - state_width - time_width,
-                                        y1,
-                                        x2 - time_width,
-                                        y2 + height * 2 + outset * 2),
-                                  radius=radius, outset=outset,
-                                  fill=self.color("fill"),
-                                  border=self.color("border"))
-
-    # Time
-    self.bordered_round_rectangle(bbox=(x2 - time_width,
-                                        y2,
-                                        x2,
-                                        y2 + height * 2 + outset * 2),
-                                  radius=radius, outset=outset,
-                                  fill=self.color("fill"),
-                                  border=self.color("border"))
-
-    # Teams
-    self.bordered_round_rectangle(bbox=(x1, y1, x1 + width, y1 + height),
-                                  radius=radius, outset=outset,
-                                  fill=self.color("fill"),
-                                  border=self.color("border"))
-    self.bordered_round_rectangle(bbox=(x1, y1 + height + outset * 2,
-                                        x1 + width, y1 + height * 2 + outset * 2),
-                                  radius=radius, outset=outset,
-                                  fill=self.color("fill"),
-                                  border=self.color("border"))
-
-    # Scores Fill
-    self.round_rectangle(bbox=(x1 + score_offset,
-                               y1,
-                               x1 + score_offset + score_width,
-                               y1 + height),
-                         radius=radius, fill=self.color("%s_fill" % (self.get('left', 'color'),)))
-    self.round_rectangle(bbox=(x1 + score_offset,
-                               y1 + height + outset * 2,
-                               x1 + score_offset + score_width,
-                               y1 + height * 2 + outset * 2),
-                         radius=radius, fill=self.color("%s_fill" % (self.get('right', 'color'),)))
-
-    if not self.mask == MaskKind.LUMA:
-      # Timeout
-      timeout_text=""
-      if self.mgr.timeoutStateRef():
-          timeout_text="Ref T/O"
-      elif self.mgr.timeoutStateWhite():
-          timeout_text="White T/O"
-      elif self.mgr.timeoutStateBlack():
-          timeout_text="Black T/O"
-      self.create_text((x2 - state_width - time_width - radius * 2, y2 + height + outset),
-                      text=timeout_text, fill=self.color("fill_text"), font=state_font, anchor=tk.E)
-
-      # Game State Text
-      state_text=""
-      if self.mgr.gameStateFirstHalf():
-          state_text="1st"
-      elif self.mgr.gameStateSecondHalf():
-          state_text="2nd"
-      elif self.mgr.gameStateHalfTime():
-          state_text="H/T"
-      elif self.mgr.gameStateGameOver():
-          state_text="G/O"
-      self.create_text((x2 - time_width - radius * 2, y2 + height + outset),
-                      text=state_text, fill=self.color("fill_text"), font=state_font, anchor=tk.E)
-
-      # Time Text
-      clock_time = self.mgr.gameClock()
-      clock_text = "%2d:%02d" % (clock_time // 60, clock_time % 60)
-      self.create_text((x2, y2 + height + outset),
-                       text=clock_text, fill=self.color("fill_text"),
-                       font=time_font, anchor=tk.E)
-
-      # White Score Text
-      left_score = self.get('left', 'score')
-      l_score="%d" % (left_score,)
-      self.create_text((x1 + score_offset + score_width / 2, y1 + height / 2),
-                       text=l_score, fill=self.color("%s_text" % (self.get('left', 'color'),)),
-                       font=score_font)
-
-      # Black Score Text
-      right_score = self.get('right', 'score')
-      r_score="%d" % (right_score,)
-      self.create_text((x1 + score_offset + score_width / 2,
-                        y1 + height / 2 + height + outset * 2),
-                       text=r_score, fill=self.color("%s_text" % (self.get('right', 'color'),)),
-                       font=score_font)
-
-      # White Team Text
-      white_team=self.abbreviate(self.get('left', 'color'))
-      self.create_text((x1, y1 + outset + height / 2), text=white_team,
-                       fill=self.color("fill_text"), anchor=tk.W, font=font)
-
-      #black_team="Club Puck"
-      black_team=self.abbreviate(self.get('right', 'color'))
-      self.create_text((x1, y1 + height + outset * 3 + height / 2), text=black_team,
-                       fill=self.color("fill_text"), anchor=tk.W, font=font)
-
-  def render_left(self):
+  def game_play_view(self):
     radius = 10
     score_radius = 0
     height = 30
@@ -506,94 +372,7 @@ class OverlayView(tk.Canvas):
 
               y_offset += v_spacing
 
-  def render_top_center(self):
-    # Bounding box (except for ellipses)
-    overall_width = 360
-    overall_height = 40
-
-    # Top left coords
-    x1 = self.w / 2 - overall_width / 2
-    y1 = overall_height / 2 + 10
-    x2 = x1 + overall_width
-    y2 = y1 + overall_height
-
-    score_width = 50
-
-    inset = 30
-    radius = 15
-    wing_size = 270
-    outset = 2
-
-    font=("Menlo", 30)
-    logo_font=("Menlo", 30)
-    time_font=("Menlo", 30)
-
-    # Border
-    self.round_rectangle(bbox=(x1 - wing_size - outset, y1 - outset,
-                              x2 + wing_size + outset, y2 + outset),
-                         radius=radius, fill=self.color("border"))
-
-    # Middle Section
-    self.create_rectangle((x1, y1, x2, y2), fill=self.color("fill"),
-                          outline=self.color("fill"))
-
-    # Left Wing
-    self.round_rectangle(bbox=(x1 - wing_size, y1, x1, y2),
-                         radius=radius, fill=self.color("fill"))
-
-    # Right Wing
-    self.round_rectangle(bbox=(x2, y1, x2 + wing_size, y2),
-                         radius=radius, fill=self.color("fill"))
-
-    # White Score
-    self.round_rectangle(bbox=(x1, y1, x1 + score_width, y1 + overall_height),
-                         radius=radius, fill=self.color("%s_fill" % (self.get('left', 'color'),)))
-    # Black Score
-    self.round_rectangle(bbox=(x2 - score_width, y1, x2, y1 + overall_height),
-                         radius=radius, fill=self.color("%s_fill" % (self.get('right', 'color'),)))
-
-    if not self.mask == MaskKind.LUMA:
-      # White Score Text
-      left_score = self.get('left', 'score')
-      l_score="%d" % (left_score,)
-      self.create_text((x1 + score_width / 2, y1 + overall_height / 2),
-                       text=l_score, fill=self.color("%s_text" % (self.get('left', 'color'),)),
-                       font=font)
-
-      # Black Score Text
-      right_score = self.get('right', 'score')
-      r_score="%d" % (right_score,)
-      self.create_text((x2 - score_width / 2, y1 + overall_height / 2),
-                       text=r_score, fill=self.color("%s_text" % (self.get('right', 'color'),)),
-                       font=font)
-
-      # Logo
-      logo_text = "TimeShark"
-      self.create_text((x1 + overall_width / 2, y1 + overall_height / 2),
-                      text=logo_text, fill=self.color("fill_text"),
-                      font=logo_font)
-
-      # Game State Text
-      state_text=""
-      if self.mgr.gameStateFirstHalf():
-          state_text="1st Half"
-      elif self.mgr.gameStateSecondHalf():
-          state_text="2nd Half"
-      elif self.mgr.gameStateHalfTime():
-          state_text="Half Time"
-      elif self.mgr.gameStateGameOver():
-          state_text="Game Over"
-      self.create_text((x1 - wing_size / 2, y1 + overall_height / 2),
-                      text=state_text, fill=self.color("fill_text"), font=font)
-
-      # Game Clock Text
-      clock_time = self.mgr.gameClock()
-      clock_text = "%2d:%02d" % (clock_time // 60, clock_time % 60)
-      self.create_text((x2 + wing_size / 2, y1 + overall_height / 2),
-                      text=clock_text, fill=self.color("fill_text"), font=time_font)
-
-  def render_worlds(self):
-
+  def roster_view(self):
       font=("Menlo", 20)
       score_font=("Menlo", 30, "bold")
       logo_font=("Menlo", 30)
@@ -602,125 +381,69 @@ class OverlayView(tk.Canvas):
       team_font=("Menlo", 30, "bold")
       players_font=("Menlo", 20)
 
-      def game_play_view():
-          if not self.mask == MaskKind.LUMA:
-              self._background = ImageTk.PhotoImage(Image.open("res/worlds-game-bg.png"))
-              self.create_image(0, 0, anchor=tk.NW, image=self._background)
+      if not self.mask == MaskKind.LUMA:
+          #self._background = ImageTk.PhotoImage(Image.open("res/worlds-roster-bg.png"))
+          #self.create_image(0, 0, anchor=tk.NW, image=self._background)
 
-              row1_y = 20
-              row2_y = 75
+          center_x = self.w / 2
+          col_spread = 200
+          left_col = center_x - col_spread
+          right_col = center_x + col_spread
+          col_width = 200
+          flag_width = 75
 
-              left_flag = self.get('left', 'flag')
-              if left_flag is not None:
-                  self._left_flag = ImageTk.PhotoImage(left_flag)
-                  self.create_image(10, row1_y, anchor=tk.NW, image=self._left_flag)
+          self.logo = ImageTk.PhotoImage(Image.open('res/worlds-roster-logo.png'))
+          self.create_image(center_x, 125, anchor=tk.N, image=self.logo)
 
-              right_flag = self.get('right', 'flag')
-              if right_flag is not None:
-                  self._right_flag = ImageTk.PhotoImage(right_flag)
-                  self.create_image(180, row1_y, anchor=tk.NW, image=self._right_flag)
+          left_flag = self.get('left', 'flag')
+          if left_flag is not None:
+              self._left_flag = ImageTk.PhotoImage(left_flag)
+              self.create_image(left_col - col_width / 2, 600, anchor=tk.W, image=self._left_flag)
 
-              clock_time = self.mgr.gameClock()
-              clock_text = "%2d:%02d" % (clock_time // 60, clock_time % 60)
-              self.create_text((125, row1_y),
-                               text=clock_text, fill=self.color("fill_text"), font=time_font,
+          right_flag = self.get('right', 'flag')
+          if right_flag is not None:
+              self._right_flag = ImageTk.PhotoImage(right_flag)
+              self.create_image(right_col - col_width / 2, 600, anchor=tk.W, image=self._right_flag)
+
+          name = self.get('left', 'name')
+          if name is not None:
+              self.create_text((left_col - col_width / 2 + flag_width, 600), text=name,
+                               fill=self.color("team_text"), font=team_font, anchor=tk.W)
+
+          name = self.get('right', 'name')
+          if name is not None:
+              self.create_text((right_col - col_width / 2 + flag_width, 600), text=name,
+                               fill=self.color("team_text"), font=team_font, anchor=tk.W)
+
+          roster = self.get('left', 'roster')
+          if roster is not None:
+              y_offset = 0
+              for pid, player in roster.items():
+                  display_text = "#{} - {}".format(pid, player['name'])
+                  self.create_text((left_col - col_width / 2, 650 + y_offset), text=display_text,
+                                   fill=self.color("team_text"), font=players_font,
+                                   anchor=tk.W)
+                  y_offset += 30
+
+          roster = self.get('right', 'roster')
+          if roster is not None:
+              y_offset = 0
+              for pid, player in roster.items():
+                  display_text = "#{} - {}".format(pid, player['name'])
+                  self.create_text((right_col - col_width / 2, 650 + y_offset), text=display_text,
+                                   fill=self.color("team_text"), font=players_font,
+                                   anchor=tk.W)
+                  y_offset += 30
+
+          if self.tournament is not None:
+              self.create_text((center_x, 475), text=self.tournament['name'],
+                               fill=self.color("team_text"), font=players_font,
                                anchor=tk.N)
 
-              left_score = self.get('left', 'score')
-              l_score="%d" % (left_score,)
-              self.create_text((40, row2_y),
-                               text=l_score, fill=self.color("%s_fill" % (self.get('left', 'color'),)),
-                               font=score_font)
+              self.create_text((center_x, 525), text=self.tournament['location'],
+                               fill=self.color("team_text"), font=players_font,
+                               anchor=tk.N)
 
-              right_score = self.get('right', 'score')
-              r_score="%d" % (right_score,)
-              self.create_text((205, row2_y),
-                               text=r_score, fill=self.color("%s_fill" % (self.get('right', 'color'),)),
-                               font=score_font)
-
-              state_text=""
-              if self.mgr.gameStateFirstHalf():
-                  state_text="1st Half"
-              elif self.mgr.gameStateSecondHalf():
-                  state_text="2nd Half"
-              elif self.mgr.gameStateHalfTime():
-                  state_text="Half Time"
-              elif self.mgr.gameStateGameOver():
-                  state_text="Game Over"
-              self.create_text((125, row2_y),
-                              text=state_text, fill=self.color("fill_text"), font=font)
-
-      def roster_view():
-          if not self.mask == MaskKind.LUMA:
-              #self._background = ImageTk.PhotoImage(Image.open("res/worlds-roster-bg.png"))
-              #self.create_image(0, 0, anchor=tk.NW, image=self._background)
-
-              center_x = self.w / 2
-              col_spread = 200
-              left_col = center_x - col_spread
-              right_col = center_x + col_spread
-              col_width = 200
-              flag_width = 75
-
-              self.logo = ImageTk.PhotoImage(Image.open('res/worlds-roster-logo.png'))
-              self.create_image(center_x, 125, anchor=tk.N, image=self.logo)
-
-              left_flag = self.get('left', 'flag')
-              if left_flag is not None:
-                  self._left_flag = ImageTk.PhotoImage(left_flag)
-                  self.create_image(left_col - col_width / 2, 600, anchor=tk.W, image=self._left_flag)
-
-              right_flag = self.get('right', 'flag')
-              if right_flag is not None:
-                  self._right_flag = ImageTk.PhotoImage(right_flag)
-                  self.create_image(right_col - col_width / 2, 600, anchor=tk.W, image=self._right_flag)
-
-              name = self.get('left', 'name')
-              if name is not None:
-                  self.create_text((left_col - col_width / 2 + flag_width, 600), text=name,
-                                   fill=self.color("team_text"), font=team_font, anchor=tk.W)
-
-              name = self.get('right', 'name')
-              if name is not None:
-                  self.create_text((right_col - col_width / 2 + flag_width, 600), text=name,
-                                   fill=self.color("team_text"), font=team_font, anchor=tk.W)
-
-              roster = self.get('left', 'roster')
-              if roster is not None:
-                  y_offset = 0
-                  for pid, player in roster.items():
-                      display_text = "#{} - {}".format(pid, player['name'])
-                      self.create_text((left_col - col_width / 2, 650 + y_offset), text=display_text,
-                                       fill=self.color("team_text"), font=players_font,
-                                       anchor=tk.W)
-                      y_offset += 30
-
-              roster = self.get('right', 'roster')
-              if roster is not None:
-                  y_offset = 0
-                  for pid, player in roster.items():
-                      display_text = "#{} - {}".format(pid, player['name'])
-                      self.create_text((right_col - col_width / 2, 650 + y_offset), text=display_text,
-                                       fill=self.color("team_text"), font=players_font,
-                                       anchor=tk.W)
-                      y_offset += 30
-
-              if self.tournament is not None:
-                  self.create_text((center_x, 475), text=self.tournament['name'],
-                                   fill=self.color("team_text"), font=players_font,
-                                   anchor=tk.N)
-
-                  self.create_text((center_x, 525), text=self.tournament['location'],
-                                   fill=self.color("team_text"), font=players_font,
-                                   anchor=tk.N)
-
-
-      if (self.mgr.gameStateFirstHalf() or
-          self.mgr.gameStateHalfTime() or
-          self.mgr.gameStateSecondHalf()):
-          game_play_view()
-      else:
-          roster_view()
 
 class Overlay(object):
   def __init__(self, mgr, mask, version):
