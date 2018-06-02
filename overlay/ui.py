@@ -104,8 +104,8 @@ class OverlayView(tk.Canvas):
           self.gid = self.mgr.gid()
           self.white_id = None
           self.black_id = None
-          self.black_name = None
-          self.white_name = None
+          self.black_name = "Black"
+          self.white_name = "White"
           self.black_roster = None
           self.white_roster = None
           self.tournament = None
@@ -466,8 +466,8 @@ class OverlayView(tk.Canvas):
           v_spacing = 40
           penalty_height = 30
 
-          name = None
-          #name = "Voss, Valentine"
+          #name = None
+          name = "Voss, Valentine"
 
           if name:
               penalty_width = width + state_width + time_width
