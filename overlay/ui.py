@@ -165,6 +165,7 @@ class OverlayView(tk.Canvas):
             "white_fill" : "#ffffff",
             "white_text" : "#2e96ff",
             "team_text"  : "#000000",
+            "title_text" : "#ffffff",
         }.get(name, "#ff0000")
 
     def abbreviate(self, s, max_len = 16):
@@ -390,47 +391,88 @@ class OverlayView(tk.Canvas):
         state_font=("Menlo", 40)
         team_font=("Menlo", 30, "bold")
         players_font=("Menlo", 20)
+        title_font=("Menlo", 25, "bold")
 
         if not self.mask == MaskKind.LUMA:
-            #self._background = ImageTk.PhotoImage(Image.open("res/worlds-roster-bg.png"))
-            #self.create_image(0, 0, anchor=tk.NW, image=self._background)
-
+            radius = 5
+            outset = 3
             center_x = self.w / 2
-            col_spread = 200
+            col_spread = 300
             left_col = center_x - col_spread
             right_col = center_x + col_spread
             col_width = 200
-            flag_width = 75
+            flag_width = 150
             roster_y = 750
-            flags_y = 600
             names_y = 550
-            tourney_name_y = 450
-            tourney_loc_y = 500
+            bar_y = 450
+            title_y = bar_y
+            bar_width = 1000
+            bar_height = 100
+            title_width = col_spread
+            title_height = bar_height
+            flags_y = bar_y
+            tourney_name_y = 460
+            tourney_loc_y = 510
 
             self.logo = ImageTk.PhotoImage(Image.open('res/worlds-roster-logo.png'))
             self.create_image(center_x, 80, anchor=tk.N, image=self.logo)
 
+            self.bordered_round_rectangle(bbox=(center_x - bar_width / 2,
+                                                bar_y,
+                                                center_x + bar_width / 2,
+                                                bar_y + bar_height),
+                                          radius=radius, outset=outset,
+                                          fill=self.color('fill'),
+                                          border=self.color("border"))
+
             # Flags
             left_flag = self.get('left', 'flag')
             if left_flag is not None:
+                left_flag = left_flag.resize((flag_width, title_height), Image.ANTIALIAS)
                 self._left_flag = ImageTk.PhotoImage(left_flag)
-                self.create_image(left_col, flags_y, anchor=tk.N, image=self._left_flag)
+                self.create_image(center_x - title_width / 2, title_y, anchor=tk.NE, image=self._left_flag)
+
+                self.bordered_round_rectangle(bbox=(center_x - bar_width / 2,
+                                                    bar_y,
+                                                    center_x - title_width / 2 - flag_width,
+                                                    bar_y + bar_height),
+                                              radius=radius, outset=outset,
+                                              fill=self.get('left', 'color'),
+                                              border=self.get('right', 'color'))
 
             right_flag = self.get('right', 'flag')
             if right_flag is not None:
+                right_flag = right_flag.resize((flag_width, title_height), Image.ANTIALIAS)
                 self._right_flag = ImageTk.PhotoImage(right_flag)
-                self.create_image(right_col, flags_y, anchor=tk.N, image=self._right_flag)
+                self.create_image(center_x + title_width / 2, title_y, anchor=tk.NW, image=self._right_flag)
+
+                self.bordered_round_rectangle(bbox=(center_x + title_width / 2 + flag_width,
+                                                    bar_y,
+                                                    center_x + bar_width / 2,
+                                                    bar_y + bar_height),
+                                              radius=radius, outset=outset,
+                                              fill=self.get('right', 'color'),
+                                              border=self.get('left', 'color'))
+
+            self.bordered_round_rectangle(bbox=(center_x - title_width / 2,
+                                                title_y,
+                                                center_x + title_width / 2,
+                                                title_y + title_height),
+                                          radius=radius, outset=outset,
+                                          fill=self.color('fill'),
+                                          border=self.color("border"))
 
             # Team Names
+            name_width = (bar_width - title_width - flag_width * 2) / 2
             name = self.get('left', 'name')
             if name is not None:
-                self.create_text((left_col - col_width / 2, names_y), text=name,
-                                 fill=self.color("team_text"), font=team_font, anchor=tk.NW)
+                self.create_text((center_x - bar_width / 2 + name_width / 2, bar_y + bar_height / 2), text=name,
+                                 fill=self.color("fill"), font=team_font, anchor=tk.CENTER)
 
             name = self.get('right', 'name')
             if name is not None:
-                self.create_text((right_col - col_width / 2, names_y), text=name,
-                                 fill=self.color("team_text"), font=team_font, anchor=tk.NW)
+                self.create_text((center_x + bar_width / 2 - name_width / 2, bar_y + bar_height / 2), text=name,
+                                 fill=self.color("fill"), font=team_font, anchor=tk.CENTER)
 
             roster = self.get('left', 'roster')
             if roster is not None:
@@ -459,11 +501,11 @@ class OverlayView(tk.Canvas):
             # Tournament info
             if self.tournament is not None:
                 self.create_text((center_x, tourney_name_y), text=self.tournament['name'],
-                                 fill=self.color("team_text"), font=players_font,
+                                 fill=self.color("title_text"), font=title_font,
                                  anchor=tk.N)
 
                 self.create_text((center_x, tourney_loc_y), text=self.tournament['location'],
-                                 fill=self.color("team_text"), font=players_font,
+                                 fill=self.color("title_text"), font=title_font,
                                  anchor=tk.N)
 
 
