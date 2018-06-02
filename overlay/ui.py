@@ -174,7 +174,7 @@ class OverlayView(tk.Canvas):
             return s
 
     def game_play_view(self):
-        radius = 10
+        radius = 5
         score_radius = 0
         height = 30
         width = 250
@@ -185,7 +185,7 @@ class OverlayView(tk.Canvas):
         state_width = 110
         timeout_width = 150
         state_offset = score_offset + time_width
-        outset = 2
+        outset = 3
 
         x1 = 40
         y1 = 40
@@ -339,7 +339,7 @@ class OverlayView(tk.Canvas):
           if len(penalties) > 0:
               penalties.sort(key=lambda p: p.timeRemaining(self.mgr))
 
-              inset = 5
+              inset = 0
               v_spacing = 40
               penalty_height = 30
 
