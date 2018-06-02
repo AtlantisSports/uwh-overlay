@@ -462,13 +462,15 @@ class OverlayView(tk.Canvas):
             name_width = (bar_width - title_width - flag_width * 2) / 2
             name = self.get('left', 'name')
             if name is not None:
+                name_fill = self.color("fill") if left_flag else "#ffffff"
                 self.create_text((center_x - bar_width / 2 + name_width / 2, bar_y + bar_height / 2), text=name,
-                                 fill=self.color("fill"), font=team_font, anchor=tk.CENTER)
+                                 fill=name_fill, font=team_font, anchor=tk.CENTER)
 
             name = self.get('right', 'name')
             if name is not None:
+                name_fill = self.color("fill") if left_flag else "#ffffff"
                 self.create_text((center_x + bar_width / 2 - name_width / 2, bar_y + bar_height / 2), text=name,
-                                 fill=self.color("fill"), font=team_font, anchor=tk.CENTER)
+                                 fill=name_fill, font=team_font, anchor=tk.CENTER)
 
             roster = self.get('left', 'roster')
             if roster is not None:
