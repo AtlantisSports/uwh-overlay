@@ -398,16 +398,17 @@ class OverlayView(tk.Canvas):
             col_spread = 300
             left_col = center_x - col_spread
             right_col = center_x + col_spread
-            col_width = 200
+            col_width = 300
             flag_width = 150
-            roster_y = 750
-            bar_y = 1080 / 2
+            roster_y = 625
+            bar_y = 500
             title_y = bar_y
             bar_width = 1000
             bar_height = 100
             title_width = col_spread
             title_height = bar_height
             flags_y = bar_y
+            player_h = 25
 
             self.logo = ImageTk.PhotoImage(Image.open('res/worlds-roster-logo.png'))
             self.create_image(center_x, 80, anchor=tk.N, image=self.logo)
@@ -473,25 +474,35 @@ class OverlayView(tk.Canvas):
             if roster is not None:
                 y_offset = 0
                 for player in roster:
+                    self.round_rectangle(bbox=(left_col - col_width / 2, roster_y + y_offset,
+                                               left_col + col_width / 2, roster_y + y_offset + player_h),
+                                         radius=radius, fill=self.get('left', 'color'))
+
                     number = player['number']
                     name = player['name']
+
                     display_text = "#{} - {}".format(number, name)
-                    self.create_text((left_col - col_width / 2, roster_y + y_offset), text=display_text,
-                                     fill=self.color("team_text"), font=players_font,
+                    self.create_text((left_col - col_width / 2, roster_y + y_offset + player_h / 2), text=display_text,
+                                     fill=self.color("fill"), font=players_font,
                                      anchor=tk.W)
-                    y_offset += 30
+                    y_offset += 40
 
             roster = self.get('right', 'roster')
             if roster is not None:
                 y_offset = 0
                 for player in roster:
+                    self.round_rectangle(bbox=(right_col - col_width / 2, roster_y + y_offset,
+                                               right_col + col_width / 2, roster_y + y_offset + player_h),
+                                         radius=radius, fill=self.get('right', 'color'))
+
                     number = player['number']
                     name = player['name']
+
                     display_text = "#{} - {}".format(number, name)
-                    self.create_text((right_col - col_width / 2, roster_y + y_offset), text=display_text,
-                                     fill=self.color("team_text"), font=players_font,
+                    self.create_text((right_col - col_width / 2, roster_y + y_offset + player_h / 2), text=display_text,
+                                     fill=self.color("fill"), font=players_font,
                                      anchor=tk.W)
-                    y_offset += 30
+                    y_offset += 40
 
             # Tournament info
             if self.tournament is not None:
