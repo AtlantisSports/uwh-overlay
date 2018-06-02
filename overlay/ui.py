@@ -28,7 +28,8 @@ class OverlayView(tk.Canvas):
     self.mask = mask
     self.version = version
 
-    self.uwhscores = UWHScores('https://uwhscores.com/api/v1/', mock=True)
+    #self.uwhscores = UWHScores('https://uwhscores.com/api/v1/', mock=True)
+    self.uwhscores = UWHScores('http://localhost:5000/api/v1/', mock=False)
     self.tid = None
     self.gid = None
     self.white_id = None
