@@ -416,8 +416,11 @@ class OverlayView(tk.Canvas):
                 self.create_text((x1, y1 + height * 3 + y_offset), text=penalty_text,
                                  fill=text_color, anchor=tk.W, font=font)
 
-                remaining = p.timeRemaining(self.mgr)
-                penalty_text = "%d:%02d" % (remaining // 60, remaining % 60)
+                if p.dismissed():
+                    penalty_text = "X"
+                else:
+                    remaining = p.timeRemaining(self.mgr)
+                    penalty_text = "%d:%02d" % (remaining // 60, remaining % 60)
                 self.create_text((x1 + penalty_width, y1 + height * 3 + y_offset), text=penalty_text,
                                  fill=text_color, anchor=tk.E, font=font)
 
