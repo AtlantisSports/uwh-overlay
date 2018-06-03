@@ -173,12 +173,12 @@ class OverlayView(tk.Canvas):
         return {
             "bg" : "#054a91",
             "border" : "#ffffff",
-            "fill" : "#2e96ff",
+            "fill" : "#313FA1",
             "fill_text" : "#ffffff",
             "black_fill" : "#000000",
             "black_text" : "#2e96ff",
             "white_fill" : "#ffffff",
-            "white_text" : "#2e96ff",
+            "white_text" : "#313FA1",
             "team_text"  : "#000000",
             "title_text" : "#ffffff",
         }.get(name, "#ff0000")
