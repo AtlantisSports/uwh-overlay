@@ -66,6 +66,12 @@ class OverlayView(tk.Canvas):
             self.after(60 * 1000, lambda : refresh_uwhscores(self))
         self.after(1, lambda : refresh_uwhscores(self))
 
+        if self.mask == MaskKind.VMAC:
+            def cycle(self):
+                self.mgr.setGid((self.mgr.gid() + 1) % 100)
+                self.after(5000, lambda : cycle(self))
+            self.after(1, lambda : cycle(self))
+
     def clear(self, fill):
         self.create_rectangle((0, 0, self.w, self.h), fill=fill)
 
