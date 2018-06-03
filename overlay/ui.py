@@ -125,6 +125,7 @@ class OverlayView(tk.Canvas):
             }[feature]
 
     def reset_uwhscores(self):
+        self.game = None
         self.white_id = None
         self.black_id = None
         self.black_name = "Black"
@@ -139,6 +140,7 @@ class OverlayView(tk.Canvas):
         self.tid = self.mgr.tid()
         self.gid = self.mgr.gid()
         def game(response):
+            self.game = response
             self.black_name = response['black']
             self.white_name = response['white']
             self.black_id = response['black_id']
@@ -168,9 +170,7 @@ class OverlayView(tk.Canvas):
             self.gid != self.mgr.gid()):
             self.fetch_uwhscores()
 
-        if (self.mgr.gameStateGameOver() and self.tournament is not None):
-            self.roster_view()
-        else:
+        if not self.roster_view():
             self.game_play_view()
 
     def color(self, name):
@@ -425,6 +425,15 @@ class OverlayView(tk.Canvas):
                     y_offset += v_spacing
 
     def roster_view(self):
+        if not self.mgr.gameStateGameOver():
+            return False
+
+        if self.tournament is None:
+            return False
+
+        if self.game is None:
+            return False
+
         font=("Avenir Next", 20)
         score_font=("Avenir Next", 30, "bold")
         logo_font=("Avenir Next", 30)
@@ -569,6 +578,8 @@ class OverlayView(tk.Canvas):
                 self.create_text((center_x, bar_y + 3 * bar_height / 4), text=self.tournament['location'],
                                  fill=self.color("title_text"), font=title_font,
                                  anchor=tk.CENTER)
+
+        return True
 
 
 class Overlay(object):
