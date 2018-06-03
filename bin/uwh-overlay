@@ -12,30 +12,35 @@ parser.add_argument('--vmac', help='Display on top of a mock VMAC image',
                     action='store_const', const=MaskKind.VMAC, dest='mask')
 parser.add_argument('--version', help='Version of the display',type=str,
                     choices=Overlay.versions())
+parser.add_argument('--demo', help='Populate the GameManager with dummy data',
+                    dest='demo',action='store_true')
 args = parser.parse_args()
 
 mgr = GameManager()
 mgr.setPassive()
-mgr.setBlackScore(10)
-mgr.setWhiteScore(11)
-mgr.setGameClock(2 * 60 + 34)
-mgr.setGameStateHalfTime()
-mgr.setTimeoutStatePenaltyShot()
-#mgr.setGameStateGameOver()
-mgr.setGid(1)
-mgr.setTid(16)
-mgr.setLayout(PoolLayout.white_on_left)
 
-mgr.addPenalty(Penalty(5, TeamColor.white, 5 * 60))
-mgr.addPenalty(Penalty(1, TeamColor.black, 1 * 60))
+if args.demo:
+    mgr.setBlackScore(10)
+    mgr.setWhiteScore(11)
+    mgr.setGameClock(2 * 60 + 34)
+    mgr.setGameStateHalfTime()
+    mgr.setTimeoutStatePenaltyShot()
+    mgr.setGameStateGameOver()
+    mgr.setGid(1)
+    mgr.setTid(16)
+    mgr.setLayout(PoolLayout.white_on_left)
+
+    mgr.addPenalty(Penalty(5, TeamColor.white, 5 * 60))
+    mgr.addPenalty(Penalty(1, TeamColor.black, 1 * 60))
 
 cfg = XBeeConfigParser()
 cfg.read('timeshark.cfg')
 
-if cfg.getboolean('hardware', 'has_xbee'):
-    xbee = XBeeServer(mgr, xbee_port(cfg), xbee_baud(cfg))
-    xbee.listen_thread()
+if not args.demo:
+    if cfg.getboolean('hardware', 'has_xbee'):
+        xbee = XBeeClient(mgr, xbee_port(cfg), xbee_baud(cfg))
+        xbee.listen_thread()
 
-ov = Overlay(mgr, args.mask, args.version)
+ov = Overlay(mgr, args.mask, args.version, args.demo)
 ov.mainloop()
 

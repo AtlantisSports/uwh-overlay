@@ -19,7 +19,7 @@ def sized_frame(master, height, width):
     return F
 
 class OverlayView(tk.Canvas):
-    def __init__(self, parent, bbox, mgr, mask, version):
+    def __init__(self, parent, bbox, mgr, mask, version, demo):
         tk.Canvas.__init__(self, parent)
 
         self.parent = parent
@@ -27,6 +27,7 @@ class OverlayView(tk.Canvas):
         self.mgr = mgr
         self.mask = mask
         self.version = version
+        self.demo = demo
 
         #self.uwhscores = UWHScores('https://uwhscores.com/api/v1/', mock=True)
         self.uwhscores = UWHScores('http://localhost:5000/api/v1/', mock=False)
@@ -70,7 +71,7 @@ class OverlayView(tk.Canvas):
             self.after(60 * 1000, lambda : refresh_uwhscores(self))
         self.after(1, lambda : refresh_uwhscores(self))
 
-        if self.mask == MaskKind.VMAC:
+        if self.demo:
             def cycle(self):
                 self.mgr.setGid(max((self.mgr.gid() + 1) % 100, 1))
                 self.after(5000, lambda : cycle(self))
@@ -606,12 +607,12 @@ class OverlayView(tk.Canvas):
 
 
 class Overlay(object):
-    def __init__(self, mgr, mask, version):
+    def __init__(self, mgr, mask, version, demo):
         self.root = tk.Tk()
         # make it cover the entire screen
         #w, h = root.winfo_screenwidth(), root.winfo_screenheight()
         w, h = 1920, 1080
-        self.ov = OverlayView(self.root, (w, h), mgr, mask, version)
+        self.ov = OverlayView(self.root, (w, h), mgr, mask, version, demo)
         self.root.geometry("%dx%d-0+0" % (w, h))
         #self.root.attributes('-fullscreen', True)
 
