@@ -453,6 +453,12 @@ class OverlayView(tk.Canvas):
             self.logo = ImageTk.PhotoImage(logo)
             self.create_image(center_x, 1080 / 4, anchor=tk.CENTER, image=self.logo)
 
+            # Timeshark
+            timeshark = Image.open('res/timeshark.png')
+            timeshark = timeshark.resize((400, 100), Image.ANTIALIAS)
+            self.timeshark = ImageTk.PhotoImage(timeshark)
+            self.create_image(self.w - 20, self.h - 20, anchor=tk.SE, image=self.timeshark)
+
             self.bordered_round_rectangle(bbox=(center_x - bar_width / 2,
                                                 bar_y,
                                                 center_x + bar_width / 2,
