@@ -72,7 +72,7 @@ class OverlayView(tk.Canvas):
 
         if self.mask == MaskKind.VMAC:
             def cycle(self):
-                self.mgr.setGid((self.mgr.gid() + 1) % 100)
+                self.mgr.setGid(max((self.mgr.gid() + 1) % 100, 1))
                 self.after(500, lambda : cycle(self))
             self.after(1, lambda : cycle(self))
 
