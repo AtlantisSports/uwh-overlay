@@ -329,6 +329,8 @@ class OverlayView(tk.Canvas):
 
         # Game State Text
         state_text=""
+        if self.mgr.gameStatePreGame():
+            state_text="Pre\nGame"
         if self.mgr.gameStateFirstHalf():
             state_text="1st\nHalf"
         elif self.mgr.gameStateSecondHalf():
@@ -428,7 +430,8 @@ class OverlayView(tk.Canvas):
                 y_offset += v_spacing
 
     def roster_view(self):
-        if not self.mgr.gameStateGameOver():
+        if (not self.mgr.gameStateGameOver() and
+            not self.mgr.gameStatePreGame()):
             return False
 
         if (self.game is None and
