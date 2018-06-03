@@ -46,18 +46,22 @@ class OverlayView(tk.Canvas):
         self.refresh = 100
         self.t = 0
         def draw(self):
-            self.delete(tk.ALL)
-            if self.mask == MaskKind.VMAC:
-                # Borrowed from the first few minutes of: https://www.youtube.com/watch?v=hb8NU1LdhnI
-                vmac = Image.open('res/vmac.png')
-                vmac = vmac.resize((self.w, self.h), Image.ANTIALIAS)
-                self.vmac = ImageTk.PhotoImage(vmac)
-                self.create_image(0, 0, anchor=tk.NW, image=self.vmac)
-            else:
-                self.clear(fill=self.color("bg"))
-            self.render()
-            self.update()
-            self.after(self.refresh, lambda : draw(self))
+            try:
+                self.delete(tk.ALL)
+                if self.mask == MaskKind.VMAC:
+                    # Borrowed from the first few minutes of: https://www.youtube.com/watch?v=hb8NU1LdhnI
+                    vmac = Image.open('res/vmac.png')
+                    vmac = vmac.resize((self.w, self.h), Image.ANTIALIAS)
+                    self.vmac = ImageTk.PhotoImage(vmac)
+                    self.create_image(0, 0, anchor=tk.NW, image=self.vmac)
+                else:
+                    self.clear(fill=self.color("bg"))
+                self.render()
+                self.update()
+                self.after(self.refresh, lambda : draw(self))
+            except KeyboardInterrupt:
+                print("Quitting...")
+                self.root.quit()
         self.after(1, lambda : draw(self))
 
         # Update UWHScores data periodically
@@ -582,4 +586,12 @@ class Overlay(object):
         return OverlayView.versions()
 
     def mainloop(self):
-        self.root.mainloop()
+        def quit(event):
+            print("Quitting...")
+            self.root.quit()
+        try:
+            self.root.bind('<Control-c>', quit)
+            self.root.bind('<Escape>', quit)
+            self.root.mainloop()
+        except KeyboardInterrupt:
+            quit(None)
