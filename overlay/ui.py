@@ -382,6 +382,9 @@ class OverlayView(tk.Canvas):
 
             y_offset = 10
             for p in penalties:
+                if p.servedCompletely(self.mgr):
+                    continue
+
                 if p.team() == TeamColor.black:
                     roster = self.black_roster
                 else:
