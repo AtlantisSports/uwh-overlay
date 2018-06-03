@@ -317,10 +317,10 @@ class OverlayView(tk.Canvas):
             text_color="#000000"
         elif self.mgr.timeoutStateWhite():
             timeout_text="White\nTimeout"
-            text_color=self.color('fill')
+            text_color="#000000"
         elif self.mgr.timeoutStateBlack():
             timeout_text="Black\nTimeout"
-            text_color=self.color('fill')
+            text_color="#ffffff"
         elif self.mgr.timeoutStatePenaltyShot():
             timeout_text="Penalty\nShot"
             text_color="#000000"
