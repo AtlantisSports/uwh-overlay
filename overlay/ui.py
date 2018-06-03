@@ -424,10 +424,8 @@ class OverlayView(tk.Canvas):
         if not self.mgr.gameStateGameOver():
             return False
 
-        if self.tournament is None:
-            return False
-
-        if self.game is None:
+        if (self.game is None and
+            self.tournament is None):
             return False
 
         font=("Avenir Next", 20)
@@ -439,10 +437,18 @@ class OverlayView(tk.Canvas):
         players_font=("Avenir Next", 20)
         title_font=("Avenir Next", 25, "bold")
 
+        if self.game is not None:
+            bar_width = 1100
+            title_width = 250
+            col_spread = 400
+        else:
+            bar_width = 1200
+            title_width = 450
+            col_spread = 450
+
         radius = 5
         outset = 3
         center_x = self.w / 2
-        col_spread = 450
         left_col = center_x - col_spread
         right_col = center_x + col_spread
         col_width = 300
@@ -450,9 +456,7 @@ class OverlayView(tk.Canvas):
         roster_y = 425
         bar_y = 300
         title_y = bar_y
-        bar_width = 1200
         bar_height = 100
-        title_width = col_spread
         title_height = bar_height
         flags_y = bar_y
         player_h = 25
@@ -564,8 +568,33 @@ class OverlayView(tk.Canvas):
                                  anchor=tk.W)
                 y_offset += 40
 
-        # Tournament info
-        if self.tournament is not None:
+        # Tournament / Game info
+        if self.game is not None:
+            game_type = self.game['game_type']
+            game_type = {
+                "RR" : "Round Robin",
+                "CO" : "Crossover",
+                "BR" : "Bracket",
+                "E"  : "Exhibition",
+            }.get(game_type, game_type)
+
+            top_text = "{} #{}".format(game_type, self.gid)
+            self.create_text((center_x, bar_y + bar_height / 4), text=top_text,
+                             fill=self.color("title_text"), font=title_font,
+                             anchor=tk.CENTER)
+
+            from datetime import datetime
+            import calendar
+            start = datetime.strptime(self.game['start_time'], "%Y-%m-%dT%H:%M:%S")
+            bottom_text = "Pool {}, {} {}".format(self.game['pool'],
+                                                  calendar.day_abbr[start.weekday()],
+                                                  start.strftime("%H:%M"))
+
+            self.create_text((center_x, bar_y + 3 * bar_height / 4), text=bottom_text,
+                             fill=self.color("title_text"), font=title_font,
+                             anchor=tk.CENTER)
+
+        elif self.tournament is not None:
             self.create_text((center_x, bar_y + bar_height / 4), text=self.tournament['name'],
                              fill=self.color("title_text"), font=title_font,
                              anchor=tk.CENTER)
