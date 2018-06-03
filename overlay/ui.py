@@ -270,13 +270,19 @@ class OverlayView(tk.Canvas):
                                       border_b=self.get('left', 'color'))
 
         # ((       )    (###))    )
+        time_fill = self.color("fill")
+        time_border=self.color("border")
+        if (self.mgr.timeoutStateWhite() or
+            self.mgr.timeoutStateBlack()):
+            time_fill = "#ffff00"
+            time_border = "#000000"
         self.bordered_round_rectangle(bbox=(x1 + width + state_width,
                                             y1,
                                             x1 + width + state_width + time_width,
                                             y1 + height * 2 + outset * 2),
                                       radius=radius, outset=outset,
-                                      fill=self.color("fill"),
-                                      border=self.color("border"))
+                                      fill=time_fill,
+                                      border=time_border)
 
         logo = Image.open('res/logo-nationals2018.png')
         size = 150
@@ -343,10 +349,14 @@ class OverlayView(tk.Canvas):
                         text=state_text, fill=self.color("fill_text"), font=state_font, anchor=tk.W)
 
         # Time Text
+        time_fill=self.color("fill_text")
+        if (self.mgr.timeoutStateWhite() or
+            self.mgr.timeoutStateBlack()):
+            time_fill = "#000000"
         clock_time = self.mgr.gameClock()
         clock_text = "%2d:%02d" % (clock_time // 60, clock_time % 60)
         self.create_text((x1 + width + state_width + time_width / 2, y1 + height + outset),
-                         text=clock_text, fill=self.color("fill_text"),
+                         text=clock_text, fill=time_fill,
                          font=time_font, anchor=tk.CENTER)
 
         # White Score Text
