@@ -442,7 +442,7 @@ class OverlayView(tk.Canvas):
             roster_y = 625
             bar_y = 500
             title_y = bar_y
-            bar_width = 1000
+            bar_width = 1200
             bar_height = 100
             title_width = col_spread
             title_height = bar_height
