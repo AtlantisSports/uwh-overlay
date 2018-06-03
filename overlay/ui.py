@@ -459,9 +459,9 @@ class OverlayView(tk.Canvas):
 
             # Nationals
             logo = Image.open('res/logo-nationals2018.png')
-            logo = logo.resize((450, 450), Image.ANTIALIAS)
+            logo = logo.resize((400, 400), Image.ANTIALIAS)
             self.logo = ImageTk.PhotoImage(logo)
-            self.create_image(center_x, 650, anchor=tk.CENTER, image=self.logo)
+            self.create_image(center_x, 625, anchor=tk.CENTER, image=self.logo)
 
             # Timeshark
             timeshark = Image.open('res/timeshark.png')
