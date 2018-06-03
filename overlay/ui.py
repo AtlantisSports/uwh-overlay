@@ -434,13 +434,13 @@ class OverlayView(tk.Canvas):
             radius = 5
             outset = 3
             center_x = self.w / 2
-            col_spread = 300
+            col_spread = 450
             left_col = center_x - col_spread
             right_col = center_x + col_spread
             col_width = 300
             flag_width = 150
-            roster_y = 625
-            bar_y = 500
+            roster_y = 425
+            bar_y = 300
             title_y = bar_y
             bar_width = 1200
             bar_height = 100
@@ -455,9 +455,9 @@ class OverlayView(tk.Canvas):
 
             # Nationals
             logo = Image.open('res/logo-nationals2018.png')
-            logo = logo.resize((400, 400), Image.ANTIALIAS)
+            logo = logo.resize((450, 450), Image.ANTIALIAS)
             self.logo = ImageTk.PhotoImage(logo)
-            self.create_image(center_x, 1080 / 4, anchor=tk.CENTER, image=self.logo)
+            self.create_image(center_x, 650, anchor=tk.CENTER, image=self.logo)
 
             # Timeshark
             timeshark = Image.open('res/timeshark.png')
