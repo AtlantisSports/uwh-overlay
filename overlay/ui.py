@@ -451,8 +451,8 @@ class OverlayView(tk.Canvas):
         center_x = self.w / 2
         left_col = center_x - col_spread
         right_col = center_x + col_spread
-        col_width = 300
         flag_width = 150
+        col_width = (bar_width - title_width - flag_width * 2) / 2
         roster_y = 425
         bar_y = 300
         title_y = bar_y
@@ -523,30 +523,29 @@ class OverlayView(tk.Canvas):
                                       border=self.color("border"))
 
         # Team Names
-        name_width = (bar_width - title_width - flag_width * 2) / 2
         name = self.get('left', 'name')
         if name is not None:
-            self.create_text((center_x - bar_width / 2 + name_width / 2, bar_y + bar_height / 2), text=name,
+            self.create_text((center_x - bar_width / 2 + col_width / 2, bar_y + bar_height / 2), text=name,
                              fill=self.get('right', 'color'), font=team_font, anchor=tk.CENTER)
 
         name = self.get('right', 'name')
         if name is not None:
-            self.create_text((center_x + bar_width / 2 - name_width / 2, bar_y + bar_height / 2), text=name,
+            self.create_text((center_x + bar_width / 2 - col_width / 2, bar_y + bar_height / 2), text=name,
                              fill=self.get('left', 'color'), font=team_font, anchor=tk.CENTER)
 
         roster = self.get('left', 'roster')
         if roster is not None:
             y_offset = 0
             for player in roster:
-                self.round_rectangle(bbox=(left_col - col_width / 2, roster_y + y_offset,
-                                           left_col + col_width / 2, roster_y + y_offset + player_h),
+                self.round_rectangle(bbox=(left_col - col_width / 2 - radius * 2, roster_y + y_offset,
+                                           left_col + col_width / 2 - radius * 2, roster_y + y_offset + player_h),
                                      radius=radius, fill=self.get('left', 'color'))
 
                 number = player['number']
                 name = player['name']
 
                 display_text = "#{} - {}".format(number, name)
-                self.create_text((left_col - col_width / 2, roster_y + y_offset + player_h / 2), text=display_text,
+                self.create_text((left_col - col_width / 2 + radius * 2, roster_y + y_offset + player_h / 2), text=display_text,
                                  fill=self.get('right', 'color'), font=players_font,
                                  anchor=tk.W)
                 y_offset += 40
@@ -555,15 +554,15 @@ class OverlayView(tk.Canvas):
         if roster is not None:
             y_offset = 0
             for player in roster:
-                self.round_rectangle(bbox=(right_col - col_width / 2, roster_y + y_offset,
-                                           right_col + col_width / 2, roster_y + y_offset + player_h),
+                self.round_rectangle(bbox=(right_col - col_width / 2 + radius * 2, roster_y + y_offset,
+                                           right_col + col_width / 2 + radius * 2, roster_y + y_offset + player_h),
                                      radius=radius, fill=self.get('right', 'color'))
 
                 number = player['number']
                 name = player['name']
 
                 display_text = "#{} - {}".format(number, name)
-                self.create_text((right_col - col_width / 2, roster_y + y_offset + player_h / 2), text=display_text,
+                self.create_text((right_col - col_width / 2 + radius * 2, roster_y + y_offset + player_h / 2), text=display_text,
                                  fill=self.get('left', 'color'), font=players_font,
                                  anchor=tk.W)
                 y_offset += 40
