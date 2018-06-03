@@ -6,8 +6,6 @@ from overlay.ui import Overlay, MaskKind
 import argparse
 
 parser = argparse.ArgumentParser(description='Timeshark Video Overlay')
-parser.add_argument('--luma', help='Display the overlay\'s greyscale mask',
-                    action='store_const', const=MaskKind.LUMA, dest='mask')
 parser.add_argument('--chroma', help='Perform masking via chroma keying',
                     action='store_const', const=MaskKind.CHROMA, dest='mask')
 parser.add_argument('--vmac', help='Display on top of a mock VMAC image',
