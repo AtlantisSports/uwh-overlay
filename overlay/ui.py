@@ -285,7 +285,7 @@ class OverlayView(tk.Canvas):
                                       border=time_border)
 
         logo = Image.open('res/logo-nationals2018.png')
-        size = 150
+        size = 100
         logo = logo.resize((size, size), Image.ANTIALIAS)
         self.logo = ImageTk.PhotoImage(logo)
         self.create_image(self.w - x1, y1, anchor=tk.NE, image=self.logo)
