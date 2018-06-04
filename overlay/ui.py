@@ -216,7 +216,6 @@ class OverlayView(tk.Canvas):
 
         font=("Avenir Next LT Pro", 10)
         score_font=("Avenir Next LT Pro", 20)
-        logo_font=("Avenir Next LT Pro", 30)
         time_font=("Avenir Next LT Pro", 40)
         state_font=("Avenir Next LT Pro", 20)
 
@@ -449,13 +448,9 @@ class OverlayView(tk.Canvas):
             return False
 
         font=("Avenir Next LT Pro", 20)
-        score_font=("Avenir Next LT Pro", 30, "bold")
-        logo_font=("Avenir Next LT Pro", 30)
-        time_font=("Avenir Next LT Pro", 30)
-        state_font=("Avenir Next LT Pro", 40)
-        team_font=("Avenir Next LT Pro", 30, "bold")
-        players_font=("Avenir Next LT Pro", 20)
-        title_font=("Avenir Next LT Pro", 25, "bold")
+        team_font=("Avenir Next LT Pro", 20, "bold")
+        players_font=("Avenir Next LT Pro", 15)
+        title_font=("Avenir Next LT Pro", 20, "bold")
 
         if self.game is not None:
             bar_width = 1100
