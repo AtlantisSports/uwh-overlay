@@ -491,11 +491,11 @@ class OverlayView(tk.Canvas):
         self.logo = ImageTk.PhotoImage(logo)
         self.create_image(center_x, 625, anchor=tk.CENTER, image=self.logo)
 
-        # Timeshark
-        timeshark = Image.open('res/timeshark.png')
-        timeshark = timeshark.resize((400, 100), Image.ANTIALIAS)
-        self.timeshark = ImageTk.PhotoImage(timeshark)
-        self.create_image(self.w / 2, self.h - 150, anchor=tk.CENTER, image=self.timeshark)
+        # Navisjon
+        navisjon = Image.open('res/navisjon.png')
+        navisjon = navisjon.resize((400, 100), Image.ANTIALIAS)
+        self.navisjon = ImageTk.PhotoImage(navisjon)
+        self.create_image(self.w / 2, self.h - 150, anchor=tk.CENTER, image=self.navisjon)
 
         self.bordered_round_rectangle(bbox=(center_x - bar_width / 2,
                                             bar_y,
