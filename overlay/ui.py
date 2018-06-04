@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import os
 from multiprocessing import Process, Queue
 from datetime import datetime
 import tkinter as tk
@@ -620,15 +621,27 @@ class OverlayView(tk.Canvas):
         return True
 
 
+def is_rpi():
+    return os.uname().machine == 'armv7l'
+
+def maybe_hide_cursor(root):
+    # Don't show a cursor on Pi.
+    if is_rpi():
+        root.configure(cursor='none')
+
 class Overlay(object):
     def __init__(self, mgr, mask, version, demo):
         self.root = tk.Tk()
         # make it cover the entire screen
-        #w, h = root.winfo_screenwidth(), root.winfo_screenheight()
+        #w, h = self.root.winfo_screenwidth(), self.root.winfo_screenheight()
         w, h = 1920, 1080
         self.ov = OverlayView(self.root, (w, h), mgr, mask, version, demo)
         self.root.geometry("%dx%d-0+0" % (w, h))
-        #self.root.attributes('-fullscreen', True)
+        self.root.attributes('-fullscreen', True)
+
+        self.root.overrideredirect(1)
+
+        maybe_hide_cursor(self.root)
 
     @staticmethod
     def versions():
