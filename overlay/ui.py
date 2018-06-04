@@ -212,7 +212,7 @@ class OverlayView(tk.Canvas):
         state_offset = score_offset + time_width
         outset = 3
 
-        x1 = 40
+        x1 = 40 + outset
         y1 = 40
 
         font=("Avenir Next LT Pro", 10)
