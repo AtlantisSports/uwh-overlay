@@ -355,7 +355,7 @@ class OverlayView(tk.Canvas):
             time_fill = "#000000"
         clock_time = self.mgr.gameClock()
         clock_text = "%2d:%02d" % (clock_time // 60, clock_time % 60)
-        self.create_text((x1 + width + state_width + time_width / 2, y1 + height + outset),
+        self.create_text((x1 + width + state_width + time_width / 2, y1 + height + outset + outset),
                          text=clock_text, fill=time_fill,
                          font=time_font, anchor=tk.CENTER)
 
