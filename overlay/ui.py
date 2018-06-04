@@ -214,11 +214,11 @@ class OverlayView(tk.Canvas):
         x1 = 40
         y1 = 40
 
-        font=("Avenir Next LT Pro", 20)
-        score_font=("Avenir Next LT Pro", 30)
+        font=("Avenir Next LT Pro", 10)
+        score_font=("Avenir Next LT Pro", 20)
         logo_font=("Avenir Next LT Pro", 30)
         time_font=("Avenir Next LT Pro", 40)
-        state_font=("Avenir Next LT Pro", 25)
+        state_font=("Avenir Next LT Pro", 20)
 
         # Bottom Rectangle
         if (self.mgr.timeoutStateRef() or
@@ -330,7 +330,7 @@ class OverlayView(tk.Canvas):
         elif self.mgr.timeoutStatePenaltyShot():
             timeout_text="Penalty\nShot"
             text_color="#000000"
-        self.create_text((x1 + width + state_width + time_width + 30, y1 + height + outset),
+        self.create_text((x1 + width + state_width + time_width + 30, y1 + height + outset * 2),
                         text=timeout_text, fill=text_color, font=state_font, anchor=tk.W)
 
         # Game State Text
@@ -355,14 +355,14 @@ class OverlayView(tk.Canvas):
             time_fill = "#000000"
         clock_time = self.mgr.gameClock()
         clock_text = "%2d:%02d" % (clock_time // 60, clock_time % 60)
-        self.create_text((x1 + width + state_width + time_width / 2, y1 + height + outset + outset),
+        self.create_text((x1 + width + state_width + time_width / 2, y1 + height + outset * 3),
                          text=clock_text, fill=time_fill,
                          font=time_font, anchor=tk.CENTER)
 
         # White Score Text
         left_score = self.get('left', 'score')
         l_score="%d" % (left_score,)
-        self.create_text((x1 + score_offset + score_width / 2, y1 + height / 2),
+        self.create_text((x1 + score_offset + score_width / 2, y1 + height / 2 + outset),
                          text=l_score, fill=self.get('right', 'color'),
                          font=score_font)
 
