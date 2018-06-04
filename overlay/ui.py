@@ -199,7 +199,7 @@ class OverlayView(tk.Canvas):
             return s
 
     def game_play_view(self):
-        radius = 5
+        radius = 10
         score_radius = 0
         height = 30
         width = 250
@@ -462,7 +462,7 @@ class OverlayView(tk.Canvas):
             title_width = 450
             col_spread = 450
 
-        radius = 5
+        radius = 10
         outset = 3
         center_x = self.w / 2
         left_col = center_x - col_spread
