@@ -30,8 +30,9 @@ class OverlayView(tk.Canvas):
         self.version = version
         self.demo = demo
 
+        self.uwhscores = UWHScores('https://uwhscores.com/api/v1/', mock=False)
         #self.uwhscores = UWHScores('https://uwhscores.com/api/v1/', mock=True)
-        self.uwhscores = UWHScores('http://localhost:5000/api/v1/', mock=False)
+        #self.uwhscores = UWHScores('http://192.168.50.52:5000/api/v1/', mock=False)
         self.tid = None
         self.gid = None
         self.reset_uwhscores()
