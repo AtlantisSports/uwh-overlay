@@ -562,6 +562,7 @@ class OverlayView(tk.Canvas):
                 number = player['number']
                 name = player['name']
 
+                name = self.abbreviate(name, 20)
                 display_text = "#{} - {}".format(number, name)
                 self.create_text((left_col - col_width / 2, roster_y + y_offset + player_h / 2), text=display_text,
                                  fill=self.get('right', 'color'), font=players_font,
@@ -580,6 +581,7 @@ class OverlayView(tk.Canvas):
                 number = player['number']
                 name = player['name']
 
+                name = self.abbreviate(name, 20)
                 display_text = "#{} - {}".format(number, name)
                 self.create_text((right_col - col_width / 2 + radius * 2, roster_y + y_offset + player_h / 2), text=display_text,
                                  fill=self.get('left', 'color'), font=players_font,
