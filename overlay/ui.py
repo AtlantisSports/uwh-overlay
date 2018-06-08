@@ -553,16 +553,17 @@ class OverlayView(tk.Canvas):
         roster = self.get('left', 'roster')
         if roster is not None:
             y_offset = 0
+            roster.sort(key=lambda p: p['number'])
             for player in roster:
-                self.round_rectangle(bbox=(left_col - col_width / 2 - radius * 2, roster_y + y_offset,
-                                           left_col + col_width / 2 - radius * 2, roster_y + y_offset + player_h),
+                self.round_rectangle(bbox=(left_col - col_width / 2 - radius, roster_y + y_offset,
+                                           left_col + col_width / 2 - radius, roster_y + y_offset + player_h),
                                      radius=radius, fill=self.get('left', 'color'))
 
                 number = player['number']
                 name = player['name']
 
                 display_text = "#{} - {}".format(number, name)
-                self.create_text((left_col - col_width / 2 + radius * 2, roster_y + y_offset + player_h / 2), text=display_text,
+                self.create_text((left_col - col_width / 2, roster_y + y_offset + player_h / 2), text=display_text,
                                  fill=self.get('right', 'color'), font=players_font,
                                  anchor=tk.W)
                 y_offset += 40
@@ -570,9 +571,10 @@ class OverlayView(tk.Canvas):
         roster = self.get('right', 'roster')
         if roster is not None:
             y_offset = 0
+            roster.sort(key=lambda p: p['number'])
             for player in roster:
-                self.round_rectangle(bbox=(right_col - col_width / 2 + radius * 2, roster_y + y_offset,
-                                           right_col + col_width / 2 + radius * 2, roster_y + y_offset + player_h),
+                self.round_rectangle(bbox=(right_col - col_width / 2 + radius, roster_y + y_offset,
+                                           right_col + col_width / 2 + radius, roster_y + y_offset + player_h),
                                      radius=radius, fill=self.get('right', 'color'))
 
                 number = player['number']
