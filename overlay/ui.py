@@ -155,9 +155,9 @@ class OverlayView(tk.Canvas):
             self.uwhscores.get_roster(self.tid, self.black_id, black_roster)
             self.uwhscores.get_roster(self.tid, self.white_id, white_roster)
             def white_flag(flag):
-                self.white_flag = flag
+                self.white_flag = Image.open(flag)
             def black_flag(flag):
-                self.black_flag = flag
+                self.black_flag = Image.open(flag)
             self.uwhscores.get_team_flag(self.tid, self.black_id, black_flag)
             self.uwhscores.get_team_flag(self.tid, self.white_id, white_flag)
 
