@@ -642,9 +642,10 @@ class Overlay(object):
         w, h = 1920, 1080
         self.ov = OverlayView(self.root, (w, h), mgr, mask, version, demo)
         self.root.geometry("%dx%d-0+0" % (w, h))
-        self.root.attributes('-fullscreen', True)
 
-        self.root.overrideredirect(1)
+        if is_rpi():
+            self.root.attributes('-fullscreen', True)
+            self.root.overrideredirect(1)
 
         maybe_hide_cursor(self.root)
 
