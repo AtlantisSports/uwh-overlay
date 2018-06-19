@@ -225,7 +225,11 @@ class OverlayView(tk.Canvas):
         if (self.mgr.timeoutState() == TimeoutState.ref or
             self.mgr.timeoutState() == TimeoutState.white or
             self.mgr.timeoutState() == TimeoutState.black or
-            self.mgr.timeoutState() == TimeoutState.penalty_shot):
+            self.mgr.timeoutState() == TimeoutState.penalty_shot or
+            self.mgr.gameState() == GameState.ot_first or
+            self.mgr.gameState() == GameState.ot_half or
+            self.mgr.gameState() == GameState.ot_second or
+            self.mgr.gameState() == GameState.sudden_death):
             if self.mgr.timeoutState() == TimeoutState.ref:
                 fill_color = "#ffff00"
                 border_color = "#000000"
@@ -235,7 +239,11 @@ class OverlayView(tk.Canvas):
             elif self.mgr.timeoutState() == TimeoutState.black:
                 fill_color = "#000000"
                 border_color = "#ffffff"
-            elif self.mgr.timeoutState() == TimeoutState.penalty_shot:
+            elif (self.mgr.timeoutState() == TimeoutState.penalty_shot or
+                  self.mgr.gameState() == GameState.ot_first or
+                  self.mgr.gameState() == GameState.ot_half or
+                  self.mgr.gameState() == GameState.ot_second or
+                  self.mgr.gameState() == GameState.sudden_death):
                 fill_color = "#ff0000"
                 border_color = "#000000"
 
@@ -331,6 +339,14 @@ class OverlayView(tk.Canvas):
         elif self.mgr.timeoutState() == TimeoutState.penalty_shot:
             timeout_text="Penalty\nShot"
             text_color="#000000"
+        elif (self.mgr.gameState() == GameState.ot_first or
+              self.mgr.gameState() == GameState.ot_half or
+              self.mgr.gameState() == GameState.ot_second):
+            timeout_text="Overtime"
+            text_color="#000000"
+        elif self.mgr.gameState() == GameState.sudden_death:
+            timeout_text="Sudden\nDeath"
+            text_color="#000000"
         self.create_text((x1 + width + state_width + time_width + 30, y1 + height + outset * 2),
                         text=timeout_text, fill=text_color, font=state_font, anchor=tk.W)
 
@@ -338,11 +354,14 @@ class OverlayView(tk.Canvas):
         state_text=""
         if self.mgr.gameState() == GameState.pre_game:
             state_text="Pre\nGame"
-        if self.mgr.gameState() == GameState.first_half:
+        if (self.mgr.gameState() == GameState.first_half or
+            self.mgr.gameState() == GameState.ot_first):
             state_text="1st\nHalf"
-        elif self.mgr.gameState() == GameState.secon_half:
+        elif (self.mgr.gameState() == GameState.second_half or
+            self.mgr.gameState() == GameState.ot_second):
             state_text="2nd\nHalf"
-        elif self.mgr.gameState() == GameState.half_time:
+        elif (self.mgr.gameState() == GameState.half_time or
+              self.mgr.gameState() == GameState.ot_half):
             state_text="Half\nTime"
         elif self.mgr.gameState() == GameState.game_over:
             state_text="Game\nOver"
