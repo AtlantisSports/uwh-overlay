@@ -4,7 +4,7 @@ import os
 from multiprocessing import Process, Queue
 from datetime import datetime
 import tkinter as tk
-from uwh.gamemanager import PoolLayout, TeamColor
+from uwh.gamemanager import PoolLayout, TeamColor, GameState, TimeoutState
 from uwh.uwhscores_comms import UWHScores
 from PIL import Image, ImageTk
 
@@ -222,20 +222,20 @@ class OverlayView(tk.Canvas):
         state_font=("Avenir Next LT Pro", 20)
 
         # Bottom Rectangle
-        if (self.mgr.timeoutStateRef() or
-            self.mgr.timeoutStateWhite() or
-            self.mgr.timeoutStateBlack() or
-            self.mgr.timeoutStatePenaltyShot()):
-            if self.mgr.timeoutStateRef():
+        if (self.mgr.timeoutState() == TimeoutState.ref or
+            self.mgr.timeoutState() == TimeoutState.white or
+            self.mgr.timeoutState() == TimeoutState.black or
+            self.mgr.timeoutState() == TimeoutState.penalty_shot):
+            if self.mgr.timeoutState() == TimeoutState.ref:
                 fill_color = "#ffff00"
                 border_color = "#000000"
-            elif self.mgr.timeoutStateWhite():
+            elif self.mgr.timeoutState() == TimeoutState.white:
                 fill_color = "#ffffff"
                 border_color = "#000000"
-            elif self.mgr.timeoutStateBlack():
+            elif self.mgr.timeoutState() == TimeoutState.black:
                 fill_color = "#000000"
                 border_color = "#ffffff"
-            elif self.mgr.timeoutStatePenaltyShot():
+            elif self.mgr.timeoutState() == TimeoutState.penalty_shot:
                 fill_color = "#ff0000"
                 border_color = "#000000"
 
@@ -273,8 +273,8 @@ class OverlayView(tk.Canvas):
         # ((       )    (###))    )
         time_fill = self.color("fill")
         time_border=self.color("border")
-        if (self.mgr.timeoutStateWhite() or
-            self.mgr.timeoutStateBlack()):
+        if (self.mgr.timeoutState() == TimeoutState.white or
+            self.mgr.timeoutState() == TimeoutState.black):
             time_fill = "#ffff00"
             time_border = "#000000"
         self.bordered_round_rectangle(bbox=(x1 + width + state_width,
@@ -319,16 +319,16 @@ class OverlayView(tk.Canvas):
         # Timeout
         timeout_text=""
         text_color = self.color('fill_text')
-        if self.mgr.timeoutStateRef():
+        if self.mgr.timeoutState() == TimeoutState.ref:
             timeout_text="Ref\nTimeout"
             text_color="#000000"
-        elif self.mgr.timeoutStateWhite():
+        elif self.mgr.timeoutState() == TimeoutState.white:
             timeout_text="White\nTimeout"
             text_color="#000000"
-        elif self.mgr.timeoutStateBlack():
+        elif self.mgr.timeoutState() == TimeoutState.black:
             timeout_text="Black\nTimeout"
             text_color="#ffffff"
-        elif self.mgr.timeoutStatePenaltyShot():
+        elif self.mgr.timeoutState() == TimeoutState.penalty_shot:
             timeout_text="Penalty\nShot"
             text_color="#000000"
         self.create_text((x1 + width + state_width + time_width + 30, y1 + height + outset * 2),
@@ -336,23 +336,23 @@ class OverlayView(tk.Canvas):
 
         # Game State Text
         state_text=""
-        if self.mgr.gameStatePreGame():
+        if self.mgr.gameState() == GameState.pre_game:
             state_text="Pre\nGame"
-        if self.mgr.gameStateFirstHalf():
+        if self.mgr.gameState() == GameState.first_half:
             state_text="1st\nHalf"
-        elif self.mgr.gameStateSecondHalf():
+        elif self.mgr.gameState() == GameState.secon_half:
             state_text="2nd\nHalf"
-        elif self.mgr.gameStateHalfTime():
+        elif self.mgr.gameState() == GameState.half_time:
             state_text="Half\nTime"
-        elif self.mgr.gameStateGameOver():
+        elif self.mgr.gameState() == GameState.game_over:
             state_text="Game\nOver"
         self.create_text((x1 + width + outset + 20, y1 + height + outset),
                         text=state_text, fill=self.color("fill_text"), font=state_font, anchor=tk.W)
 
         # Time Text
         time_fill=self.color("fill_text")
-        if (self.mgr.timeoutStateWhite() or
-            self.mgr.timeoutStateBlack()):
+        if (self.mgr.timeoutState() == TimeoutState.white or
+            self.mgr.timeoutState() == TimeoutState.black):
             time_fill = "#000000"
         clock_time = self.mgr.gameClock()
         clock_text = "%2d:%02d" % (clock_time // 60, clock_time % 60)
@@ -441,8 +441,8 @@ class OverlayView(tk.Canvas):
                 y_offset += v_spacing
 
     def roster_view(self):
-        if (not self.mgr.gameStateGameOver() and
-            not self.mgr.gameStatePreGame()):
+        if (not self.mgr.gameState() == GameState.game_over and
+            not self.mgr.gameState() == GameState.pre_game):
             return False
 
         if (self.game is None and
