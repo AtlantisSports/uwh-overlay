@@ -110,6 +110,14 @@ class OverlayView(tk.Canvas):
         self.round_rectangle(bbox, radius=radius, fill=fill,
                              fill_t=fill_t, fill_b=fill_b)
 
+    def bordered_circle(self, bbox, outset, fill, border):
+        self.create_oval(bbox[0]-outset, bbox[1]-outset,
+                         bbox[2]+outset, bbox[3]+outset,
+                         fill=border)
+        self.create_oval(bbox[0], bbox[1],
+                         bbox[2], bbox[3],
+                         fill=fill)
+
     @staticmethod
     def versions():
         return ["center", "split", "worlds", "left"]
@@ -544,28 +552,12 @@ class OverlayView(tk.Canvas):
         flag_width = 150
         col_width = (bar_width - title_width - flag_width * 2) / 2
         roster_y = 425
-        bar_y = 300
+        bar_y = 300 if self.mgr.gameState() == GameState.pre_game else 750
         title_y = bar_y
         bar_height = 100
         title_height = bar_height
         flags_y = bar_y
         player_h = 25
-
-        # Worlds
-        #self.logo = ImageTk.PhotoImage(Image.open('res/worlds-roster-logo.png'))
-        #self.create_image(center_x, 80, anchor=tk.N, image=self.logo)
-
-        # Nationals
-        logo = Image.open('res/logo-nationals2018.png')
-        logo = logo.resize((400, 400), Image.ANTIALIAS)
-        self.logo = ImageTk.PhotoImage(logo)
-        self.create_image(center_x, 625, anchor=tk.CENTER, image=self.logo)
-
-        # Navisjon
-        navisjon = Image.open('res/navisjon.png')
-        navisjon = navisjon.resize((400, 100), Image.ANTIALIAS)
-        self.navisjon = ImageTk.PhotoImage(navisjon)
-        self.create_image(self.w / 2, self.h - 150, anchor=tk.CENTER, image=self.navisjon)
 
         self.bordered_round_rectangle(bbox=(center_x - bar_width / 2,
                                             bar_y,
@@ -623,44 +615,6 @@ class OverlayView(tk.Canvas):
             self.create_text((center_x + bar_width / 2 - col_width / 2, bar_y + bar_height / 2), text=name,
                              fill=self.get('left', 'color'), font=team_font, anchor=tk.CENTER)
 
-        roster = self.get('left', 'roster')
-        if roster is not None:
-            y_offset = 0
-            roster.sort(key=lambda p: p['number'])
-            for player in roster:
-                self.round_rectangle(bbox=(left_col - col_width / 2 - radius, roster_y + y_offset,
-                                           left_col + col_width / 2 - radius, roster_y + y_offset + player_h),
-                                     radius=radius, fill=self.get('left', 'color'))
-
-                number = player['number']
-                name = player['name']
-
-                name = self.abbreviate(name, 20)
-                display_text = "#{} - {}".format(number, name)
-                self.create_text((left_col - col_width / 2, roster_y + y_offset + player_h / 2), text=display_text,
-                                 fill=self.get('right', 'color'), font=players_font,
-                                 anchor=tk.W)
-                y_offset += 40
-
-        roster = self.get('right', 'roster')
-        if roster is not None:
-            y_offset = 0
-            roster.sort(key=lambda p: p['number'])
-            for player in roster:
-                self.round_rectangle(bbox=(right_col - col_width / 2 + radius, roster_y + y_offset,
-                                           right_col + col_width / 2 + radius, roster_y + y_offset + player_h),
-                                     radius=radius, fill=self.get('right', 'color'))
-
-                number = player['number']
-                name = player['name']
-
-                name = self.abbreviate(name, 20)
-                display_text = "#{} - {}".format(number, name)
-                self.create_text((right_col - col_width / 2 + radius * 2, roster_y + y_offset + player_h / 2), text=display_text,
-                                 fill=self.get('left', 'color'), font=players_font,
-                                 anchor=tk.W)
-                y_offset += 40
-
         # Tournament / Game info
         if self.game is not None:
             game_type = self.game['game_type']
@@ -695,6 +649,88 @@ class OverlayView(tk.Canvas):
             self.create_text((center_x, bar_y + 3 * bar_height / 4), text=self.tournament['location'],
                              fill=self.color("title_text"), font=title_font,
                              anchor=tk.CENTER)
+
+        # Roster
+        if self.mgr.gameState() == GameState.pre_game:
+            roster = self.get('left', 'roster')
+            if roster is not None:
+                y_offset = 0
+                roster.sort(key=lambda p: p['number'])
+                for player in roster:
+                    self.round_rectangle(bbox=(left_col - col_width / 2 - radius, roster_y + y_offset,
+                                               left_col + col_width / 2 - radius, roster_y + y_offset + player_h),
+                                         radius=radius, fill=self.get('left', 'color'))
+
+                    number = player['number']
+                    name = player['name']
+
+                    name = self.abbreviate(name, 20)
+                    display_text = "#{} - {}".format(number, name)
+                    self.create_text((left_col - col_width / 2, roster_y + y_offset + player_h / 2), text=display_text,
+                                     fill=self.get('right', 'color'), font=players_font,
+                                     anchor=tk.W)
+                    y_offset += 40
+
+            roster = self.get('right', 'roster')
+            if roster is not None:
+                y_offset = 0
+                roster.sort(key=lambda p: p['number'])
+                for player in roster:
+                    self.round_rectangle(bbox=(right_col - col_width / 2 + radius, roster_y + y_offset,
+                                               right_col + col_width / 2 + radius, roster_y + y_offset + player_h),
+                                         radius=radius, fill=self.get('right', 'color'))
+
+                    number = player['number']
+                    name = player['name']
+
+                    name = self.abbreviate(name, 20)
+                    display_text = "#{} - {}".format(number, name)
+                    self.create_text((right_col - col_width / 2 + radius * 2, roster_y + y_offset + player_h / 2), text=display_text,
+                                     fill=self.get('left', 'color'), font=players_font,
+                                     anchor=tk.W)
+                    y_offset += 40
+
+            # Worlds
+            logo = Image.open('res/worlds-cmas.png')
+            logo = logo.resize((400,300), Image.ANTIALIAS)
+            self.logo = ImageTk.PhotoImage(logo)
+            self.create_image(center_x, 650, anchor=tk.CENTER, image=self.logo)
+
+            # Nationals
+            #logo = Image.open('res/logo-nationals2018.png')
+            #logo = logo.resize((400, 400), Image.ANTIALIAS)
+            #self.logo = ImageTk.PhotoImage(logo)
+            #self.create_image(center_x, 625, anchor=tk.CENTER, image=self.logo)
+        else:
+            score_y = 500
+            score_radius = 300
+            score_font=("Avenir Next LT Pro", 180, "bold")
+            self.bordered_circle(bbox=(center_x - col_spread - score_radius / 2, score_y - score_radius / 2,
+                                       center_x - col_spread + score_radius / 2, score_y + score_radius / 2),
+                                 fill=self.get('left', 'color'),
+                                 border=self.get('right', 'color'),
+                                 outset=outset)
+            self.bordered_circle(bbox=(center_x + col_spread - score_radius / 2, score_y - score_radius / 2,
+                                       center_x + col_spread + score_radius / 2, score_y + score_radius / 2),
+                                 fill=self.get('right', 'color'),
+                                 border=self.get('left', 'color'),
+                                 outset=outset)
+            self.create_text((center_x - col_spread, score_y), text=self.get('left', 'score'),
+                             fill=self.get('right', 'color'), font=score_font, anchor=tk.CENTER)
+            self.create_text((center_x + col_spread, score_y), text=self.get('right', 'score'),
+                             fill=self.get('left', 'color'), font=score_font, anchor=tk.CENTER)
+
+            # Worlds
+            logo = Image.open('res/worlds-cmas.png')
+            logo = logo.resize((400,300), Image.ANTIALIAS)
+            self.logo = ImageTk.PhotoImage(logo)
+            self.create_image(center_x, score_y, anchor=tk.CENTER, image=self.logo)
+
+        # Navisjon
+        navisjon = Image.open('res/navisjon.png')
+        navisjon = navisjon.resize((400, 100), Image.ANTIALIAS)
+        self.navisjon = ImageTk.PhotoImage(navisjon)
+        self.create_image(self.w / 2, self.h - 100, anchor=tk.CENTER, image=self.navisjon)
 
         return True
 
