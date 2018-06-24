@@ -448,7 +448,7 @@ class OverlayView(tk.Canvas):
         v_spacing = 15
         goals = self.mgr.goals()
         if len(goals) > 0:
-            goals.sort(key=lambda g: g.time())
+            goals = sorted(goals, key=lambda g: g.goal_no())
 
             g = goals[-1]
             number = len(goals)
