@@ -74,10 +74,18 @@ class OverlayView(tk.Canvas):
         self.after(1, lambda : refresh_uwhscores(self))
 
         if self.demo:
-            def cycle(self):
+            def cycle_teams(self):
                 self.mgr.setGid(max((self.mgr.gid() + 1) % 100, 1))
-                self.after(5000, lambda : cycle(self))
-            self.after(1, lambda : cycle(self))
+                self.after(5000, lambda : cycle_teams(self))
+            self.after(1, lambda : cycle_teams(self))
+
+            def cycle_goal_black(self):
+                self.mgr.addBlackGoal(5)
+                self.after(3000, lambda : cycle_goal_white(self))
+            def cycle_goal_white(self):
+                self.mgr.addWhiteGoal(5)
+                self.after(3000, lambda : cycle_goal_black(self))
+            self.after(1, lambda : cycle_goal_black(self))
 
     def clear(self, fill):
         self.create_rectangle((0, 0, self.w, self.h), fill=fill)
@@ -412,32 +420,69 @@ class OverlayView(tk.Canvas):
         self.create_text((x1 + 10, y1 + height + outset * 2 + height / 2), text=black_team,
                          fill=self.get('left', 'color'), anchor=tk.W, font=font)
 
+        def player_name(player_no, team):
+            if team == TeamColor.black:
+                roster = self.black_roster
+            else:
+                roster = self.white_roster
+
+            if roster is not None:
+                for player in roster:
+                    if player_no == player['number']:
+                        return player['name']
+            return None
+
+        # Goals
+        inset = 0
+        y_offset = 0
+
+        goal_height = 50
+        v_spacing = 15
+        goals = self.mgr.goals()
+        if len(goals) > 0:
+            goals.sort(key=lambda g: g.time())
+
+            g = goals[-1]
+            number = len(goals)
+
+            name = player_name(g.player(), g.team())
+            if name is not None:
+                name = self.abbreviate(name, 32)
+                goal_width = width
+            else:
+                name = ""
+                goal_width = 120
+
+            fill_color = "#000000" if g.team() == TeamColor.black else "#ffffff"
+            text_color = "#ffffff" if g.team() == TeamColor.black else "#000000"
+            self.bordered_round_rectangle(bbox=(x1 + inset, y1 + height * 3 + y_offset,
+                                                x1 + goal_width - inset,
+                                                y1 + height * 3 + y_offset + goal_height),
+                                          radius=radius, fill=fill_color, border=text_color,
+                                          outset=outset)
+
+            goal_text = "#%d - %s" % (g.player(), name)
+            self.create_text((x1, y1 + height * 3 + y_offset + goal_height / 2), text=goal_text,
+                             fill=text_color, anchor=tk.W, font=font)
+
+            goal_text = "Goal #%d" % (number,)
+            self.create_text((x1 + goal_width, y1 + height * 3 + y_offset + goal_height / 2), text=goal_text,
+                             fill=text_color, anchor=tk.E, font=font)
+
+            y_offset += goal_height + v_spacing
+
         # Sin-bin
+        penalty_height = 30
+
         penalties = self.mgr.penalties(TeamColor.white) + self.mgr.penalties(TeamColor.black)
         if len(penalties) > 0:
             penalties.sort(key=lambda p: p.timeRemaining(self.mgr))
 
-            inset = 0
-            v_spacing = 45
-            penalty_height = 30
-
-            y_offset = 10
             for p in penalties:
                 if p.servedCompletely(self.mgr):
                     continue
 
-                if p.team() == TeamColor.black:
-                    roster = self.black_roster
-                else:
-                    roster = self.white_roster
-
-                name = None
-                if roster is not None:
-                    for player in roster:
-                        if p.player() == player['number']:
-                            name = player['name']
-                            break
-
+                name = player_name(p.player(), p.team())
                 if name is not None:
                     name = self.abbreviate(name, 32)
                     penalty_width = width
@@ -447,14 +492,14 @@ class OverlayView(tk.Canvas):
 
                 fill_color = "#000000" if p.team() == TeamColor.black else "#ffffff"
                 text_color = "#ffffff" if p.team() == TeamColor.black else "#000000"
-                self.bordered_round_rectangle(bbox=(x1 + inset, y1 + height * 3 + y_offset - penalty_height / 2,
+                self.bordered_round_rectangle(bbox=(x1 + inset, y1 + height * 3 + y_offset,
                                                     x1 + penalty_width - inset,
-                                                    y1 + height * 3 + y_offset + penalty_height / 2),
+                                                    y1 + height * 3 + y_offset + penalty_height),
                                               radius=radius, fill=fill_color, border="#ff0000",
                                               outset=outset)
 
                 penalty_text = "#%d - %s" % (p.player(), name)
-                self.create_text((x1, y1 + height * 3 + y_offset), text=penalty_text,
+                self.create_text((x1, y1 + height * 3 + y_offset + penalty_height / 2), text=penalty_text,
                                  fill=text_color, anchor=tk.W, font=font)
 
                 if p.dismissed():
@@ -462,11 +507,11 @@ class OverlayView(tk.Canvas):
                 else:
                     remaining = p.timeRemaining(self.mgr)
                     penalty_text = "%d:%02d" % (remaining // 60, remaining % 60)
-                self.create_text((x1 + penalty_width, y1 + height * 3 + y_offset), text=penalty_text,
+                self.create_text((x1 + penalty_width, y1 + height * 3 + y_offset + penalty_height / 2), text=penalty_text,
                                  fill=text_color, anchor=tk.E, font=font)
 
+                y_offset += penalty_height + v_spacing
 
-                y_offset += v_spacing
 
     def roster_view(self):
         if (not self.mgr.gameState() == GameState.game_over and
