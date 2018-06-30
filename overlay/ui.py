@@ -692,8 +692,9 @@ class OverlayView(tk.Canvas):
                     y_offset += 40
 
             # Worlds
-            logo = Image.open('res/worlds-cmas.png')
-            logo = logo.resize((400,300), Image.ANTIALIAS)
+            logo = Image.open('res/logo-worlds2018.png')
+            scale = 400 / 1500
+            logo = logo.resize((int(1500 * scale), int(900 * scale)), Image.ANTIALIAS)
             self.logo = ImageTk.PhotoImage(logo)
             self.create_image(center_x, 650, anchor=tk.CENTER, image=self.logo)
 
@@ -722,8 +723,9 @@ class OverlayView(tk.Canvas):
                              fill=self.get('left', 'color'), font=score_font, anchor=tk.CENTER)
 
             # Worlds
-            logo = Image.open('res/worlds-cmas.png')
-            logo = logo.resize((400,300), Image.ANTIALIAS)
+            logo = Image.open('res/logo-worlds2018.png')
+            scale = 400 / 1500
+            logo = logo.resize((int(1500 * scale), int(900 * scale)), Image.ANTIALIAS)
             self.logo = ImageTk.PhotoImage(logo)
             self.create_image(center_x, score_y, anchor=tk.CENTER, image=self.logo)
 
