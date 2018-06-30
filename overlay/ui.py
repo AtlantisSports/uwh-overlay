@@ -484,6 +484,7 @@ class OverlayView(tk.Canvas):
 
         penalties = self.mgr.penalties(TeamColor.white) + self.mgr.penalties(TeamColor.black)
         if len(penalties) > 0:
+            penalties.sort(key=lambda p: p.player())
             penalties.sort(key=lambda p: p.timeRemaining(self.mgr))
 
             for p in penalties:
