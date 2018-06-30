@@ -313,11 +313,11 @@ class OverlayView(tk.Canvas):
                                       fill=time_fill,
                                       border=time_border)
 
-        logo = Image.open('res/logo-nationals2018.png')
-        size = 100
+        logo = Image.open('res/logo-worlds2018-square.png')
+        size = 200
         logo = logo.resize((size, size), Image.ANTIALIAS)
         self.logo = ImageTk.PhotoImage(logo)
-        self.create_image(self.w - x1, y1, anchor=tk.NE, image=self.logo)
+        self.create_image(self.w - x1 + 30, y1, anchor=tk.NE, image=self.logo)
 
         # Flags
         left_flag = self.get('left', 'flag')
