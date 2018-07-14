@@ -638,6 +638,13 @@ class OverlayView(tk.Canvas):
                              fill=self.color("title_text"), font=title_font,
                              anchor=tk.CENTER)
 
+            if self.tid == 17:
+                if self.game['description'] is not None:
+                    self.create_text((center_x, bar_y + bar_height / 2),
+                                     text=self.game['description'],
+                                     fill=self.color("title_text"), font=title_font,
+                                     anchor=tk.CENTER)
+
             from datetime import datetime
             import calendar
             start = datetime.strptime(self.game['start_time'], "%Y-%m-%dT%H:%M:%S")
