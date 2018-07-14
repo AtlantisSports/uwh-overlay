@@ -75,8 +75,8 @@ class OverlayView(tk.Canvas):
 
         if self.demo:
             def cycle_teams(self):
-                self.mgr.setGid(max((self.mgr.gid() + 1) % 100, 1))
-                self.after(5000, lambda : cycle_teams(self))
+                self.mgr.setGid(max((self.mgr.gid() + 1) % 272, 1))
+                self.after(2500, lambda : cycle_teams(self))
             self.after(1, lambda : cycle_teams(self))
 
             def cycle_goal_black(self):
