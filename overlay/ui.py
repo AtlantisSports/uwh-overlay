@@ -618,15 +618,22 @@ class OverlayView(tk.Canvas):
 
         # Tournament / Game info
         if self.game is not None:
-            game_type = self.game['game_type']
-            game_type = {
-                "RR" : "Round Robin",
-                "CO" : "Crossover",
-                "BR" : "Bracket",
-                "E"  : "Exhibition",
-            }.get(game_type, game_type)
 
-            top_text = "{} #{}".format(game_type, self.gid)
+            if self.tid == 17:
+                if 200 <= self.gid:
+                    top_text = "#PO" + str(self.gid)
+                else:
+                    top_text = "#" + str(self.gid)
+            else:
+                game_type = self.game['game_type']
+                game_type = {
+                    "RR" : "Round Robin",
+                    "CO" : "Crossover",
+                    "BR" : "Bracket",
+                    "E"  : "Exhibition",
+                }.get(game_type, game_type)
+                top_text = "{} #{}".format(game_type, self.gid)
+
             self.create_text((center_x, bar_y + bar_height / 4), text=top_text,
                              fill=self.color("title_text"), font=title_font,
                              anchor=tk.CENTER)
