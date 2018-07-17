@@ -314,7 +314,7 @@ class OverlayView(tk.Canvas):
                                       border=time_border)
 
         logo = Image.open('res/logo-worlds2018-square.png')
-        size = 200
+        size = 130
         logo = logo.resize((size, size), Image.ANTIALIAS)
         self.logo = ImageTk.PhotoImage(logo)
         self.create_image(self.w - x1 + 30, y1, anchor=tk.NE, image=self.logo)
