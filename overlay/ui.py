@@ -390,7 +390,7 @@ class OverlayView(tk.Canvas):
         elif (self.mgr.gameState() == GameState.pre_ot or
               self.mgr.gameState() == GameState.pre_sudden_death):
             state_text="Break"
-        self.create_text((x1 + width + outset + 20, y1 + height + outset),
+        self.create_text((x1 + width + outset + 25, y1 + height + outset),
                         text=state_text, fill=self.color("fill_text"), font=state_font, anchor=tk.W)
 
         # Time Text
