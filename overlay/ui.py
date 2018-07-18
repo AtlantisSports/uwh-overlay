@@ -533,7 +533,7 @@ class OverlayView(tk.Canvas):
 
         font=("Avenir Next LT Pro", 20)
         team_font=("Avenir Next LT Pro", 20, "bold")
-        players_font=("Avenir Next LT Pro", 15)
+        players_font=("Avenir Next LT Pro", 10, "bold")
         title_font=("Avenir Next LT Pro", 20, "bold")
 
         if self.game is not None:
