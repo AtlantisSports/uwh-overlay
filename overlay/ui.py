@@ -313,7 +313,7 @@ class OverlayView(tk.Canvas):
                                       fill=time_fill,
                                       border=time_border)
 
-        logo = Image.open('res/logo-worlds2018-square.png')
+        logo = Image.open('res/worlds-cmas-sticker.png')
         size = 130
         logo = logo.resize((size, size), Image.ANTIALIAS)
         self.logo = ImageTk.PhotoImage(logo)
