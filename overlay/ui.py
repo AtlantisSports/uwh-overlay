@@ -232,10 +232,10 @@ class OverlayView(tk.Canvas):
         x1 = 40 + outset
         y1 = 40
 
-        font=("Avenir Next LT Pro", 10)
-        score_font=("Avenir Next LT Pro", 20)
+        font=("Avenir Next LT Pro", 15, "bold")
+        score_font=("Avenir Next LT Pro", 20, "bold")
         time_font=("Avenir Next LT Pro", 40)
-        state_font=("Avenir Next LT Pro", 16)
+        state_font=("Avenir Next LT Pro", 16, "bold")
 
         # Bottom Rectangle
         if (self.mgr.timeoutState() == TimeoutState.ref or
