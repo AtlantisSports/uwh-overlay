@@ -734,9 +734,9 @@ class OverlayView(tk.Canvas):
                                  fill=self.get('right', 'color'),
                                  border=self.get('left', 'color'),
                                  outset=outset)
-            self.create_text((center_x - col_spread, score_y), text=self.get('left', 'score'),
+            self.create_text((center_x - col_spread, score_y + 20), text=self.get('left', 'score'),
                              fill=self.get('right', 'color'), font=score_font, anchor=tk.CENTER)
-            self.create_text((center_x + col_spread, score_y), text=self.get('right', 'score'),
+            self.create_text((center_x + col_spread, score_y + 20), text=self.get('right', 'score'),
                              fill=self.get('left', 'color'), font=score_font, anchor=tk.CENTER)
 
             # Worlds
