@@ -453,31 +453,34 @@ class OverlayView(tk.Canvas):
             g = goals[-1]
             number = len(goals)
 
-            name = player_name(g.player(), g.team())
-            if name is not None:
-                name = self.abbreviate(name, 32)
-                goal_width = width
-            else:
-                name = ""
-                goal_width = 120
+            # Display goals for at most 30 seconds after they were scored
+            if g.time() - 30 < self.mgr.gameClockAtPause():
 
-            fill_color = "#000000" if g.team() == TeamColor.black else "#ffffff"
-            text_color = "#ffffff" if g.team() == TeamColor.black else "#000000"
-            self.bordered_round_rectangle(bbox=(x1 + inset, y1 + height * 3 + y_offset,
-                                                x1 + goal_width - inset,
-                                                y1 + height * 3 + y_offset + goal_height),
-                                          radius=radius, fill=fill_color, border=text_color,
-                                          outset=outset)
+                name = player_name(g.player(), g.team())
+                if name is not None:
+                    name = self.abbreviate(name, 32)
+                    goal_width = width
+                else:
+                    name = ""
+                    goal_width = 120
 
-            goal_text = "#%d - %s" % (g.player(), name)
-            self.create_text((x1, y1 + height * 3 + y_offset + goal_height / 2), text=goal_text,
-                             fill=text_color, anchor=tk.W, font=font)
+                fill_color = "#000000" if g.team() == TeamColor.black else "#ffffff"
+                text_color = "#ffffff" if g.team() == TeamColor.black else "#000000"
+                self.bordered_round_rectangle(bbox=(x1 + inset, y1 + height * 3 + y_offset,
+                                                    x1 + goal_width - inset,
+                                                    y1 + height * 3 + y_offset + goal_height),
+                                              radius=radius, fill=fill_color, border=text_color,
+                                              outset=outset)
 
-            goal_text = "Goal #%d" % (number,)
-            self.create_text((x1 + goal_width, y1 + height * 3 + y_offset + goal_height / 2), text=goal_text,
-                             fill=text_color, anchor=tk.E, font=font)
+                goal_text = "#%d - %s" % (g.player(), name)
+                self.create_text((x1, y1 + height * 3 + y_offset + goal_height / 2), text=goal_text,
+                                 fill=text_color, anchor=tk.W, font=font)
 
-            y_offset += goal_height + v_spacing
+                goal_text = "Goal #%d" % (number,)
+                self.create_text((x1 + goal_width, y1 + height * 3 + y_offset + goal_height / 2), text=goal_text,
+                                 fill=text_color, anchor=tk.E, font=font)
+
+                y_offset += goal_height + v_spacing
 
         # Sin-bin
         penalty_height = 30
