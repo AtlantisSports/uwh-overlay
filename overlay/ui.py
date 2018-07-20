@@ -723,7 +723,7 @@ class OverlayView(tk.Canvas):
         else:
             score_y = 500
             score_radius = 300
-            score_font=("Avenir Next LT Pro", 180, "bold")
+            score_font=("Avenir Next LT Pro", 160, "bold")
             self.bordered_circle(bbox=(center_x - col_spread - score_radius / 2, score_y - score_radius / 2,
                                        center_x - col_spread + score_radius / 2, score_y + score_radius / 2),
                                  fill=self.get('left', 'color'),
