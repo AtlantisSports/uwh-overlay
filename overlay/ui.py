@@ -222,7 +222,7 @@ class OverlayView(tk.Canvas):
         bar_width = 350
         player_width = 450
         flag_width = 60
-        score_width = 40
+        score_width = 50
         score_offset = bar_width - score_width
         time_width = 155
         state_width = 110
@@ -234,7 +234,7 @@ class OverlayView(tk.Canvas):
         y1 = 40
 
         font=("Avenir Next LT Pro", 15, "bold")
-        score_font=("Avenir Next LT Pro", 20, "bold")
+        score_font=("Avenir Next LT Pro", 24, "bold")
         time_font=("Avenir Next LT Pro", 40)
         state_font=("Avenir Next LT Pro", 16, "bold")
 
@@ -408,17 +408,17 @@ class OverlayView(tk.Canvas):
         # White Score Text
         left_score = self.get('left', 'score')
         l_score="%d" % (left_score,)
-        self.create_text((x1 + score_offset + score_width / 2, y1 + height / 2 + outset),
+        self.create_text((x1 + score_offset + score_width / 2 + 3, y1 + height / 2 + outset),
                          text=l_score, fill=self.get('right', 'color'),
-                         font=score_font)
+                         font=score_font, anchor=tk.CENTER)
 
         # Black Score Text
         right_score = self.get('right', 'score')
         r_score="%d" % (right_score,)
-        self.create_text((x1 + score_offset + score_width / 2,
+        self.create_text((x1 + score_offset + score_width / 2 + 3,
                           y1 + height / 2 + height + outset * 2),
                          text=r_score, fill=self.get('left', 'color'),
-                         font=score_font)
+                         font=score_font, anchor=tk.CENTER)
 
         # Team Names
         white_team=self.abbreviate(self.get('left', 'name'))
