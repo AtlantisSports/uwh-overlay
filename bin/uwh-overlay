@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from uwh.gamemanager import GameManager, GameState, TimeoutState, Penalty, TeamColor, PoolLayout
 from uwh.xbee_comms import XBeeClient, XBeeConfigParser, xbee_port, xbee_baud, xbee_id, xbee_ch
