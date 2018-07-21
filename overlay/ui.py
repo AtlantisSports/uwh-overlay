@@ -219,7 +219,7 @@ class OverlayView(tk.Canvas):
         radius = 10
         score_radius = 0
         height = 30
-        width = 250
+        width = 300
         flag_width = 60
         score_width = 40
         score_offset = width - score_width
