@@ -219,10 +219,11 @@ class OverlayView(tk.Canvas):
         radius = 10
         score_radius = 0
         height = 30
-        width = 350
+        bar_width = 350
+        player_width = 450
         flag_width = 60
         score_width = 40
-        score_offset = width - score_width
+        score_offset = bar_width - score_width
         time_width = 155
         state_width = 110
         timeout_width = 150
@@ -268,18 +269,18 @@ class OverlayView(tk.Canvas):
                 border_color = "#000000"
 
             # ((       )    (   ))####)
-            self.bordered_round_rectangle(bbox=(x1 + width + state_width + time_width,
+            self.bordered_round_rectangle(bbox=(x1 + bar_width + state_width + time_width,
                                                 y1,
-                                                x1 + width + state_width + time_width + timeout_width,
+                                                x1 + bar_width + state_width + time_width + timeout_width,
                                                 y1 + height * 2 + outset * 2),
                                           radius=radius, outset=outset,
                                           fill=fill_color,
                                           border=border_color)
 
         # ((       )####(   ))    )
-        self.bordered_round_rectangle(bbox=(x1 + width,
+        self.bordered_round_rectangle(bbox=(x1 + bar_width,
                                             y1,
-                                            x1 + width + state_width,
+                                            x1 + bar_width + state_width,
                                             y1 + height * 2 + outset * 2),
                                       radius=radius, outset=outset,
                                       fill=self.color("fill"),
@@ -288,7 +289,7 @@ class OverlayView(tk.Canvas):
         # ((#######)    (   ))    )
         self.bordered_round_rectangle(bbox=(x1,
                                             y1,
-                                            x1 + width,
+                                            x1 + bar_width,
                                             y1 + height * 2 + outset * 2),
                                       radius=radius, outset=outset,
                                       fill=None,
@@ -305,9 +306,9 @@ class OverlayView(tk.Canvas):
             self.mgr.timeoutState() == TimeoutState.black):
             time_fill = "#ffff00"
             time_border = "#000000"
-        self.bordered_round_rectangle(bbox=(x1 + width + state_width,
+        self.bordered_round_rectangle(bbox=(x1 + bar_width + state_width,
                                             y1,
-                                            x1 + width + state_width + time_width,
+                                            x1 + bar_width + state_width + time_width,
                                             y1 + height * 2 + outset * 2),
                                       radius=radius, outset=outset,
                                       fill=time_fill,
@@ -324,13 +325,13 @@ class OverlayView(tk.Canvas):
         if left_flag is not None:
             left_flag = left_flag.resize((flag_width, height + outset), Image.ANTIALIAS)
             self._left_flag = ImageTk.PhotoImage(left_flag)
-            self.create_image(x1 + width - score_width, y1, anchor=tk.NE, image=self._left_flag)
+            self.create_image(x1 + bar_width - score_width, y1, anchor=tk.NE, image=self._left_flag)
 
         right_flag = self.get('right', 'flag')
         if right_flag is not None:
             right_flag = right_flag.resize((flag_width, height + outset), Image.ANTIALIAS)
             self._right_flag = ImageTk.PhotoImage(right_flag)
-            self.create_image(x1 + width - score_width, y1 + height + outset, anchor=tk.NE, image=self._right_flag)
+            self.create_image(x1 + bar_width - score_width, y1 + height + outset, anchor=tk.NE, image=self._right_flag)
 
         # Scores Fill
         self.round_rectangle(bbox=(x1 + score_offset,
@@ -369,7 +370,7 @@ class OverlayView(tk.Canvas):
               self.mgr.gameState() == GameState.sudden_death):
             timeout_text="Sudden\nDeath"
             text_color="#000000"
-        self.create_text((x1 + width + state_width + time_width + 30, y1 + height + outset * 2),
+        self.create_text((x1 + bar_width + state_width + time_width + 30, y1 + height + outset * 2),
                         text=timeout_text, fill=text_color, font=state_font, anchor=tk.W)
 
         # Game State Text
@@ -390,7 +391,7 @@ class OverlayView(tk.Canvas):
         elif (self.mgr.gameState() == GameState.pre_ot or
               self.mgr.gameState() == GameState.pre_sudden_death):
             state_text="Break"
-        self.create_text((x1 + width + outset + 25, y1 + height + outset),
+        self.create_text((x1 + bar_width + outset + 25, y1 + height + outset),
                         text=state_text, fill=self.color("fill_text"), font=state_font, anchor=tk.W)
 
         # Time Text
@@ -400,7 +401,7 @@ class OverlayView(tk.Canvas):
             time_fill = "#000000"
         clock_time = self.mgr.gameClock()
         clock_text = "%2d:%02d" % (clock_time // 60, clock_time % 60)
-        self.create_text((x1 + width + state_width + time_width / 2, y1 + height + outset * 3),
+        self.create_text((x1 + bar_width + state_width + time_width / 2, y1 + height + outset * 3),
                          text=clock_text, fill=time_fill,
                          font=time_font, anchor=tk.CENTER)
 
@@ -476,8 +477,8 @@ class OverlayView(tk.Canvas):
 
                 name = player_name(g.player(), g.team())
                 if name is not None:
-                    name = self.abbreviate(name, 22)
-                    goal_width = width
+                    name = self.abbreviate(name, 28)
+                    goal_width = player_width
                 else:
                     name = ""
                     goal_width = 120
@@ -510,8 +511,8 @@ class OverlayView(tk.Canvas):
 
                 name = player_name(p.player(), p.team())
                 if name is not None:
-                    name = self.abbreviate(name, 22)
-                    penalty_width = width
+                    name = self.abbreviate(name, 28)
+                    penalty_width = player_width
                 else:
                     name = ""
                     penalty_width = 120
