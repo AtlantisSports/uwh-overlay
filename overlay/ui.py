@@ -551,13 +551,13 @@ class OverlayView(tk.Canvas):
 
         font=("Avenir Next LT Pro", 20)
         team_font=("Avenir Next LT Pro", 20, "bold")
-        players_font=("Avenir Next LT Pro", 18, "bold")
+        players_font=("Avenir Next LT Pro", 20, "bold")
         title_font=("Avenir Next LT Pro", 20, "bold")
 
         if self.game is not None:
-            bar_width = 1400
+            bar_width = 1600
             title_width = 250
-            col_spread = 475
+            col_spread = 525
         else:
             bar_width = 1200
             title_width = 450
@@ -570,13 +570,13 @@ class OverlayView(tk.Canvas):
         right_col = center_x + col_spread
         flag_width = 150
         col_width = (bar_width - title_width - flag_width * 2) / 2
-        roster_y = 350
-        bar_y = 200 if self.mgr.gameState() == GameState.pre_game else 750
+        roster_y = 250
+        bar_y = 100 if self.mgr.gameState() == GameState.pre_game else 750
         title_y = bar_y
         bar_height = 100
         title_height = bar_height
         flags_y = bar_y
-        player_h = 35
+        player_h = 40
 
         self.bordered_round_rectangle(bbox=(center_x - bar_width / 2,
                                             bar_y,
@@ -697,12 +697,12 @@ class OverlayView(tk.Canvas):
                     number = player['number']
                     name = player['name']
 
-                    name = self.abbreviate(name, 22)
+                    name = self.abbreviate(name, 26)
                     display_text = "#{} - {}".format(number, name)
                     self.create_text((left_col - col_width / 2, roster_y + y_offset + player_h / 2), text=display_text,
                                      fill=self.get('right', 'color'), font=players_font,
                                      anchor=tk.W)
-                    y_offset += 55
+                    y_offset += 60
 
             roster = self.get('right', 'roster')
             if roster is not None:
@@ -716,19 +716,19 @@ class OverlayView(tk.Canvas):
                     number = player['number']
                     name = player['name']
 
-                    name = self.abbreviate(name, 22)
+                    name = self.abbreviate(name, 26)
                     display_text = "#{} - {}".format(number, name)
                     self.create_text((right_col - col_width / 2 + radius * 2, roster_y + y_offset + player_h / 2), text=display_text,
                                      fill=self.get('left', 'color'), font=players_font,
                                      anchor=tk.W)
-                    y_offset += 55
+                    y_offset += 60
 
             # Worlds
             logo = Image.open('res/logo-worlds2018.png')
             scale = 400 / 1500
             logo = logo.resize((int(1500 * scale), int(900 * scale)), Image.ANTIALIAS)
             self.logo = ImageTk.PhotoImage(logo)
-            self.create_image(center_x, 650, anchor=tk.CENTER, image=self.logo)
+            self.create_image(center_x, 550, anchor=tk.CENTER, image=self.logo)
 
             # Nationals
             #logo = Image.open('res/logo-nationals2018.png')
@@ -765,7 +765,7 @@ class OverlayView(tk.Canvas):
         navisjon = Image.open('res/navisjon.png')
         navisjon = navisjon.resize((400, 100), Image.ANTIALIAS)
         self.navisjon = ImageTk.PhotoImage(navisjon)
-        self.create_image(self.w / 2, self.h - 100, anchor=tk.CENTER, image=self.navisjon)
+        self.create_image(self.w / 2, self.h - 175, anchor=tk.CENTER, image=self.navisjon)
 
         return True
 
