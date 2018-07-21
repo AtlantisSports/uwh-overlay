@@ -532,13 +532,13 @@ class OverlayView(tk.Canvas):
 
         font=("Avenir Next LT Pro", 20)
         team_font=("Avenir Next LT Pro", 20, "bold")
-        players_font=("Avenir Next LT Pro", 15, "bold")
+        players_font=("Avenir Next LT Pro", 10, "bold")
         title_font=("Avenir Next LT Pro", 20, "bold")
 
         if self.game is not None:
-            bar_width = 1300
+            bar_width = 1100
             title_width = 250
-            col_spread = 500
+            col_spread = 400
         else:
             bar_width = 1200
             title_width = 450
@@ -557,7 +557,7 @@ class OverlayView(tk.Canvas):
         bar_height = 100
         title_height = bar_height
         flags_y = bar_y
-        player_h = 30
+        player_h = 25
 
         self.bordered_round_rectangle(bbox=(center_x - bar_width / 2,
                                             bar_y,
