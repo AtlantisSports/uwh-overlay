@@ -476,7 +476,7 @@ class OverlayView(tk.Canvas):
 
                 name = player_name(g.player(), g.team())
                 if name is not None:
-                    name = self.abbreviate(name, 32)
+                    name = self.abbreviate(name, 22)
                     goal_width = width
                 else:
                     name = ""
@@ -510,7 +510,7 @@ class OverlayView(tk.Canvas):
 
                 name = player_name(p.player(), p.team())
                 if name is not None:
-                    name = self.abbreviate(name, 32)
+                    name = self.abbreviate(name, 22)
                     penalty_width = width
                 else:
                     name = ""
