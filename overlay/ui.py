@@ -446,7 +446,25 @@ class OverlayView(tk.Canvas):
 
         goal_height = 50
         v_spacing = 15
-        goals = self.mgr.goals()
+
+        def recent_goal(g):
+            state_idx = {
+                GameState.pre_game :     0,
+                GameState.first_half :   1,
+                GameState.half_time :    2,
+                GameState.second_half :  3,
+                GameState.pre_ot :       4,
+                GameState.ot_first :     5,
+                GameState.ot_half :      6,
+                GameState.ot_second :    7,
+                GameState.pre_sudden_death : 8,
+                GameState.sudden_death : 9,
+                GameState.game_over :   10,
+            }
+            return (state_idx[self.mgr.gameState()] -
+                    state_idx[g.state()]) <= 1
+
+        goals = [g for g in self.mgr.goals() if recent_goal(g)]
         if len(goals) > 0:
             goals = sorted(goals, key=lambda g: g.goal_no())
 
