@@ -735,6 +735,12 @@ class OverlayView(tk.Canvas):
             #logo = logo.resize((400, 400), Image.ANTIALIAS)
             #self.logo = ImageTk.PhotoImage(logo)
             #self.create_image(center_x, 625, anchor=tk.CENTER, image=self.logo)
+
+            # Navisjon
+            navisjon = Image.open('res/navisjon.png')
+            navisjon = navisjon.resize((400, 100), Image.ANTIALIAS)
+            self.navisjon = ImageTk.PhotoImage(navisjon)
+            self.create_image(self.w / 2, self.h - 175, anchor=tk.CENTER, image=self.navisjon)
         else:
             score_y = 500
             score_radius = 300
@@ -761,11 +767,11 @@ class OverlayView(tk.Canvas):
             self.logo = ImageTk.PhotoImage(logo)
             self.create_image(center_x, score_y, anchor=tk.CENTER, image=self.logo)
 
-        # Navisjon
-        navisjon = Image.open('res/navisjon.png')
-        navisjon = navisjon.resize((400, 100), Image.ANTIALIAS)
-        self.navisjon = ImageTk.PhotoImage(navisjon)
-        self.create_image(self.w / 2, self.h - 175, anchor=tk.CENTER, image=self.navisjon)
+            # Navisjon
+            navisjon = Image.open('res/navisjon.png')
+            navisjon = navisjon.resize((400, 100), Image.ANTIALIAS)
+            self.navisjon = ImageTk.PhotoImage(navisjon)
+            self.create_image(self.w / 2, self.h - 100, anchor=tk.CENTER, image=self.navisjon)
 
         return True
 
