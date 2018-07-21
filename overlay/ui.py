@@ -472,13 +472,9 @@ class OverlayView(tk.Canvas):
                                               radius=radius, fill=fill_color, border=text_color,
                                               outset=outset)
 
-                goal_text = "#%d - %s" % (g.player(), name)
+                goal_text = "Goal: #%d - %s" % (g.player(), name)
                 self.create_text((x1, y1 + height * 3 + y_offset + goal_height / 2), text=goal_text,
                                  fill=text_color, anchor=tk.W, font=font)
-
-                goal_text = "Goal #%d" % (number,)
-                self.create_text((x1 + goal_width, y1 + height * 3 + y_offset + goal_height / 2), text=goal_text,
-                                 fill=text_color, anchor=tk.E, font=font)
 
                 y_offset += goal_height + v_spacing
 
