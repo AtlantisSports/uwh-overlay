@@ -24,7 +24,7 @@ if args.demo:
     mgr.setBlackScore(10)
     mgr.setWhiteScore(11)
     mgr.setGameClock(2 * 60 + 34)
-    mgr.setGameState(GameState.pre_game)
+    mgr.setGameState(GameState.first_half)
     mgr.setTimeoutState(TimeoutState.none)
     mgr.setGid(1)
     mgr.setTid(17)
