@@ -571,7 +571,7 @@ class OverlayView(tk.Canvas):
         flag_width = 150
         col_width = (bar_width - title_width - flag_width * 2) / 2
         roster_y = 250
-        bar_y = 100 if self.mgr.gameState() == GameState.pre_game else 750
+        bar_y = 100 if self.mgr.gameState() == GameState.pre_game else 725
         title_y = bar_y
         bar_height = 100
         title_height = bar_height
@@ -740,7 +740,7 @@ class OverlayView(tk.Canvas):
             navisjon = Image.open('res/navisjon.png')
             navisjon = navisjon.resize((400, 100), Image.ANTIALIAS)
             self.navisjon = ImageTk.PhotoImage(navisjon)
-            self.create_image(self.w / 2, self.h - 175, anchor=tk.CENTER, image=self.navisjon)
+            self.create_image(self.w / 2, self.h - 150, anchor=tk.CENTER, image=self.navisjon)
         else:
             score_y = 500
             score_radius = 300
@@ -771,7 +771,23 @@ class OverlayView(tk.Canvas):
             navisjon = Image.open('res/navisjon.png')
             navisjon = navisjon.resize((400, 100), Image.ANTIALIAS)
             self.navisjon = ImageTk.PhotoImage(navisjon)
-            self.create_image(self.w / 2, self.h - 100, anchor=tk.CENTER, image=self.navisjon)
+            self.create_image(self.w / 2, self.h - 150, anchor=tk.CENTER, image=self.navisjon)
+
+
+        next_y = self.h - 50
+        next_w = 200
+        next_h = 50
+
+        self.bordered_round_rectangle((center_x - next_w / 2, next_y - next_h / 2,
+                                       center_x + next_w / 2, next_y + next_h / 2),
+                                      fill=self.color('fill'), border="#ffffff",
+                                      outset=outset, radius=radius)
+
+        next_in_text = "Next: %2d:%02d" % (self.mgr.gameClock() // 60,
+                                    self.mgr.gameClock() % 60)
+        self.create_text((center_x - next_w / 2 + 20, next_y), text=next_in_text,
+                         fill="#ffffff", font=title_font, anchor=tk.W)
+
 
         return True
 
