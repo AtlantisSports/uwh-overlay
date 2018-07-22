@@ -195,14 +195,49 @@ class OverlayView(tk.Canvas):
 
             if self.mgr.gameState() == GameState.half_time:
                 self.roster_view(bar_only=900)
+                self.gofundme()
+
         elif (self.game is None and
               self.tournament is None):
             self.game_play_view()
 
             if self.mgr.gameState() == GameState.half_time:
                 self.roster_view(bar_only=900)
+                self.gofundme()
+
         else:
             self.roster_view()
+
+    def gofundme(self):
+        height = 100
+        width = 300
+        radius = 10
+        outset = 3
+
+        center_x = self.w * 4 / 5
+
+        logo = Image.open('res/gofundme.png')
+        logo = logo.resize((300, 400), Image.ANTIALIAS)
+        self.logo = ImageTk.PhotoImage(logo)
+        self.create_image(center_x, self.h / 2, anchor=tk.CENTER, image=self.logo)
+
+
+        self.bordered_round_rectangle(bbox=(center_x - width /2,
+                                            self.h * 1 / 4 - height/2,
+                                            center_x + width /2,
+                                            self.h * 1 / 4 + height/2),
+                                      radius=radius, outset=outset,
+                                      fill="#000000",
+                                      border="#ffffff")
+
+        font = ("Avenir Next LT Pro", 15, "bold")
+
+        self.create_text((center_x, self.h * 1/4 - 25), text="Support the Organizers",
+                         fill="#ffffff", font=font, anchor=tk.CENTER)
+
+        self.create_text((center_x, self.h * 1/4 + 25), text="bit.ly/2mzRBFe",
+                         fill="#ffffff", font=font, anchor=tk.CENTER)
+
 
     def color(self, name):
         if self.mask == MaskKind.CHROMA and name == "bg":
