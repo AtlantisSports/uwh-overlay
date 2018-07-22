@@ -554,7 +554,7 @@ class OverlayView(tk.Canvas):
 
     def roster_view(self, bar_only=None):
         font=("Avenir Next LT Pro", 20)
-        team_font=("Avenir Next LT Pro", 20, "bold")
+        team_font=("Avenir Next LT Pro", 35, "bold")
         players_font=("Avenir Next LT Pro", 20, "bold")
         title_font=("Avenir Next LT Pro", 20, "bold")
 
