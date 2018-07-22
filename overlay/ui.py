@@ -210,7 +210,7 @@ class OverlayView(tk.Canvas):
 
     def gofundme(self):
         height = 100
-        width = 300
+        width = 325
         radius = 10
         outset = 3
 
@@ -232,11 +232,13 @@ class OverlayView(tk.Canvas):
 
         font = ("Avenir Next LT Pro", 15, "bold")
 
-        self.create_text((center_x, self.h * 1/4 - 25), text="Support the Organizers",
+        self.create_text((center_x, self.h * 1/4 - 25), text="GoFundMe Underwater\nHockey World Champs 2018",
                          fill="#ffffff", font=font, anchor=tk.CENTER)
 
-        self.create_text((center_x, self.h * 1/4 + 25), text="bit.ly/2mzRBFe",
-                         fill="#ffffff", font=font, anchor=tk.CENTER)
+        font = ("Avenir Next LT Pro", 15, "underline")
+
+        self.create_text((center_x, self.h * 1/4 + 25), text="http://bit.ly/2mzRBFe",
+                         fill="#4040ff", font=font, anchor=tk.CENTER)
 
 
     def color(self, name):
