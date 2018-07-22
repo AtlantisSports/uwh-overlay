@@ -336,14 +336,14 @@ class OverlayView(tk.Canvas):
         left_flag = self.get('left', 'flag')
         if left_flag is not None:
             left_flag = left_flag.resize((flag_width, height + outset), Image.ANTIALIAS)
-            self._left_flag = ImageTk.PhotoImage(left_flag)
-            self.create_image(x1 + bar_width - score_width, y1, anchor=tk.NE, image=self._left_flag)
+            self._left_status_flag = ImageTk.PhotoImage(left_flag)
+            self.create_image(x1 + bar_width - score_width, y1, anchor=tk.NE, image=self._left_status_flag)
 
         right_flag = self.get('right', 'flag')
         if right_flag is not None:
             right_flag = right_flag.resize((flag_width, height + outset), Image.ANTIALIAS)
-            self._right_flag = ImageTk.PhotoImage(right_flag)
-            self.create_image(x1 + bar_width - score_width, y1 + height + outset, anchor=tk.NE, image=self._right_flag)
+            self._right_status_flag = ImageTk.PhotoImage(right_flag)
+            self.create_image(x1 + bar_width - score_width, y1 + height + outset, anchor=tk.NE, image=self._right_status_flag)
 
         # Scores Fill
         self.round_rectangle(bbox=(x1 + score_offset,
@@ -599,8 +599,8 @@ class OverlayView(tk.Canvas):
         left_flag = self.get('left', 'flag')
         if left_flag is not None:
             left_flag = left_flag.resize((flag_width, title_height), Image.ANTIALIAS)
-            self._left_flag = ImageTk.PhotoImage(left_flag)
-            self.create_image(center_x - title_width / 2, title_y, anchor=tk.NE, image=self._left_flag)
+            self._left_bar_flag = ImageTk.PhotoImage(left_flag)
+            self.create_image(center_x - title_width / 2, title_y, anchor=tk.NE, image=self._left_bar_flag)
 
             self.bordered_round_rectangle(bbox=(center_x - bar_width / 2,
                                                 bar_y,
@@ -613,8 +613,8 @@ class OverlayView(tk.Canvas):
         right_flag = self.get('right', 'flag')
         if right_flag is not None:
             right_flag = right_flag.resize((flag_width, title_height), Image.ANTIALIAS)
-            self._right_flag = ImageTk.PhotoImage(right_flag)
-            self.create_image(center_x + title_width / 2, title_y, anchor=tk.NW, image=self._right_flag)
+            self._right_bar_flag = ImageTk.PhotoImage(right_flag)
+            self.create_image(center_x + title_width / 2, title_y, anchor=tk.NW, image=self._right_bar_flag)
 
             self.bordered_round_rectangle(bbox=(center_x + title_width / 2 + flag_width,
                                                 bar_y,
