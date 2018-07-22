@@ -783,8 +783,14 @@ class OverlayView(tk.Canvas):
                                       fill=self.color('fill'), border="#ffffff",
                                       outset=outset, radius=radius)
 
-        next_in_text = "Next: %2d:%02d" % (self.mgr.gameClock() // 60,
-                                    self.mgr.gameClock() % 60)
+        if self.mgr.gameState() == GameState.pre_game:
+            next_time = self.mgr.gameClock()
+            next_status = "Start: "
+        else:
+            next_time = self.mgr.gameClock() + 3 * 60
+            next_status = "Next: "
+
+        next_in_text = next_status + "%2d:%02d" % (next_time // 60, next_time % 60)
         self.create_text((center_x - next_w / 2 + 20, next_y), text=next_in_text,
                          fill="#ffffff", font=title_font, anchor=tk.W)
 
