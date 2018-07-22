@@ -44,5 +44,13 @@ if not args.demo:
         xbee.listen_thread()
 
 ov = Overlay(mgr, args.mask, args.version, args.demo)
+
+def mtop():
+    from mem_top import mem_top
+    mem_top()
+    ov.root.after(5000, mtop)
+
+mtop()
+
 ov.mainloop()
 
