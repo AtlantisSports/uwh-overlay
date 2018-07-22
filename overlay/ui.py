@@ -189,8 +189,20 @@ class OverlayView(tk.Canvas):
             self.gid != self.mgr.gid()):
             self.fetch_uwhscores()
 
-        if not self.roster_view():
+        if (not self.mgr.gameState() == GameState.game_over and
+            not self.mgr.gameState() == GameState.pre_game):
             self.game_play_view()
+
+            if self.mgr.gameState() == GameState.half_time:
+                self.roster_view(bar_only=900)
+        elif (self.game is None and
+              self.tournament is None):
+            self.game_play_view()
+
+            if self.mgr.gameState() == GameState.half_time:
+                self.roster_view(bar_only=900)
+        else:
+            self.roster_view()
 
     def color(self, name):
         if self.mask == MaskKind.CHROMA and name == "bg":
@@ -540,15 +552,7 @@ class OverlayView(tk.Canvas):
                 y_offset += penalty_height + v_spacing
 
 
-    def roster_view(self):
-        if (not self.mgr.gameState() == GameState.game_over and
-            not self.mgr.gameState() == GameState.pre_game):
-            return False
-
-        if (self.game is None and
-            self.tournament is None):
-            return False
-
+    def roster_view(self, bar_only=None):
         font=("Avenir Next LT Pro", 20)
         team_font=("Avenir Next LT Pro", 20, "bold")
         players_font=("Avenir Next LT Pro", 20, "bold")
@@ -571,7 +575,12 @@ class OverlayView(tk.Canvas):
         flag_width = 150
         col_width = (bar_width - title_width - flag_width * 2) / 2
         roster_y = 250
-        bar_y = 100 if self.mgr.gameState() == GameState.pre_game else 725
+
+        if bar_only is not None:
+            bar_y = bar_only
+        else:
+            bar_y = 100 if self.mgr.gameState() == GameState.pre_game else 725
+
         title_y = bar_y
         bar_height = 100
         title_height = bar_height
@@ -652,7 +661,7 @@ class OverlayView(tk.Canvas):
                 }.get(game_type, game_type)
                 top_text = "{} #{}".format(game_type, self.gid)
 
-            self.create_text((center_x, bar_y + bar_height / 4), text=top_text,
+            self.create_text((center_x, bar_y + bar_height / 4 - 5), text=top_text,
                              fill=self.color("title_text"), font=title_font,
                              anchor=tk.CENTER)
 
@@ -663,6 +672,15 @@ class OverlayView(tk.Canvas):
                                      fill=self.color("title_text"), font=title_font,
                                      anchor=tk.CENTER)
 
+            game_state = ""
+            if self.mgr.gameState() == GameState.game_over:
+                game_state = "Final Scores"
+            elif self.mgr.gameState() == GameState.half_time:
+                game_state = "Half Time"
+            self.create_text((center_x, bar_y + bar_height / 2), text=game_state,
+                             fill=self.color("title_text"), font=title_font,
+                             anchor=tk.CENTER)
+
             from datetime import datetime
             import calendar
             start = datetime.strptime(self.game['start_time'], "%Y-%m-%dT%H:%M:%S")
@@ -670,18 +688,30 @@ class OverlayView(tk.Canvas):
                                                   calendar.day_abbr[start.weekday()],
                                                   start.strftime("%H:%M"))
 
-            self.create_text((center_x, bar_y + 3 * bar_height / 4), text=bottom_text,
+            self.create_text((center_x, bar_y + 3 * bar_height / 4 + 5), text=bottom_text,
                              fill=self.color("title_text"), font=title_font,
                              anchor=tk.CENTER)
 
         elif self.tournament is not None:
-            self.create_text((center_x, bar_y + bar_height / 4), text=self.tournament['name'],
+            self.create_text((center_x, bar_y + bar_height / 4 - 5), text=self.tournament['name'],
                              fill=self.color("title_text"), font=title_font,
                              anchor=tk.CENTER)
 
-            self.create_text((center_x, bar_y + 3 * bar_height / 4), text=self.tournament['location'],
+            game_state = ""
+            if self.mgr.gameState() == GameState.game_over:
+                game_state = "Final Scores"
+            elif self.mgr.gameState() == GameState.half_time:
+                game_state = "Half Time"
+            self.create_text((center_x, bar_y + bar_height / 2), text=game_state,
                              fill=self.color("title_text"), font=title_font,
                              anchor=tk.CENTER)
+
+            self.create_text((center_x, bar_y + 3 * bar_height / 4 + 5), text=self.tournament['location'],
+                             fill=self.color("title_text"), font=title_font,
+                             anchor=tk.CENTER)
+
+        if bar_only is not None:
+            return
 
         # Roster
         if self.mgr.gameState() == GameState.pre_game:
@@ -793,9 +823,6 @@ class OverlayView(tk.Canvas):
         next_in_text = next_status + "%2d:%02d" % (next_time // 60, next_time % 60)
         self.create_text((center_x - next_w / 2 + 20, next_y), text=next_in_text,
                          fill="#ffffff", font=title_font, anchor=tk.W)
-
-
-        return True
 
 
 def is_rpi():
