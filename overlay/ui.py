@@ -46,7 +46,7 @@ class OverlayView(tk.Canvas):
         self.w = bbox[0]
         self.h = bbox[1]
 
-        self.refresh = 100
+        self.refresh = 50
         self.t = 0
         def draw(self):
             try:
@@ -70,7 +70,7 @@ class OverlayView(tk.Canvas):
         # Update UWHScores data periodically
         def refresh_uwhscores(self):
             self.fetch_uwhscores()
-            self.after(60 * 1000, lambda : refresh_uwhscores(self))
+            self.after(5000, lambda : refresh_uwhscores(self))
         self.after(1, lambda : refresh_uwhscores(self))
 
         if self.demo:
