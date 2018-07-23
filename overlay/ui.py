@@ -439,8 +439,8 @@ class OverlayView(tk.Canvas):
             self.mgr.timeoutState() == TimeoutState.black):
             clock_time = self.mgr.gameClock()
             clock_text = "%02d" % (clock_time,)
-            self.create_text((x1 + bar_width + state_width + time_width +timeout_L_width + 30, y1 + height + outset * 2),
-                             text=clock_time, fill="#000000", font=time_font, anchor=tk.W)
+            self.create_text((x1 + bar_width + state_width + time_width + timeout_L_width + timeout_R_width - 15, y1 + height + outset * 2),
+                             text=clock_time, fill="#000000", font=time_font, anchor=tk.E)
 
         # Game State Text
         state_text=""
