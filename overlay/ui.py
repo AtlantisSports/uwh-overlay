@@ -275,7 +275,8 @@ class OverlayView(tk.Canvas):
         score_offset = bar_width - score_width
         time_width = 155
         state_width = 110
-        timeout_width = 150
+        timeout_R_width = 110
+        timeout_L_width = 150
         state_offset = score_offset + time_width
         outset = 3
 
@@ -299,13 +300,15 @@ class OverlayView(tk.Canvas):
             self.mgr.gameState() == GameState.pre_sudden_death or
             self.mgr.gameState() == GameState.sudden_death):
             if self.mgr.timeoutState() == TimeoutState.ref:
-                fill_color = "#ffff00"
+                L_fill_color = "#ffff00"
                 border_color = "#000000"
             elif self.mgr.timeoutState() == TimeoutState.white:
-                fill_color = "#ffffff"
+                R_fill_color = "#ffff00"
+                L_fill_color = "#ffffff"
                 border_color = "#000000"
             elif self.mgr.timeoutState() == TimeoutState.black:
-                fill_color = "#000000"
+                R_fill_color = "#ffff00"
+                L_fill_color = "#000000"
                 border_color = "#ffffff"
             elif (self.mgr.timeoutState() == TimeoutState.penalty_shot or
                   self.mgr.gameState() == GameState.pre_ot or
@@ -314,17 +317,31 @@ class OverlayView(tk.Canvas):
                   self.mgr.gameState() == GameState.ot_second or
                   self.mgr.gameState() == GameState.pre_sudden_death or
                   self.mgr.gameState() == GameState.sudden_death):
-                fill_color = "#ff0000"
+                L_fill_color = "#ff0000"
                 border_color = "#000000"
+
+            if (self.mgr.timeoutState() == TimeoutState.white or
+                self.mgr.timeoutState() == TimeoutState.black):
+
+                # ((       )    (   ))    )####)
+                self.bordered_round_rectangle(bbox=(x1 + bar_width + state_width + time_width,
+                                                    y1,
+                                                    x1 + bar_width + state_width + time_width + timeout_L_width + timeout_R_width,
+                                                    y1 + height * 2 + outset * 2),
+                                              radius=radius, outset=outset,
+                                              fill=R_fill_color,
+                                              border="#000000")
 
             # ((       )    (   ))####)
             self.bordered_round_rectangle(bbox=(x1 + bar_width + state_width + time_width,
                                                 y1,
-                                                x1 + bar_width + state_width + time_width + timeout_width,
+                                                x1 + bar_width + state_width + time_width + timeout_L_width,
                                                 y1 + height * 2 + outset * 2),
                                           radius=radius, outset=outset,
-                                          fill=fill_color,
+                                          fill=L_fill_color,
                                           border=border_color)
+
+
 
         # ((       )####(   ))    )
         self.bordered_round_rectangle(bbox=(x1 + bar_width,
@@ -351,10 +368,6 @@ class OverlayView(tk.Canvas):
         # ((       )    (###))    )
         time_fill = self.color("fill")
         time_border=self.color("border")
-        if (self.mgr.timeoutState() == TimeoutState.white or
-            self.mgr.timeoutState() == TimeoutState.black):
-            time_fill = "#ffff00"
-            time_border = "#000000"
         self.bordered_round_rectangle(bbox=(x1 + bar_width + state_width,
                                             y1,
                                             x1 + bar_width + state_width + time_width,
@@ -422,6 +435,13 @@ class OverlayView(tk.Canvas):
         self.create_text((x1 + bar_width + state_width + time_width + 30, y1 + height + outset * 2),
                         text=timeout_text, fill=text_color, font=state_font, anchor=tk.W)
 
+        if (self.mgr.timeoutState() == TimeoutState.white or
+            self.mgr.timeoutState() == TimeoutState.black):
+            clock_time = self.mgr.gameClock()
+            clock_text = "%02d" % (clock_time,)
+            self.create_text((x1 + bar_width + state_width + time_width +timeout_L_width + 30, y1 + height + outset * 2),
+                             text=clock_time, fill="#000000", font=time_font, anchor=tk.W)
+
         # Game State Text
         state_text=""
         if self.mgr.gameState() == GameState.pre_game:
@@ -445,10 +465,7 @@ class OverlayView(tk.Canvas):
 
         # Time Text
         time_fill=self.color("fill_text")
-        if (self.mgr.timeoutState() == TimeoutState.white or
-            self.mgr.timeoutState() == TimeoutState.black):
-            time_fill = "#000000"
-        clock_time = self.mgr.gameClock()
+        clock_time = self.mgr.gameClockAtPause()
         clock_text = "%2d:%02d" % (clock_time // 60, clock_time % 60)
         self.create_text((x1 + bar_width + state_width + time_width / 2, y1 + height + outset * 3),
                          text=clock_text, fill=time_fill,
