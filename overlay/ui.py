@@ -726,18 +726,13 @@ class OverlayView(tk.Canvas):
                              fill=self.color("title_text"), font=title_font,
                              anchor=tk.CENTER)
 
-            if self.tid == 17:
-                if self.game['description'] is not None:
-                    self.create_text((center_x, bar_y + bar_height / 2),
-                                     text=self.game['description'],
-                                     fill=self.color("title_text"), font=title_font,
-                                     anchor=tk.CENTER)
-
             game_state = ""
             if self.mgr.gameState() == GameState.game_over:
                 game_state = "Final Scores"
             elif self.mgr.gameState() == GameState.half_time:
                 game_state = "Half Time"
+            elif self.tid == 17 and self.game['description'] is not None:
+                game_state = self.game['description']
             self.create_text((center_x, bar_y + bar_height / 2), text=game_state,
                              fill=self.color("title_text"), font=title_font,
                              anchor=tk.CENTER)
