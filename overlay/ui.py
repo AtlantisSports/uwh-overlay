@@ -490,7 +490,7 @@ class OverlayView(tk.Canvas):
         # Team Names
         white_team=self.get('left', 'name')
         white_team=re.sub(r'\(.*\)', '', white_team)
-        white_team=self.abbreviate(self.get('left', 'name'))
+        white_team=self.abbreviate(white_team)
         self.create_text((x1 + 10, y1 + outset + height / 2), text=white_team,
                          fill=self.get('right','color'), anchor=tk.W, font=font)
 
