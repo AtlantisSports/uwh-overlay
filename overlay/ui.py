@@ -190,11 +190,13 @@ class OverlayView(tk.Canvas):
             self.gid != self.mgr.gid()):
             self.fetch_uwhscores()
 
-        if (not self.mgr.gameState() == GameState.game_over and
-            not self.mgr.gameState() == GameState.pre_game):
+        if ((self.mgr.gameState() != GameState.game_over and
+             self.mgr.gameState() != GameState.pre_game) or
+            self.mgr.gameClock() < 15):
             self.game_play_view()
 
-            if self.mgr.gameState() == GameState.half_time:
+            if (self.mgr.gameState() == GameState.half_time and
+                self.mgr.gameClock() >= 15):
                 self.roster_view(bar_only=900)
                 self.gofundme()
 
