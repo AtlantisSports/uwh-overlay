@@ -190,9 +190,9 @@ class OverlayView(tk.Canvas):
             self.gid != self.mgr.gid()):
             self.fetch_uwhscores()
 
-        if ((self.mgr.gameState() != GameState.game_over and
-             self.mgr.gameState() != GameState.pre_game) or
-            self.mgr.gameClock() < 15):
+        if (self.mgr.gameState() != GameState.game_over and
+            (self.mgr.gameState() != GameState.pre_game or
+             self.mgr.gameClock() < 15)):
             self.game_play_view()
 
             if (self.mgr.gameState() == GameState.half_time and
