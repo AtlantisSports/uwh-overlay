@@ -492,13 +492,13 @@ class OverlayView(tk.Canvas):
         # Team Names
         white_team=self.get('left', 'name')
         white_team=re.sub(r'\(.*\)', '', white_team)
-        white_team=self.abbreviate(white_team)
+        white_team=self.abbreviate(white_team, 24)
         self.create_text((x1 + 10, y1 + outset + height / 2), text=white_team,
                          fill=self.get('right','color'), anchor=tk.W, font=font)
 
         black_team=self.get('right', 'name')
         black_team=re.sub(r'\(.*\)', '', black_team)
-        black_team=self.abbreviate(black_team)
+        black_team=self.abbreviate(black_team, 24)
         self.create_text((x1 + 10, y1 + height + outset * 2 + height / 2), text=black_team,
                          fill=self.get('left', 'color'), anchor=tk.W, font=font)
 
