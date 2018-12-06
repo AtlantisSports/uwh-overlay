@@ -2,6 +2,7 @@
 
 from uwh.gamemanager import GameManager, GameState, TimeoutState, Penalty, TeamColor, PoolLayout
 from uwh.xbee_comms import XBeeClient, XBeeConfigParser, xbee_port, xbee_baud, xbee_id, xbee_ch
+import uwh.rs485_comms as rs485_ser
 from overlay.ui import Overlay, MaskKind
 import argparse
 import socket
@@ -39,9 +40,14 @@ cfg.read('timeshark.cfg')
 
 if not args.demo:
     if cfg.getboolean('hardware', 'has_xbee'):
+        print('Using XBee comms')
         xbee = XBeeClient(mgr, xbee_port(cfg), xbee_baud(cfg))
         xbee.setup(xbee_id(cfg), xbee_ch(cfg), socket.gethostname())
         xbee.listen_thread()
+    elif cfg.getboolean('hardware', 'has_rs485'):
+        print('Using RS485 comms')
+        ser = rs485_ser.RS485Client(mgr, rs485_ser.port(cfg), rs485_ser.baud(cfg))
+        ser.listen_thread()
 
 ov = Overlay(mgr, args.mask, args.version, args.demo)
 ov.mainloop()
