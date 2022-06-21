@@ -12,13 +12,16 @@ import time
 import sys
 import re
 
+
 class MaskKind:
     NONE, CHROMA, VMAC = range(3)
+
 
 def sized_frame(master, height, width):
     F = tk.Frame(master, height=height, width=width)
     F.pack_propagate(0)
     return F
+
 
 class OverlayView(tk.Canvas):
     def __init__(self, parent, bbox, mgr, mask, version, demo):
@@ -49,6 +52,7 @@ class OverlayView(tk.Canvas):
 
         self.refresh = 50
         self.t = 0
+
         def draw(self):
             try:
                 self.delete(tk.ALL)
@@ -62,31 +66,32 @@ class OverlayView(tk.Canvas):
                     self.clear(fill=self.color("bg"))
                 self.render()
                 self.update()
-                self.after(self.refresh, lambda : draw(self))
+                self.after(self.refresh, lambda: draw(self))
             except KeyboardInterrupt:
                 print("Quitting...")
                 self.root.quit()
-        self.after(1, lambda : draw(self))
+        self.after(1, lambda: draw(self))
 
         # Update UWHScores data periodically
         def refresh_uwhscores(self):
             self.fetch_uwhscores()
-            self.after(5000, lambda : refresh_uwhscores(self))
-        self.after(1, lambda : refresh_uwhscores(self))
+            self.after(5000, lambda: refresh_uwhscores(self))
+        self.after(1, lambda: refresh_uwhscores(self))
 
         if self.demo:
             def cycle_teams(self):
                 self.mgr.setGid(max((self.mgr.gid() + 1) % 272, 1))
-                self.after(2500, lambda : cycle_teams(self))
-            self.after(1, lambda : cycle_teams(self))
+                self.after(2500, lambda: cycle_teams(self))
+            self.after(1, lambda: cycle_teams(self))
 
             def cycle_goal_black(self):
                 self.mgr.addBlackGoal(5)
-                self.after(3000, lambda : cycle_goal_white(self))
+                self.after(3000, lambda: cycle_goal_white(self))
+
             def cycle_goal_white(self):
                 self.mgr.addWhiteGoal(5)
-                self.after(3000, lambda : cycle_goal_black(self))
-            self.after(1, lambda : cycle_goal_black(self))
+                self.after(3000, lambda: cycle_goal_black(self))
+            self.after(1, lambda: cycle_goal_black(self))
 
     def clear(self, fill):
         self.create_rectangle((0, 0, self.w, self.h), fill=fill)
@@ -95,12 +100,18 @@ class OverlayView(tk.Canvas):
         x1, y1, x2, y2 = bbox
         fill_t = fill_t or fill
         fill_b = fill_b or fill
-        self.create_arc((x2 - radius, y1, x2 + radius, y2), fill=fill_t, outline=fill_t, start=0)
-        self.create_arc((x1 - radius, y1, x1 + radius, y2), fill=fill_t, outline=fill_t, start=90)
-        self.create_arc((x1 - radius, y1, x1 + radius, y2), fill=fill_b, outline=fill_b, start=180)
-        self.create_arc((x2 - radius, y1, x2 + radius, y2), fill=fill_b, outline=fill_b, start=270)
-        self.create_rectangle((x1, y1, x2, (y1+y2)/2), fill=fill_t, outline=fill_t)
-        self.create_rectangle((x1, (y1+y2)/2, x2, y2), fill=fill_b, outline=fill_b)
+        self.create_arc((x2 - radius, y1, x2 + radius, y2),
+                        fill=fill_t, outline=fill_t, start=0)
+        self.create_arc((x1 - radius, y1, x1 + radius, y2),
+                        fill=fill_t, outline=fill_t, start=90)
+        self.create_arc((x1 - radius, y1, x1 + radius, y2),
+                        fill=fill_b, outline=fill_b, start=180)
+        self.create_arc((x2 - radius, y1, x2 + radius, y2),
+                        fill=fill_b, outline=fill_b, start=270)
+        self.create_rectangle((x1, y1, x2, (y1+y2)/2),
+                              fill=fill_t, outline=fill_t)
+        self.create_rectangle((x1, (y1+y2)/2, x2, y2),
+                              fill=fill_b, outline=fill_b)
 
     def bordered_round_rectangle(self, bbox, radius, outset, fill, border,
                                  fill_t=None, fill_b=None, border_t=None, border_b=None):
@@ -125,23 +136,23 @@ class OverlayView(tk.Canvas):
 
     def get(self, side, feature):
         if ((self.mgr.layout() == PoolLayout.white_on_right) ==
-            (side == 'right')):
+                (side == 'right')):
             return {
-                'score' : self.mgr.whiteScore(),
-                'color' : 'white',
-                'id' : self.white_id,
-                'name' : self.white_name,
-                'roster' : self.white_roster,
-                'flag' : self.white_flag,
+                'score': self.mgr.whiteScore(),
+                'color': 'white',
+                'id': self.white_id,
+                'name': self.white_name,
+                'roster': self.white_roster,
+                'flag': self.white_flag,
             }[feature]
         else:
             return {
-                'score' : self.mgr.blackScore(),
-                'color' : 'black',
-                'id' : self.black_id,
-                'name' : self.black_name,
-                'roster' : self.black_roster,
-                'flag' : self.black_flag,
+                'score': self.mgr.blackScore(),
+                'color': 'black',
+                'id': self.black_id,
+                'name': self.black_name,
+                'roster': self.black_roster,
+                'flag': self.black_flag,
             }[feature]
 
     def reset_uwhscores(self):
@@ -159,22 +170,29 @@ class OverlayView(tk.Canvas):
     def fetch_uwhscores(self):
         self.tid = self.mgr.tid()
         self.gid = self.mgr.gid()
+
         def game(response):
             self.game = response
             self.black_name = response['black']
             self.white_name = response['white']
             self.black_id = response['black_id']
             self.white_id = response['white_id']
+
             def black_roster(roster):
                 self.black_roster = roster
+
             def white_roster(roster):
                 self.white_roster = roster
             self.uwhscores.get_roster(self.tid, self.black_id, black_roster)
             self.uwhscores.get_roster(self.tid, self.white_id, white_roster)
+
             def white_flag(flag):
-                self.white_flag = Image.open(flag)
+                if flag is not None:
+                    self.white_flag = Image.open(flag)
+
             def black_flag(flag):
-                self.black_flag = Image.open(flag)
+                if flag is not None:
+                    self.black_flag = Image.open(flag)
             self.uwhscores.get_team_flag(self.tid, self.black_id, black_flag)
             self.uwhscores.get_team_flag(self.tid, self.white_id, white_flag)
 
@@ -187,7 +205,7 @@ class OverlayView(tk.Canvas):
     def render(self):
         # Force update of teams between games
         if (self.tid != self.mgr.tid() or
-            self.gid != self.mgr.gid()):
+                self.gid != self.mgr.gid()):
             self.fetch_uwhscores()
 
         if (self.mgr.gameState() != GameState.game_over and
@@ -196,7 +214,7 @@ class OverlayView(tk.Canvas):
             self.game_play_view()
 
             if (self.mgr.gameState() == GameState.half_time and
-                self.mgr.gameClock() >= 15):
+                    self.mgr.gameClock() >= 15):
                 self.roster_view(bar_only=900)
                 self.gofundme()
 
@@ -219,49 +237,48 @@ class OverlayView(tk.Canvas):
 
         center_x = self.w * 4 / 5
 
-        logo = Image.open('res/gofundme.png')
-        logo = logo.resize((300, 400), Image.ANTIALIAS)
-        self.logo = ImageTk.PhotoImage(logo)
-        self.create_image(center_x, self.h / 2, anchor=tk.CENTER, image=self.logo)
+        # logo = Image.open('res/gofundme.png')
+        # logo = logo.resize((300, 400), Image.ANTIALIAS)
+        # self.logo = ImageTk.PhotoImage(logo)
+        # self.create_image(center_x, self.h / 2,
+        #                   anchor=tk.CENTER, image=self.logo)
 
+        # self.bordered_round_rectangle(bbox=(center_x - width / 2,
+        #                                     self.h * 1 / 4 - height/2,
+        #                                     center_x + width / 2,
+        #                                     self.h * 1 / 4 + height/2),
+        #                               radius=radius, outset=outset,
+        #                               fill="#000000",
+        #                               border="#ffffff")
 
-        self.bordered_round_rectangle(bbox=(center_x - width /2,
-                                            self.h * 1 / 4 - height/2,
-                                            center_x + width /2,
-                                            self.h * 1 / 4 + height/2),
-                                      radius=radius, outset=outset,
-                                      fill="#000000",
-                                      border="#ffffff")
+        # font = ("Avenir Next LT Pro", 15, "bold")
 
-        font = ("Avenir Next LT Pro", 15, "bold")
+        # self.create_text((center_x, self.h * 1/4 - 25), text="GoFundMe Underwater\nHockey World Champs 2018",
+        #                  fill="#ffffff", font=font, anchor=tk.CENTER)
 
-        self.create_text((center_x, self.h * 1/4 - 25), text="GoFundMe Underwater\nHockey World Champs 2018",
-                         fill="#ffffff", font=font, anchor=tk.CENTER)
+        # font = ("Avenir Next LT Pro", 15, "underline")
 
-        font = ("Avenir Next LT Pro", 15, "underline")
-
-        self.create_text((center_x, self.h * 1/4 + 25), text="http://bit.ly/2mzRBFe",
-                         fill="#4040ff", font=font, anchor=tk.CENTER)
-
+        # self.create_text((center_x, self.h * 1/4 + 25), text="http://bit.ly/2mzRBFe",
+        #                  fill="#4040ff", font=font, anchor=tk.CENTER)
 
     def color(self, name):
         if self.mask == MaskKind.CHROMA and name == "bg":
             return "#00ff00"
 
         return {
-            "bg" : "#054a91",
-            "border" : "#ffffff",
-            "fill" : "#313FA1",
-            "fill_text" : "#ffffff",
-            "black_fill" : "#000000",
-            "black_text" : "#2e96ff",
-            "white_fill" : "#ffffff",
-            "white_text" : "#313FA1",
-            "team_text"  : "#000000",
-            "title_text" : "#ffffff",
+            "bg": "#054a91",
+            "border": "#ffffff",
+            "fill": "#313FA1",
+            "fill_text": "#ffffff",
+            "black_fill": "#000000",
+            "black_text": "#2e96ff",
+            "white_fill": "#ffffff",
+            "white_text": "#313FA1",
+            "team_text": "#000000",
+            "title_text": "#ffffff",
         }.get(name, "#ff0000")
 
-    def abbreviate(self, s, max_len = 16):
+    def abbreviate(self, s, max_len=16):
         if len(s) > max_len:
             return s[0:max_len-3] + "..."
         else:
@@ -286,10 +303,10 @@ class OverlayView(tk.Canvas):
         x1 = 40 + outset
         y1 = 40
 
-        font=("Avenir Next LT Pro", 15, "bold")
-        score_font=("Avenir Next LT Pro", 24, "bold")
-        time_font=("Avenir Next LT Pro", 40)
-        state_font=("Avenir Next LT Pro", 16, "bold")
+        font = ("Avenir Next LT Pro", 15, "bold")
+        score_font = ("Avenir Next LT Pro", 24, "bold")
+        time_font = ("Avenir Next LT Pro", 40)
+        state_font = ("Avenir Next LT Pro", 16, "bold")
 
         # Bottom Rectangle
         if (self.mgr.timeoutState() == TimeoutState.ref or
@@ -301,7 +318,7 @@ class OverlayView(tk.Canvas):
             self.mgr.gameState() == GameState.ot_half or
             self.mgr.gameState() == GameState.ot_second or
             self.mgr.gameState() == GameState.pre_sudden_death or
-            self.mgr.gameState() == GameState.sudden_death):
+                self.mgr.gameState() == GameState.sudden_death):
             if self.mgr.timeoutState() == TimeoutState.ref:
                 L_fill_color = "#ffff00"
                 border_color = "#000000"
@@ -324,7 +341,7 @@ class OverlayView(tk.Canvas):
                 border_color = "#000000"
 
             if (self.mgr.timeoutState() == TimeoutState.white or
-                self.mgr.timeoutState() == TimeoutState.black):
+                    self.mgr.timeoutState() == TimeoutState.black):
 
                 # ((       )    (   ))    )####)
                 self.bordered_round_rectangle(bbox=(x1 + bar_width + state_width + time_width,
@@ -343,8 +360,6 @@ class OverlayView(tk.Canvas):
                                           radius=radius, outset=outset,
                                           fill=L_fill_color,
                                           border=border_color)
-
-
 
         # ((       )####(   ))    )
         self.bordered_round_rectangle(bbox=(x1 + bar_width,
@@ -370,7 +385,7 @@ class OverlayView(tk.Canvas):
 
         # ((       )    (###))    )
         time_fill = self.color("fill")
-        time_border=self.color("border")
+        time_border = self.color("border")
         self.bordered_round_rectangle(bbox=(x1 + bar_width + state_width,
                                             y1,
                                             x1 + bar_width + state_width + time_width,
@@ -379,24 +394,28 @@ class OverlayView(tk.Canvas):
                                       fill=time_fill,
                                       border=time_border)
 
-        logo = Image.open('res/worlds-cmas-sticker.png')
-        size = 130
-        logo = logo.resize((size, size), Image.ANTIALIAS)
-        self.logo = ImageTk.PhotoImage(logo)
-        self.create_image(self.w - x1 + 30, y1, anchor=tk.NE, image=self.logo)
+        # logo = Image.open('res/worlds-cmas-sticker.png')
+        # size = 130
+        # logo = logo.resize((size, size), Image.ANTIALIAS)
+        # self.logo = ImageTk.PhotoImage(logo)
+        # self.create_image(self.w - x1 + 30, y1, anchor=tk.NE, image=self.logo)
 
         # Flags
         left_flag = self.get('left', 'flag')
         if left_flag is not None:
-            left_flag = left_flag.resize((flag_width, height + outset), Image.ANTIALIAS)
+            left_flag = left_flag.resize(
+                (flag_width, height + outset), Image.ANTIALIAS)
             self._left_status_flag = ImageTk.PhotoImage(left_flag)
-            self.create_image(x1 + bar_width - score_width, y1, anchor=tk.NE, image=self._left_status_flag)
+            self.create_image(x1 + bar_width - score_width,
+                              y1, anchor=tk.NE, image=self._left_status_flag)
 
         right_flag = self.get('right', 'flag')
         if right_flag is not None:
-            right_flag = right_flag.resize((flag_width, height + outset), Image.ANTIALIAS)
+            right_flag = right_flag.resize(
+                (flag_width, height + outset), Image.ANTIALIAS)
             self._right_status_flag = ImageTk.PhotoImage(right_flag)
-            self.create_image(x1 + bar_width - score_width, y1 + height + outset, anchor=tk.NE, image=self._right_status_flag)
+            self.create_image(x1 + bar_width - score_width, y1 + height +
+                              outset, anchor=tk.NE, image=self._right_status_flag)
 
         # Scores Fill
         self.round_rectangle(bbox=(x1 + score_offset,
@@ -411,63 +430,63 @@ class OverlayView(tk.Canvas):
                              radius=score_radius, fill=self.get('right', 'color'))
 
         # Timeout
-        timeout_text=""
+        timeout_text = ""
         text_color = self.color('fill_text')
         if self.mgr.timeoutState() == TimeoutState.ref:
-            timeout_text="Ref\nTimeout"
-            text_color="#000000"
+            timeout_text = "Ref\nTimeout"
+            text_color = "#000000"
         elif self.mgr.timeoutState() == TimeoutState.white:
-            timeout_text="White\nTimeout"
-            text_color="#000000"
+            timeout_text = "White\nTimeout"
+            text_color = "#000000"
         elif self.mgr.timeoutState() == TimeoutState.black:
-            timeout_text="Black\nTimeout"
-            text_color="#ffffff"
+            timeout_text = "Black\nTimeout"
+            text_color = "#ffffff"
         elif self.mgr.timeoutState() == TimeoutState.penalty_shot:
-            timeout_text="Penalty\nShot"
-            text_color="#000000"
+            timeout_text = "Penalty\nShot"
+            text_color = "#000000"
         elif (self.mgr.gameState() == GameState.pre_ot or
               self.mgr.gameState() == GameState.ot_first or
               self.mgr.gameState() == GameState.ot_half or
               self.mgr.gameState() == GameState.ot_second):
-            timeout_text="Overtime"
-            text_color="#000000"
+            timeout_text = "Overtime"
+            text_color = "#000000"
         elif (self.mgr.gameState() == GameState.pre_sudden_death or
               self.mgr.gameState() == GameState.sudden_death):
-            timeout_text="Sudden\nDeath"
-            text_color="#000000"
+            timeout_text = "Sudden\nDeath"
+            text_color = "#000000"
         self.create_text((x1 + bar_width + state_width + time_width + 30, y1 + height + outset * 2),
-                        text=timeout_text, fill=text_color, font=state_font, anchor=tk.W)
+                         text=timeout_text, fill=text_color, font=state_font, anchor=tk.W)
 
         if (self.mgr.timeoutState() == TimeoutState.white or
-            self.mgr.timeoutState() == TimeoutState.black):
+                self.mgr.timeoutState() == TimeoutState.black):
             clock_time = self.mgr.gameClock()
             clock_text = "%02d" % (clock_time,)
             self.create_text((x1 + bar_width + state_width + time_width + timeout_L_width + timeout_R_width - 15, y1 + height + outset * 2),
                              text=clock_time, fill="#000000", font=time_font, anchor=tk.E)
 
         # Game State Text
-        state_text=""
+        state_text = ""
         if self.mgr.gameState() == GameState.pre_game:
-            state_text="Pre\nGame"
+            state_text = "Pre\nGame"
         if (self.mgr.gameState() == GameState.first_half or
-            self.mgr.gameState() == GameState.ot_first):
-            state_text="1st\nHalf"
+                self.mgr.gameState() == GameState.ot_first):
+            state_text = "1st\nHalf"
         elif (self.mgr.gameState() == GameState.second_half or
-            self.mgr.gameState() == GameState.ot_second):
-            state_text="2nd\nHalf"
+              self.mgr.gameState() == GameState.ot_second):
+            state_text = "2nd\nHalf"
         elif (self.mgr.gameState() == GameState.half_time or
               self.mgr.gameState() == GameState.ot_half):
-            state_text="Half\nTime"
+            state_text = "Half\nTime"
         elif self.mgr.gameState() == GameState.game_over:
-            state_text="Game\nOver"
+            state_text = "Game\nOver"
         elif (self.mgr.gameState() == GameState.pre_ot or
               self.mgr.gameState() == GameState.pre_sudden_death):
-            state_text="Break"
+            state_text = "Break"
         self.create_text((x1 + bar_width + outset + 25, y1 + height + outset),
-                        text=state_text, fill=self.color("fill_text"), font=state_font, anchor=tk.W)
+                         text=state_text, fill=self.color("fill_text"), font=state_font, anchor=tk.W)
 
         # Time Text
-        time_fill=self.color("fill_text")
+        time_fill = self.color("fill_text")
         clock_time = self.mgr.gameClockAtPause()
         clock_text = "%2d:%02d" % (clock_time // 60, clock_time % 60)
         self.create_text((x1 + bar_width + state_width + time_width / 2, y1 + height + outset * 3),
@@ -476,29 +495,29 @@ class OverlayView(tk.Canvas):
 
         # White Score Text
         left_score = self.get('left', 'score')
-        l_score="%d" % (left_score,)
+        l_score = "%d" % (left_score,)
         self.create_text((x1 + score_offset + score_width / 2 + 3, y1 + height / 2 + outset),
                          text=l_score, fill=self.get('right', 'color'),
                          font=score_font, anchor=tk.CENTER)
 
         # Black Score Text
         right_score = self.get('right', 'score')
-        r_score="%d" % (right_score,)
+        r_score = "%d" % (right_score,)
         self.create_text((x1 + score_offset + score_width / 2 + 3,
                           y1 + height / 2 + height + outset * 2),
                          text=r_score, fill=self.get('left', 'color'),
                          font=score_font, anchor=tk.CENTER)
 
         # Team Names
-        white_team=self.get('left', 'name')
-        white_team=re.sub(r'\(.*\)', '', white_team)
-        white_team=self.abbreviate(white_team, 24)
+        white_team = self.get('left', 'name')
+        white_team = re.sub(r'\(.*\)', '', white_team)
+        white_team = self.abbreviate(white_team, 24)
         self.create_text((x1 + 10, y1 + outset + height / 2), text=white_team,
-                         fill=self.get('right','color'), anchor=tk.W, font=font)
+                         fill=self.get('right', 'color'), anchor=tk.W, font=font)
 
-        black_team=self.get('right', 'name')
-        black_team=re.sub(r'\(.*\)', '', black_team)
-        black_team=self.abbreviate(black_team, 24)
+        black_team = self.get('right', 'name')
+        black_team = re.sub(r'\(.*\)', '', black_team)
+        black_team = self.abbreviate(black_team, 24)
         self.create_text((x1 + 10, y1 + height + outset * 2 + height / 2), text=black_team,
                          fill=self.get('left', 'color'), anchor=tk.W, font=font)
 
@@ -523,17 +542,17 @@ class OverlayView(tk.Canvas):
 
         def recent_goal(g):
             state_idx = {
-                GameState.pre_game :     0,
-                GameState.first_half :   1,
-                GameState.half_time :    2,
-                GameState.second_half :  3,
-                GameState.pre_ot :       4,
-                GameState.ot_first :     5,
-                GameState.ot_half :      6,
-                GameState.ot_second :    7,
-                GameState.pre_sudden_death : 8,
-                GameState.sudden_death : 9,
-                GameState.game_over :   10,
+                GameState.pre_game:     0,
+                GameState.first_half:   1,
+                GameState.half_time:    2,
+                GameState.second_half:  3,
+                GameState.pre_ot:       4,
+                GameState.ot_first:     5,
+                GameState.ot_half:      6,
+                GameState.ot_second:    7,
+                GameState.pre_sudden_death: 8,
+                GameState.sudden_death: 9,
+                GameState.game_over:   10,
             }
             return (state_idx[self.mgr.gameState()] -
                     state_idx[g.state()]) <= 1
@@ -573,7 +592,8 @@ class OverlayView(tk.Canvas):
         # Sin-bin
         penalty_height = 30
 
-        penalties = self.mgr.penalties(TeamColor.white) + self.mgr.penalties(TeamColor.black)
+        penalties = self.mgr.penalties(
+            TeamColor.white) + self.mgr.penalties(TeamColor.black)
         if len(penalties) > 0:
             penalties.sort(key=lambda p: p.player())
             penalties.sort(key=lambda p: p.timeRemaining(self.mgr))
@@ -606,18 +626,18 @@ class OverlayView(tk.Canvas):
                     penalty_text = "X"
                 else:
                     remaining = p.timeRemaining(self.mgr)
-                    penalty_text = "%d:%02d" % (remaining // 60, remaining % 60)
+                    penalty_text = "%d:%02d" % (
+                        remaining // 60, remaining % 60)
                 self.create_text((x1 + penalty_width, y1 + height * 3 + y_offset + penalty_height / 2), text=penalty_text,
                                  fill=text_color, anchor=tk.E, font=font)
 
                 y_offset += penalty_height + v_spacing
 
-
     def roster_view(self, bar_only=None):
-        font=("Avenir Next LT Pro", 20)
-        team_font=("Avenir Next LT Pro", 35, "bold")
-        players_font=("Avenir Next LT Pro", 20, "bold")
-        title_font=("Avenir Next LT Pro", 20, "bold")
+        font = ("Avenir Next LT Pro", 20)
+        team_font = ("Avenir Next LT Pro", 35, "bold")
+        players_font = ("Avenir Next LT Pro", 20, "bold")
+        title_font = ("Avenir Next LT Pro", 20, "bold")
 
         if self.game is not None:
             bar_width = 1600
@@ -659,9 +679,11 @@ class OverlayView(tk.Canvas):
         # Flags
         left_flag = self.get('left', 'flag')
         if left_flag is not None:
-            left_flag = left_flag.resize((flag_width, title_height), Image.ANTIALIAS)
+            left_flag = left_flag.resize(
+                (flag_width, title_height), Image.ANTIALIAS)
             self._left_bar_flag = ImageTk.PhotoImage(left_flag)
-            self.create_image(center_x - title_width / 2, title_y, anchor=tk.NE, image=self._left_bar_flag)
+            self.create_image(center_x - title_width / 2,
+                              title_y, anchor=tk.NE, image=self._left_bar_flag)
 
             self.bordered_round_rectangle(bbox=(center_x - bar_width / 2,
                                                 bar_y,
@@ -673,9 +695,11 @@ class OverlayView(tk.Canvas):
 
         right_flag = self.get('right', 'flag')
         if right_flag is not None:
-            right_flag = right_flag.resize((flag_width, title_height), Image.ANTIALIAS)
+            right_flag = right_flag.resize(
+                (flag_width, title_height), Image.ANTIALIAS)
             self._right_bar_flag = ImageTk.PhotoImage(right_flag)
-            self.create_image(center_x + title_width / 2, title_y, anchor=tk.NW, image=self._right_bar_flag)
+            self.create_image(center_x + title_width / 2, title_y,
+                              anchor=tk.NW, image=self._right_bar_flag)
 
             self.bordered_round_rectangle(bbox=(center_x + title_width / 2 + flag_width,
                                                 bar_y,
@@ -695,13 +719,13 @@ class OverlayView(tk.Canvas):
 
         # Team Names
         name = self.get('left', 'name')
-        name=re.sub(r'\(.*\)', '', name)
+        name = re.sub(r'\(.*\)', '', name)
         if name is not None:
             self.create_text((center_x - bar_width / 2 + col_width / 2, bar_y + bar_height / 2), text=name,
                              fill=self.get('right', 'color'), font=team_font, anchor=tk.CENTER)
 
         name = self.get('right', 'name')
-        name=re.sub(r'\(.*\)', '', name)
+        name = re.sub(r'\(.*\)', '', name)
         if name is not None:
             self.create_text((center_x + bar_width / 2 - col_width / 2, bar_y + bar_height / 2), text=name,
                              fill=self.get('left', 'color'), font=team_font, anchor=tk.CENTER)
@@ -717,10 +741,10 @@ class OverlayView(tk.Canvas):
             else:
                 game_type = self.game['game_type']
                 game_type = {
-                    "RR" : "Round Robin",
-                    "CO" : "Crossover",
-                    "BR" : "Bracket",
-                    "E"  : "Exhibition",
+                    "RR": "Round Robin",
+                    "CO": "Crossover",
+                    "BR": "Bracket",
+                    "E": "Exhibition",
                 }.get(game_type, game_type)
                 top_text = "{} #{}".format(game_type, self.gid)
 
@@ -741,9 +765,11 @@ class OverlayView(tk.Canvas):
 
             from datetime import datetime
             import calendar
-            start = datetime.strptime(self.game['start_time'], "%Y-%m-%dT%H:%M:%S")
+            start = datetime.strptime(
+                self.game['start_time'], "%Y-%m-%dT%H:%M:%S")
             bottom_text = "Pool {}, {} {}".format(self.game['pool'],
-                                                  calendar.day_abbr[start.weekday()],
+                                                  calendar.day_abbr[start.weekday(
+                                                  )],
                                                   start.strftime("%H:%M"))
 
             self.create_text((center_x, bar_y + 3 * bar_height / 4 + 5), text=bottom_text,
@@ -776,7 +802,11 @@ class OverlayView(tk.Canvas):
             roster = self.get('left', 'roster')
             if roster is not None:
                 y_offset = 0
-                roster.sort(key=lambda p: p['number'])
+                try:
+                    roster.sort(key=lambda p: p['number'])
+                except TypeError:
+                    roster.sort(key=lambda p: p['name'])
+
                 for player in roster:
                     self.round_rectangle(bbox=(left_col - col_width / 2 - radius, roster_y + y_offset,
                                                left_col + col_width / 2 - radius, roster_y + y_offset + player_h),
@@ -795,7 +825,11 @@ class OverlayView(tk.Canvas):
             roster = self.get('right', 'roster')
             if roster is not None:
                 y_offset = 0
-                roster.sort(key=lambda p: p['number'])
+                try:
+                    roster.sort(key=lambda p: p['number'])
+                except TypeError:
+                    roster.sort(key=lambda p: p['name'])
+
                 for player in roster:
                     self.round_rectangle(bbox=(right_col - col_width / 2 + radius, roster_y + y_offset,
                                                right_col + col_width / 2 + radius, roster_y + y_offset + player_h),
@@ -812,11 +846,12 @@ class OverlayView(tk.Canvas):
                     y_offset += 60
 
             # Worlds
-            logo = Image.open('res/logo-worlds2018.png')
-            scale = 400 / 1500
-            logo = logo.resize((int(1500 * scale), int(900 * scale)), Image.ANTIALIAS)
-            self.logo = ImageTk.PhotoImage(logo)
-            self.create_image(center_x, 550, anchor=tk.CENTER, image=self.logo)
+            # logo = Image.open('res/logo-worlds2018.png')
+            # scale = 400 / 1500
+            # logo = logo.resize(
+            #     (int(1500 * scale), int(900 * scale)), Image.ANTIALIAS)
+            # self.logo = ImageTk.PhotoImage(logo)
+            # self.create_image(center_x, 550, anchor=tk.CENTER, image=self.logo)
 
             # Nationals
             #logo = Image.open('res/logo-nationals2018.png')
@@ -825,14 +860,15 @@ class OverlayView(tk.Canvas):
             #self.create_image(center_x, 625, anchor=tk.CENTER, image=self.logo)
 
             # Navisjon
-            navisjon = Image.open('res/navisjon.png')
-            navisjon = navisjon.resize((400, 100), Image.ANTIALIAS)
-            self.navisjon = ImageTk.PhotoImage(navisjon)
-            self.create_image(self.w / 2, self.h - 150, anchor=tk.CENTER, image=self.navisjon)
+            # navisjon = Image.open('res/navisjon.png')
+            # navisjon = navisjon.resize((400, 100), Image.ANTIALIAS)
+            # self.navisjon = ImageTk.PhotoImage(navisjon)
+            # self.create_image(self.w / 2, self.h - 150,
+            #                   anchor=tk.CENTER, image=self.navisjon)
         else:
             score_y = 500
             score_radius = 300
-            score_font=("Avenir Next LT Pro", 160, "bold")
+            score_font = ("Avenir Next LT Pro", 160, "bold")
             self.bordered_circle(bbox=(center_x - col_spread - score_radius / 2, score_y - score_radius / 2,
                                        center_x - col_spread + score_radius / 2, score_y + score_radius / 2),
                                  fill=self.get('left', 'color'),
@@ -849,18 +885,20 @@ class OverlayView(tk.Canvas):
                              fill=self.get('left', 'color'), font=score_font, anchor=tk.CENTER)
 
             # Worlds
-            logo = Image.open('res/logo-worlds2018.png')
-            scale = 400 / 1500
-            logo = logo.resize((int(1500 * scale), int(900 * scale)), Image.ANTIALIAS)
-            self.logo = ImageTk.PhotoImage(logo)
-            self.create_image(center_x, score_y, anchor=tk.CENTER, image=self.logo)
+            # logo = Image.open('res/logo-worlds2018.png')
+            # scale = 400 / 1500
+            # logo = logo.resize(
+            #     (int(1500 * scale), int(900 * scale)), Image.ANTIALIAS)
+            # self.logo = ImageTk.PhotoImage(logo)
+            # self.create_image(center_x, score_y,
+            #                   anchor=tk.CENTER, image=self.logo)
 
             # Navisjon
-            navisjon = Image.open('res/navisjon.png')
-            navisjon = navisjon.resize((400, 100), Image.ANTIALIAS)
-            self.navisjon = ImageTk.PhotoImage(navisjon)
-            self.create_image(self.w / 2, self.h - 150, anchor=tk.CENTER, image=self.navisjon)
-
+            # navisjon = Image.open('res/navisjon.png')
+            # navisjon = navisjon.resize((400, 100), Image.ANTIALIAS)
+            # self.navisjon = ImageTk.PhotoImage(navisjon)
+            # self.create_image(self.w / 2, self.h - 150,
+            #                   anchor=tk.CENTER, image=self.navisjon)
 
         next_y = self.h - 50
         next_w = 200
@@ -878,7 +916,8 @@ class OverlayView(tk.Canvas):
             next_time = self.mgr.gameClock() + 3 * 60
             next_status = "Next: "
 
-        next_in_text = next_status + "%2d:%02d" % (next_time // 60, next_time % 60)
+        next_in_text = next_status + \
+            "%2d:%02d" % (next_time // 60, next_time % 60)
         self.create_text((center_x - next_w / 2 + 20, next_y), text=next_in_text,
                          fill="#ffffff", font=title_font, anchor=tk.W)
 
@@ -886,10 +925,12 @@ class OverlayView(tk.Canvas):
 def is_rpi():
     return os.uname().machine == 'armv7l'
 
+
 def maybe_hide_cursor(root):
     # Don't show a cursor on Pi.
     if is_rpi():
         root.configure(cursor='none')
+
 
 class Overlay(object):
     def __init__(self, mgr, mask, version, demo):

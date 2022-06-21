@@ -1,21 +1,20 @@
 #!/usr/bin/env python3
 
 from uwh.gamemanager import GameManager, GameState, TimeoutState, Penalty, TeamColor, PoolLayout
-from uwh.xbee_comms import XBeeClient, XBeeConfigParser, xbee_port, xbee_baud, xbee_id, xbee_ch
+from uwh.tcp_comms import TcpClient, TcpConfigParser, ip, port
 import uwh.rs485_comms as rs485_ser
 from overlay.ui import Overlay, MaskKind
 import argparse
-import socket
 
 parser = argparse.ArgumentParser(description='Timeshark Video Overlay')
 parser.add_argument('--chroma', help='Perform masking via chroma keying',
                     action='store_const', const=MaskKind.CHROMA, dest='mask')
 parser.add_argument('--vmac', help='Display on top of a mock VMAC image',
                     action='store_const', const=MaskKind.VMAC, dest='mask')
-parser.add_argument('--version', help='Version of the display',type=str,
+parser.add_argument('--version', help='Version of the display', type=str,
                     choices=Overlay.versions())
 parser.add_argument('--demo', help='Populate the GameManager with dummy data',
-                    dest='demo',action='store_true')
+                    dest='demo', action='store_true')
 args = parser.parse_args()
 
 mgr = GameManager()
@@ -25,7 +24,7 @@ if args.demo:
     mgr.setBlackScore(10)
     mgr.setWhiteScore(11)
     mgr.setGameClock(2 * 60 + 34)
-    #mgr.setGameState(GameState.first_half)
+    # mgr.setGameState(GameState.first_half)
     mgr.setGameState(GameState.pre_game)
     mgr.setTimeoutState(TimeoutState.none)
     mgr.setGid(1)
@@ -35,20 +34,19 @@ if args.demo:
     mgr.addPenalty(Penalty(5, TeamColor.white, 5 * 60))
     mgr.addPenalty(Penalty(1, TeamColor.black, 1 * 60))
 
-cfg = XBeeConfigParser()
+cfg = TcpConfigParser()
 cfg.read('timeshark.cfg')
 
 if not args.demo:
-    if cfg.getboolean('hardware', 'has_xbee'):
-        print('Using XBee comms')
-        xbee = XBeeClient(mgr, xbee_port(cfg), xbee_baud(cfg))
-        xbee.setup(xbee_id(cfg), xbee_ch(cfg), socket.gethostname())
-        xbee.listen_thread()
-    elif cfg.getboolean('hardware', 'has_rs485'):
+    if cfg.getboolean('hardware', 'has_rs485'):
         print('Using RS485 comms')
-        ser = rs485_ser.RS485Client(mgr, rs485_ser.port(cfg), rs485_ser.baud(cfg))
+        ser = rs485_ser.RS485Client(
+            mgr, rs485_ser.port(cfg), rs485_ser.baud(cfg))
         ser.listen_thread()
+    elif cfg.getboolean('hardware', 'use_tcp'):
+        print("Using TCP comms")
+        sock = TcpClient(mgr, ip(cfg), port(cfg))
+        sock.listen_thread()
 
 ov = Overlay(mgr, args.mask, args.version, args.demo)
 ov.mainloop()
-
