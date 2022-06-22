@@ -394,11 +394,11 @@ class OverlayView(tk.Canvas):
                                       fill=time_fill,
                                       border=time_border)
 
-        # logo = Image.open('res/worlds-cmas-sticker.png')
-        # size = 130
-        # logo = logo.resize((size, size), Image.ANTIALIAS)
-        # self.logo = ImageTk.PhotoImage(logo)
-        # self.create_image(self.w - x1 + 30, y1, anchor=tk.NE, image=self.logo)
+        logo = Image.open('res/logo-nationals2022.png')
+        size = 130
+        logo = logo.resize((size, size), Image.ANTIALIAS)
+        self.logo = ImageTk.PhotoImage(logo)
+        self.create_image(self.w - 60, 30, anchor=tk.NE, image=self.logo)
 
         # Flags
         left_flag = self.get('left', 'flag')
@@ -854,17 +854,17 @@ class OverlayView(tk.Canvas):
             # self.create_image(center_x, 550, anchor=tk.CENTER, image=self.logo)
 
             # Nationals
-            #logo = Image.open('res/logo-nationals2018.png')
-            #logo = logo.resize((400, 400), Image.ANTIALIAS)
-            #self.logo = ImageTk.PhotoImage(logo)
-            #self.create_image(center_x, 625, anchor=tk.CENTER, image=self.logo)
+            logo = Image.open('res/logo-nationals2022.png')
+            logo = logo.resize((400, 400), Image.ANTIALIAS)
+            self.logo = ImageTk.PhotoImage(logo)
+            self.create_image(center_x, 625, anchor=tk.CENTER, image=self.logo)
 
-            # Navisjon
-            # navisjon = Image.open('res/navisjon.png')
-            # navisjon = navisjon.resize((400, 100), Image.ANTIALIAS)
-            # self.navisjon = ImageTk.PhotoImage(navisjon)
-            # self.create_image(self.w / 2, self.h - 150,
-            #                   anchor=tk.CENTER, image=self.navisjon)
+            # Atlantis
+            atlantis = Image.open('res/atlantis.png')
+            atlantis = atlantis.resize((100, 100), Image.ANTIALIAS)
+            self.atlantis = ImageTk.PhotoImage(atlantis)
+            self.create_image(self.w / 2, self.h - 150,
+                              anchor=tk.CENTER, image=self.atlantis)
         else:
             score_y = 500
             score_radius = 300
@@ -885,20 +885,18 @@ class OverlayView(tk.Canvas):
                              fill=self.get('left', 'color'), font=score_font, anchor=tk.CENTER)
 
             # Worlds
-            # logo = Image.open('res/logo-worlds2018.png')
-            # scale = 400 / 1500
-            # logo = logo.resize(
-            #     (int(1500 * scale), int(900 * scale)), Image.ANTIALIAS)
-            # self.logo = ImageTk.PhotoImage(logo)
-            # self.create_image(center_x, score_y,
-            #                   anchor=tk.CENTER, image=self.logo)
+            logo = Image.open('res/logo-nationals2022.png')
+            logo = logo.resize((320, 320), Image.ANTIALIAS)
+            self.logo = ImageTk.PhotoImage(logo)
+            self.create_image(center_x, score_y / 2,
+                              anchor=tk.CENTER, image=self.logo)
 
-            # Navisjon
-            # navisjon = Image.open('res/navisjon.png')
-            # navisjon = navisjon.resize((400, 100), Image.ANTIALIAS)
-            # self.navisjon = ImageTk.PhotoImage(navisjon)
-            # self.create_image(self.w / 2, self.h - 150,
-            #                   anchor=tk.CENTER, image=self.navisjon)
+            # Atlantis
+            atlantis = Image.open('res/atlantis.png')
+            atlantis = atlantis.resize((100, 100), Image.ANTIALIAS)
+            self.atlantis = ImageTk.PhotoImage(atlantis)
+            self.create_image(self.w / 2, self.h - 150,
+                              anchor=tk.CENTER, image=self.atlantis)
 
         next_y = self.h - 50
         next_w = 200
@@ -913,7 +911,7 @@ class OverlayView(tk.Canvas):
             next_time = self.mgr.gameClock()
             next_status = "Start: "
         else:
-            next_time = self.mgr.gameClock() + 3 * 60
+            next_time = self.mgr.gameClock()  # + 3 * 60
             next_status = "Next: "
 
         next_in_text = next_status + \
