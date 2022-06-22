@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import io
 import os
 from multiprocessing import Process, Queue
 from datetime import datetime
@@ -921,7 +922,13 @@ class OverlayView(tk.Canvas):
 
 
 def is_rpi():
-    return os.uname().machine == 'armv7l'
+    try:
+        with io.open('/sys/firmware/devicetree/base/model', 'r') as m:
+            if 'raspberry pi' in m.read().lower():
+                return True
+    except Exception:
+        pass
+    return False
 
 
 def maybe_hide_cursor(root):
