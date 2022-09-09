@@ -395,7 +395,7 @@ class OverlayView(tk.Canvas):
                                       fill=time_fill,
                                       border=time_border)
 
-        logo = Image.open('res/logo-nationals2022.png')
+        logo = Image.open('res/2022-uwr-nationals-logo.png')
         size = 130
         logo = logo.resize((size, size), Image.ANTIALIAS)
         self.logo = ImageTk.PhotoImage(logo)
@@ -855,7 +855,7 @@ class OverlayView(tk.Canvas):
             # self.create_image(center_x, 550, anchor=tk.CENTER, image=self.logo)
 
             # Nationals
-            logo = Image.open('res/logo-nationals2022.png')
+            logo = Image.open('res/2022-uwr-nationals-logo.png')
             logo = logo.resize((400, 400), Image.ANTIALIAS)
             self.logo = ImageTk.PhotoImage(logo)
             self.create_image(center_x, 625, anchor=tk.CENTER, image=self.logo)
@@ -886,7 +886,7 @@ class OverlayView(tk.Canvas):
                              fill=self.get('left', 'color'), font=score_font, anchor=tk.CENTER)
 
             # Worlds
-            logo = Image.open('res/logo-nationals2022.png')
+            logo = Image.open('res/2022-uwr-nationals-logo.png')
             logo = logo.resize((320, 320), Image.ANTIALIAS)
             self.logo = ImageTk.PhotoImage(logo)
             self.create_image(center_x, score_y / 2,
